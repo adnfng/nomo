@@ -16,10 +16,13 @@ type ThemeDefinition = {
   semantic: Record<string, string>;
 };
 
+type PageStyle = "standard" | "dense";
+
 type PageFrontmatter = {
   theme: ThemeName;
   font: string;
-  fontSize: string;
+  fontsize: string;
+  style: PageStyle;
 };
 
 type PageRecord = {
@@ -30,7 +33,8 @@ type PageRecord = {
 const DEFAULT_FRONTMATTER: PageFrontmatter = {
   theme: "light",
   font: "system",
-  fontSize: "14.4px",
+  fontsize: "14.4px",
+  style: "standard",
 };
 
 const SYSTEM_FONT_STACK = '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif';
@@ -84,15 +88,19 @@ function normalizeFontSize(value: unknown): string {
   }
 
   if (typeof value !== "string") {
-    return DEFAULT_FRONTMATTER.fontSize;
+    return DEFAULT_FRONTMATTER.fontsize;
   }
 
   const trimmed = value.trim();
   if (!trimmed) {
-    return DEFAULT_FRONTMATTER.fontSize;
+    return DEFAULT_FRONTMATTER.fontsize;
   }
 
   return /^\d+(\.\d+)?$/.test(trimmed) ? `${trimmed}px` : trimmed;
+}
+
+function normalizeStyle(value: unknown): PageStyle {
+  return value === "dense" ? "dense" : "standard";
 }
 
 function extractFrontmatter(raw: string): PageRecord {
@@ -122,9 +130,13 @@ function extractFrontmatter(raw: string): PageRecord {
     frontmatter: {
       theme: normalizeTheme(frontmatter.theme),
       font: normalizeFont(frontmatter.font),
-      fontSize: normalizeFontSize(
-        frontmatter.fontSize ?? frontmatter["font-size"] ?? frontmatter["font size"],
+      fontsize: normalizeFontSize(
+        frontmatter.fontsize ??
+          frontmatter.fontSize ??
+          frontmatter["font-size"] ??
+          frontmatter["font size"],
       ),
+      style: normalizeStyle(frontmatter.style),
     },
   };
 }
@@ -194,7 +206,7 @@ function App() {
 
     let cancelled = false;
 
-    document.documentElement.style.setProperty("--page-font-size", page.frontmatter.fontSize);
+    document.documentElement.style.setProperty("--page-font-size", page.frontmatter.fontsize);
     applyFont(page.frontmatter.font);
 
     loadTheme(page.frontmatter.theme)
@@ -227,7 +239,7 @@ function App() {
           </Link>
         </header>
 
-        <article className="markdown">
+        <article className={`markdown style-${page?.frontmatter.style ?? DEFAULT_FRONTMATTER.style}`}>
           {page ? (
             <ReactMarkdown remarkPlugins={[remarkFrontmatter, remarkGfm]}>{page.content}</ReactMarkdown>
           ) : (

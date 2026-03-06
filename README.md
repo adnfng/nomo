@@ -1,73 +1,97 @@
-# React + TypeScript + Vite
+# Nomo
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Nomo is a markdown-first site renderer built with React and Vite. Each file in `pages/` becomes a route, and YAML frontmatter controls presentation for that page.
 
-Currently, two official plugins are available:
+## Getting Started
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+bun install
+bun run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Other useful commands:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+bun run build
+bun run lint
 ```
+
+## How Routing Works
+
+Every markdown file in `pages/` becomes a route based on its filename.
+
+- `pages/home.md` -> `/`
+- `pages/test-page.md` -> `/test-page`
+- `pages/docs.md` -> `/docs`
+
+## Frontmatter
+
+Each page can define presentation options in YAML frontmatter:
+
+```yaml
+---
+theme: light
+font: system
+fontsize: 14.4px
+style: standard
+---
+```
+
+Supported keys:
+
+- `theme`: `light` or `dark`
+- `font`: `system` for the system stack, or a Google Font family name like `Open Sans`
+- `fontsize`: base page font size; numbers are treated as pixel values
+- `style`: `standard` or `dense`
+
+`fontSize` is still accepted as a compatibility fallback, but `fontsize` is the canonical key.
+
+## Themes
+
+Theme files live in `public/themes/` and are loaded at runtime based on frontmatter.
+
+Theme shape:
+
+```json
+{
+  "name": "Light",
+  "semantic": {
+    "background": "#ffffff",
+    "surface": "#f5f5f5",
+    "border": "#e5e5e5",
+    "text": "#000000",
+    "muted": "#737373",
+    "subtle": "#a3a3a3",
+    "link": "#000000",
+    "accent": "#60a5fa",
+    "code": "#f5f5f5"
+  }
+}
+```
+
+The `semantic` keys are applied directly to CSS variables on the document root.
+
+## Markdown Styles
+
+Markdown styling is split under `src/styles/`:
+
+- `base.css`: shared layout, tokens, and common markdown primitives
+- `standard.css`: more relaxed document-style spacing and heading scale
+- `dense.css`: tighter spacing for compact notes
+- `index.css`: imports the style modules
+
+Use frontmatter to switch between them:
+
+```yaml
+style: standard
+```
+
+or
+
+```yaml
+style: dense
+```
+
+## Previewing Markdown
+
+`pages/test-page.md` is the specimen page for markdown rendering. Use it to inspect headings, lists, tables, code blocks, blockquotes, rules, and footnotes while adjusting styles.

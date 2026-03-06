@@ -1,7 +1,8 @@
 ---
-theme: dark
-font: Open Sans
-fontSize: 14.4px
+theme: light
+font: system
+fontsize: 14.4px
+style: dense
 ---
 
 # Markdown Preview
@@ -69,11 +70,11 @@ Inline code sits inside text, while fenced blocks should preserve whitespace and
 type Frontmatter = {
   theme: "light" | "dark";
   font: string;
-  fontSize: string;
+  fontsize: string;
 };
 
 export function describePage(page: Frontmatter) {
-  return `${page.theme} / ${page.font} / ${page.fontSize}`;
+  return `${page.theme} / ${page.font} / ${page.fontsize}`;
 }
 ```
 
@@ -85,11 +86,11 @@ bun run lint
 
 ## Table
 
-| Surface | Purpose | Example |
+| Token | Purpose | Example |
 | --- | --- | --- |
-| `bg` | Page background | Main canvas |
+| `background` | Page background | Main canvas |
 | `surface` | Secondary panels | Cards, callouts |
-| `codeBg` | Code treatment | Inline code, code blocks |
+| `code` | Code treatment | Inline code, code blocks |
 
 ## Horizontal Rule
 
