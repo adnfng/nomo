@@ -1,0 +1,191 @@
+:root {
+  --bg: #f6f6f6;
+  --surface: #ffffff;
+  --border: #e6e6e6;
+  --text: #202020;
+  --text-muted: #6a6a6a;
+  --link: #111111;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: var(--link);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.app-shell {
+  min-height: 100vh;
+  padding: 3rem 1.5rem;
+}
+
+.page-wrap {
+  margin: 0 auto;
+  max-width: 720px;
+}
+
+.page-header {
+  margin-bottom: 1.25rem;
+}
+
+.home-link {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+.markdown {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.25rem;
+  line-height: 1.45;
+}
+
+.markdown > :first-child {
+  margin-top: 0;
+}
+
+.markdown > :last-child {
+  margin-bottom: 0;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+  margin: 1.25rem 0 0.45rem;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.markdown h1 {
+  font-size: 1.15rem;
+}
+
+.markdown h2 {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+}
+
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+.markdown p,
+.markdown ul,
+.markdown ol,
+.markdown blockquote,
+.markdown pre,
+.markdown table,
+.markdown hr {
+  margin: 0.55rem 0;
+}
+
+.markdown ul,
+.markdown ol {
+  padding-left: 1.2rem;
+}
+
+.markdown li + li {
+  margin-top: 0.2rem;
+}
+
+.markdown code {
+  background: #f1f1f1;
+  border-radius: 6px;
+  padding: 0.1rem 0.35rem;
+  font-size: 0.85em;
+}
+
+.markdown pre {
+  background: #f1f1f1;
+  border-radius: 8px;
+  padding: 0.75rem;
+  overflow-x: auto;
+}
+
+.markdown pre code {
+  padding: 0;
+  background: transparent;
+}
+
+.markdown img,
+.markdown video {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  display: block;
+}
+
+.markdown blockquote {
+  border-left: 3px solid var(--border);
+  padding-left: 0.75rem;
+  color: var(--text-muted);
+}
+
+.markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.markdown th,
+.markdown td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.45rem 0.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.markdown th {
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.markdown sup {
+  font-size: 0.72em;
+  color: var(--text-muted);
+}
+
+.markdown [data-footnotes] {
+  margin-top: 1rem;
+  border-top: 1px solid var(--border);
+  padding-top: 0.75rem;
+}
+
+.markdown [data-footnotes] p,
+.markdown [data-footnotes] li {
+  color: var(--text-muted);
+}
+
+.markdown [data-footnote-backref] {
+  text-decoration: none;
+}
