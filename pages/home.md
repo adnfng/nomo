@@ -1,3 +1,9 @@
+---
+theme: light
+font: system
+fontSize: 14.4px
+---
+
 # Nomo
 
 This is a fresh markdown-first frontend.

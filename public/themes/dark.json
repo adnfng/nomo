@@ -1,0 +1,17 @@
+{
+  "name": "Dark",
+  "semantic": {
+    "bg": "#171717",
+    "surface": "#262626",
+    "surfaceAlt": "#404040",
+    "border": "#525252",
+    "text": "#fafafa",
+    "textMuted": "#d4d4d4",
+    "textSubtle": "#a3a3a3",
+    "link": "#e5e5e5",
+    "accent": "#79b8ff",
+    "badgeBg": "#404040",
+    "badgeText": "#e5e5e5",
+    "codeBg": "#262626"
+  }
+}
