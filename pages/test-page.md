@@ -14,7 +14,6 @@ This page is a full specimen for the markdown renderer. It covers copy, hierarch
 ---
 
 ## Headings
-
 # Heading One
 
 ## Heading Two
@@ -28,8 +27,13 @@ This page is a full specimen for the markdown renderer. It covers copy, hierarch
 ###### Heading Six
 
 ## Paragraphs And Inline Formatting
-
 Regular body copy should feel calm and readable at the configured base size.
+
+This paragraph intentionally has two blank lines above it.
+
+
+
+This paragraph intentionally has three blank lines above it.
 
 You can mix **bold**, *italic*, ***bold italic***, ~~strikethrough~~, `inline code`, and bare URLs like https://example.com in the same paragraph.
 

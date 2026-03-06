@@ -1,5 +1,7 @@
-import { useEffect } from "react";
+import { createElement, useEffect, type CSSProperties, type HTMLAttributes } from "react";
 import ReactMarkdown from "react-markdown";
+import type { Components } from "react-markdown";
+import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkParse from "remark-parse";
@@ -15,6 +17,11 @@ type ThemeDefinition = {
   name: string;
   semantic: Record<string, string>;
 };
+
+type BlockTag = keyof Pick<
+  HTMLElementTagNameMap,
+  "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "hr" | "ol" | "p" | "pre" | "table" | "ul"
+>;
 
 type PageStyle = "standard" | "dense";
 
@@ -101,6 +108,33 @@ function normalizeFontSize(value: unknown): string {
 
 function normalizeStyle(value: unknown): PageStyle {
   return value === "dense" ? "dense" : "standard";
+}
+
+function remarkSourceSpacing() {
+  return (tree: {
+    children?: Array<{
+      type: string;
+      position?: { start?: { line?: number }; end?: { line?: number } };
+      data?: { hProperties?: Record<string, string> };
+    }>;
+  }) => {
+    let previousEndLine: number | null = null;
+
+    for (const child of tree.children ?? []) {
+      if (typeof child.position?.start?.line !== "number") {
+        continue;
+      }
+
+      const lineGap =
+        previousEndLine === null ? 0 : Math.max(child.position.start.line - previousEndLine - 1, 0);
+
+      child.data ??= {};
+      child.data.hProperties ??= {};
+      child.data.hProperties["data-line-gap"] = String(lineGap);
+
+      previousEndLine = child.position?.end?.line ?? child.position.start.line;
+    }
+  };
 }
 
 function extractFrontmatter(raw: string): PageRecord {
@@ -195,6 +229,51 @@ function applyFont(font: string) {
   }
 }
 
+function buildBlockStyle(
+  properties: Record<string, unknown> | undefined,
+  style: CSSProperties | undefined,
+): CSSProperties | undefined {
+  const gapValue = Number(properties?.["data-line-gap"]);
+  if (!Number.isFinite(gapValue) || gapValue <= 0) {
+    return style;
+  }
+
+  return {
+    ...style,
+    marginTop: `${gapValue}em`,
+  };
+}
+
+function withBlockGap<T extends HTMLElement>(tagName: BlockTag) {
+  return ({
+    node,
+    style,
+    ...props
+  }: HTMLAttributes<T> & {
+    node?: { properties?: Record<string, unknown> };
+  }) =>
+    createElement(tagName, {
+      ...props,
+      style: buildBlockStyle(node?.properties, style),
+    });
+}
+
+const markdownComponents: Components = {
+  blockquote: withBlockGap("blockquote"),
+  h1: withBlockGap("h1"),
+  h2: withBlockGap("h2"),
+  h3: withBlockGap("h3"),
+  h4: withBlockGap("h4"),
+  h5: withBlockGap("h5"),
+  h6: withBlockGap("h6"),
+  hr: withBlockGap("hr"),
+  ol: withBlockGap("ol"),
+  p: withBlockGap("p"),
+  pre: withBlockGap("pre"),
+  table: withBlockGap("table"),
+  ul: withBlockGap("ul"),
+};
+
 function App() {
   const location = useLocation();
   const { slug, page } = getPageContent(location.pathname);
@@ -241,7 +320,12 @@ function App() {
 
         <article className={`markdown style-${page?.frontmatter.style ?? DEFAULT_FRONTMATTER.style}`}>
           {page ? (
-            <ReactMarkdown remarkPlugins={[remarkFrontmatter, remarkGfm]}>{page.content}</ReactMarkdown>
+            <ReactMarkdown
+              components={markdownComponents}
+              remarkPlugins={[remarkFrontmatter, remarkBreaks, remarkGfm, remarkSourceSpacing]}
+            >
+              {page.content}
+            </ReactMarkdown>
           ) : (
             <>
               <h1>Page Not Found</h1>
