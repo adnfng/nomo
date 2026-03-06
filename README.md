@@ -33,7 +33,6 @@ Each page can define presentation options in YAML frontmatter:
 theme: light
 font: system
 fontsize: 14.4px
-style: standard
 ---
 ```
 
@@ -42,7 +41,6 @@ Supported keys:
 - `theme`: `light` or `dark`
 - `font`: `system` for the system stack, or a Google Font family name like `Open Sans`
 - `fontsize`: base page font size; numbers are treated as pixel values
-- `style`: `standard` or `dense`
 
 `fontSize` is still accepted as a compatibility fallback, but `fontsize` is the canonical key.
 
@@ -73,24 +71,9 @@ The `semantic` keys are applied directly to CSS variables on the document root.
 
 ## Markdown Styles
 
-Markdown styling is split under `src/styles/`:
+Markdown styling now lives in a single file:
 
-- `base.css`: shared layout, tokens, and common markdown primitives
-- `standard.css`: more relaxed document-style spacing and heading scale
-- `dense.css`: tighter spacing for compact notes
-- `index.css`: imports the style modules
-
-Use frontmatter to switch between them:
-
-```yaml
-style: standard
-```
-
-or
-
-```yaml
-style: dense
-```
+- `src/styles/index.css`: layout, tokens, and markdown rules
 
 ## Previewing Markdown
 
@@ -104,10 +87,24 @@ You can size markdown images by adding dimensions to the alt text:
 ![avatar:100x170](https://github.com/adnfng.png)
 ```
 
-This renders the image at `100px` by `170px`.
+This renders the image inside a `100px` by `170px` frame using `cover`.
 
 ```md
 ![avatar:100](https://github.com/adnfng.png)
 ```
 
 This sets the image width to `100px` and preserves the original aspect ratio.
+
+## Badges
+
+You can create inline badges with double parentheses:
+
+```md
+((design))
+```
+
+You can also wrap markdown links:
+
+```md
+(([x](https://x.com/adnfng)))
+```

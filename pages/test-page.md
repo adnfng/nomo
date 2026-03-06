@@ -1,8 +1,7 @@
 ---
-theme: light
+theme: dark
 font: system
 fontsize: 14.4px
-style: dense
 ---
 
 # Markdown Preview
@@ -99,6 +98,12 @@ Sized image with width and height:
 Sized image with width only:
 
 ![avatar:100](https://github.com/adnfng.png)
+
+## Badges
+
+Plain badge: ((design))
+
+Linked badge: (([x](https://x.com/adnfng)))
 
 ## Horizontal Rule
 

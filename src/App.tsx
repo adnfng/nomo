@@ -3,6 +3,7 @@ import {
   useEffect,
   type CSSProperties,
   type HTMLAttributes,
+  type ReactNode,
 } from "react";
 import ReactMarkdown from "react-markdown";
 import type { Components } from "react-markdown";
@@ -28,13 +29,10 @@ type BlockTag = keyof Pick<
   "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "hr" | "ol" | "p" | "pre" | "table" | "ul"
 >;
 
-type PageStyle = "standard" | "dense";
-
 type PageFrontmatter = {
   theme: ThemeName;
   font: string;
   fontsize: string;
-  style: PageStyle;
 };
 
 type PageRecord = {
@@ -46,7 +44,6 @@ const DEFAULT_FRONTMATTER: PageFrontmatter = {
   theme: "light",
   font: "system",
   fontsize: "14.4px",
-  style: "standard",
 };
 
 const SYSTEM_FONT_STACK = '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif';
@@ -111,10 +108,6 @@ function normalizeFontSize(value: unknown): string {
   return /^\d+(\.\d+)?$/.test(trimmed) ? `${trimmed}px` : trimmed;
 }
 
-function normalizeStyle(value: unknown): PageStyle {
-  return value === "dense" ? "dense" : "standard";
-}
-
 function remarkSourceSpacing() {
   return (tree: {
     children?: Array<{
@@ -161,6 +154,117 @@ function remarkLeadingImageBreak() {
   };
 }
 
+function createTextNode(value: string) {
+  return { type: "text", value };
+}
+
+function createBadgeNode(children: Array<Record<string, unknown>>) {
+  return {
+    type: "badge",
+    children,
+    data: {
+      hName: "span",
+      hProperties: {
+        className: ["markdown-badge"],
+      },
+    },
+  };
+}
+
+function transformBadgeChildren(children: Array<Record<string, unknown>>) {
+  const output: Array<Record<string, unknown>> = [];
+  let isCollectingBadge = false;
+  let badgeChildren: Array<Record<string, unknown>> = [];
+
+  const flushBadgeAsText = () => {
+    output.push(createTextNode("(("));
+    output.push(...badgeChildren);
+    badgeChildren = [];
+    isCollectingBadge = false;
+  };
+
+  const pushNode = (node: Record<string, unknown>) => {
+    if (isCollectingBadge) {
+      badgeChildren.push(node);
+      return;
+    }
+
+    output.push(node);
+  };
+
+  for (const child of children) {
+    if (child.type !== "text" || typeof child.value !== "string") {
+      pushNode(child);
+      continue;
+    }
+
+    let remaining = child.value;
+
+    while (remaining.length > 0) {
+      if (!isCollectingBadge) {
+        const startIndex = remaining.indexOf("((");
+        if (startIndex === -1) {
+          pushNode(createTextNode(remaining));
+          remaining = "";
+          continue;
+        }
+
+        if (startIndex > 0) {
+          output.push(createTextNode(remaining.slice(0, startIndex)));
+        }
+
+        isCollectingBadge = true;
+        badgeChildren = [];
+        remaining = remaining.slice(startIndex + 2);
+        continue;
+      }
+
+      const endIndex = remaining.indexOf("))");
+      if (endIndex === -1) {
+        badgeChildren.push(createTextNode(remaining));
+        remaining = "";
+        continue;
+      }
+
+      if (endIndex > 0) {
+        badgeChildren.push(createTextNode(remaining.slice(0, endIndex)));
+      }
+
+      output.push(createBadgeNode(badgeChildren));
+      badgeChildren = [];
+      isCollectingBadge = false;
+      remaining = remaining.slice(endIndex + 2);
+    }
+  }
+
+  if (isCollectingBadge) {
+    flushBadgeAsText();
+  }
+
+  return output;
+}
+
+function remarkBadges() {
+  return (tree: unknown) => {
+    visit(tree as { type: string; children?: Array<Record<string, unknown>> }, (node: unknown) => {
+      return (
+        typeof node === "object" &&
+        node !== null &&
+        "children" in node &&
+        Array.isArray((node as { children?: unknown }).children)
+      );
+    }, (node: unknown) => {
+      const parent = node as { type?: string; children?: Array<Record<string, unknown>> };
+
+      if (!Array.isArray(parent.children) || parent.type === "badge") {
+        return;
+      }
+
+      parent.children = transformBadgeChildren(parent.children);
+    });
+  };
+}
+
 function extractFrontmatter(raw: string): PageRecord {
   const file = unified().use(remarkParse).use(remarkFrontmatter, ["yaml"]).parse(raw);
 
@@ -194,7 +298,6 @@ function extractFrontmatter(raw: string): PageRecord {
           frontmatter["font-size"] ??
           frontmatter["font size"],
       ),
-      style: normalizeStyle(frontmatter.style),
     },
   };
 }
@@ -303,7 +406,41 @@ function parseImageDimensions(alt: string | null | undefined): {
   };
 }
 
+function renderMarkdownLink({
+  children,
+  node,
+  ...props
+}: HTMLAttributes<HTMLAnchorElement> & {
+  children?: ReactNode;
+  node?: unknown;
+}) {
+  void node;
+
+  return (
+    <a {...props} className="markdown-link">
+      <span className="markdown-link__label">{children}</span>
+      <svg
+        aria-hidden="true"
+        className="markdown-link__icon"
+        fill="none"
+        height="12"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+        viewBox="0 0 24 24"
+        width="12"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path d="M7 7h10v10" />
+        <path d="M7 17 17 7" />
+      </svg>
+    </a>
+  );
+}
+
 const markdownComponents: Components = {
+  a: renderMarkdownLink,
   blockquote: withBlockGap("blockquote"),
   h1: withBlockGap("h1"),
   h2: withBlockGap("h2"),
@@ -320,6 +457,7 @@ const markdownComponents: Components = {
   img: ({ alt, node, style, ...props }) => {
     void node;
     const parsed = parseImageDimensions(alt);
+    const hasFixedFrame = Boolean(parsed.width && parsed.height);
 
     return (
       <img
@@ -330,6 +468,8 @@ const markdownComponents: Components = {
           ...style,
           marginTop: "0.35em",
           marginBottom: "0.35em",
+          objectFit: hasFixedFrame ? "cover" : style?.objectFit,
+          objectPosition: hasFixedFrame ? "center" : style?.objectPosition,
           width: parsed.width ? `${parsed.width}px` : style?.width,
           height: parsed.height ? `${parsed.height}px` : style?.height,
         }}
@@ -383,7 +523,7 @@ function App() {
           </Link>
         </header>
 
-        <article className={`markdown style-${page?.frontmatter.style ?? DEFAULT_FRONTMATTER.style}`}>
+        <article className="markdown">
           {page ? (
             <ReactMarkdown
               components={markdownComponents}
@@ -391,6 +531,7 @@ function App() {
                 remarkFrontmatter,
                 remarkGfm,
                 remarkBreaks,
+                remarkBadges,
                 remarkLeadingImageBreak,
                 remarkSourceSpacing,
               ]}

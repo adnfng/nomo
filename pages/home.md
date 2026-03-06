@@ -2,7 +2,6 @@
 theme: light
 font: system
 fontsize: 14.4px
-style: standard
 ---
 
 # Nomo
