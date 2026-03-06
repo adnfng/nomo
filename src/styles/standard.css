@@ -1,5 +1,5 @@
 .markdown.style-standard {
-  line-height: 1.7;
+  line-height: 1.4;
 }
 
 .markdown.style-standard h1,
@@ -48,10 +48,13 @@
 .markdown.style-standard ul,
 .markdown.style-standard ol,
 .markdown.style-standard blockquote,
-.markdown.style-standard pre,
 .markdown.style-standard table,
 .markdown.style-standard hr {
   margin: 1em 0;
+}
+
+.markdown.style-standard pre {
+  margin: 1.35em 0;
 }
 
 .markdown.style-standard ul,
@@ -70,7 +73,7 @@
 }
 
 .markdown.style-standard pre {
-  padding: 1rem 1.1rem;
+  padding: 1.2rem 1.1rem;
 }
 
 .markdown.style-standard blockquote {

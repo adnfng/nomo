@@ -1,4 +1,9 @@
-import { createElement, useEffect, type CSSProperties, type HTMLAttributes } from "react";
+import {
+  createElement,
+  useEffect,
+  type CSSProperties,
+  type HTMLAttributes,
+} from "react";
 import ReactMarkdown from "react-markdown";
 import type { Components } from "react-markdown";
 import remarkBreaks from "remark-breaks";
@@ -137,6 +142,25 @@ function remarkSourceSpacing() {
   };
 }
 
+function remarkLeadingImageBreak() {
+  return (tree: {
+    children?: Array<{
+      type: string;
+      children?: Array<{ type: string }>;
+    }>;
+  }) => {
+    for (const child of tree.children ?? []) {
+      if (child.type !== "paragraph" || !child.children || child.children.length < 2) {
+        continue;
+      }
+
+      if (child.children[0].type === "image" && child.children[1].type === "break") {
+        child.children.splice(1, 1);
+      }
+    }
+  };
+}
+
 function extractFrontmatter(raw: string): PageRecord {
   const file = unified().use(remarkParse).use(remarkFrontmatter, ["yaml"]).parse(raw);
 
@@ -258,6 +282,27 @@ function withBlockGap<T extends HTMLElement>(tagName: BlockTag) {
     });
 }
 
+function parseImageDimensions(alt: string | null | undefined): {
+  alt: string | undefined;
+  width: number | undefined;
+  height: number | undefined;
+} {
+  if (!alt) {
+    return { alt: alt ?? undefined, width: undefined, height: undefined };
+  }
+
+  const match = alt.match(/^(.*?):(\d+)(?:x(\d+))?$/);
+  if (!match) {
+    return { alt, width: undefined, height: undefined };
+  }
+
+  return {
+    alt: match[1].trim() || undefined,
+    width: Number(match[2]),
+    height: match[3] ? Number(match[3]) : undefined,
+  };
+}
+
 const markdownComponents: Components = {
   blockquote: withBlockGap("blockquote"),
   h1: withBlockGap("h1"),
@@ -272,6 +317,26 @@ const markdownComponents: Components = {
   pre: withBlockGap("pre"),
   table: withBlockGap("table"),
   ul: withBlockGap("ul"),
+  img: ({ alt, node, style, ...props }) => {
+    void node;
+    const parsed = parseImageDimensions(alt);
+
+    return (
+      <img
+        {...props}
+        alt={parsed.alt}
+        height={parsed.height}
+        style={{
+          ...style,
+          marginTop: "0.35em",
+          marginBottom: "0.35em",
+          width: parsed.width ? `${parsed.width}px` : style?.width,
+          height: parsed.height ? `${parsed.height}px` : style?.height,
+        }}
+        width={parsed.width}
+      />
+    );
+  },
 };
 
 function App() {
@@ -322,7 +387,13 @@ function App() {
           {page ? (
             <ReactMarkdown
               components={markdownComponents}
-              remarkPlugins={[remarkFrontmatter, remarkBreaks, remarkGfm, remarkSourceSpacing]}
+              remarkPlugins={[
+                remarkFrontmatter,
+                remarkGfm,
+                remarkBreaks,
+                remarkLeadingImageBreak,
+                remarkSourceSpacing,
+              ]}
             >
               {page.content}
             </ReactMarkdown>

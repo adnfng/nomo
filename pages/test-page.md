@@ -27,14 +27,8 @@ This page is a full specimen for the markdown renderer. It covers copy, hierarch
 ###### Heading Six
 
 ## Paragraphs And Inline Formatting
+
 Regular body copy should feel calm and readable at the configured base size.
-
-This paragraph intentionally has two blank lines above it.
-
-
-
-This paragraph intentionally has three blank lines above it.
-
 You can mix **bold**, *italic*, ***bold italic***, ~~strikethrough~~, `inline code`, and bare URLs like https://example.com in the same paragraph.
 
 Markdown also handles long-form writing:
@@ -95,6 +89,16 @@ bun run lint
 | `background` | Page background | Main canvas |
 | `surface` | Secondary panels | Cards, callouts |
 | `code` | Code treatment | Inline code, code blocks |
+
+## Images
+
+Sized image with width and height:
+
+![avatar:100x170](https://github.com/adnfng.png)
+
+Sized image with width only:
+
+![avatar:100](https://github.com/adnfng.png)
 
 ## Horizontal Rule
 

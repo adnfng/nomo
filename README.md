@@ -95,3 +95,19 @@ style: dense
 ## Previewing Markdown
 
 `pages/test-page.md` is the specimen page for markdown rendering. Use it to inspect headings, lists, tables, code blocks, blockquotes, rules, and footnotes while adjusting styles.
+
+## Image Sizing
+
+You can size markdown images by adding dimensions to the alt text:
+
+```md
+![avatar:100x170](https://github.com/adnfng.png)
+```
+
+This renders the image at `100px` by `170px`.
+
+```md
+![avatar:100](https://github.com/adnfng.png)
+```
+
+This sets the image width to `100px` and preserves the original aspect ratio.

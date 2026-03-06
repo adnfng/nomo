@@ -8,7 +8,7 @@
 .markdown.style-dense h4,
 .markdown.style-dense h5,
 .markdown.style-dense h6 {
-  margin: 0.4em 0 0;
+  margin: 0.4em 0 0.2em;
   line-height: 1.2;
   font-weight: 650;
   color: var(--text);
@@ -43,10 +43,13 @@
 .markdown.style-dense ul,
 .markdown.style-dense ol,
 .markdown.style-dense blockquote,
-.markdown.style-dense pre,
 .markdown.style-dense table,
 .markdown.style-dense hr {
   margin: 0.2em 0;
+}
+
+.markdown.style-dense pre {
+  margin: 0.7em 0;
 }
 
 .markdown.style-dense ul,
@@ -69,7 +72,7 @@
 }
 
 .markdown.style-dense pre {
-  padding: 0.75rem 0.85rem;
+  padding: 0.95rem 0.85rem;
   border-radius: 8px;
 }
 
