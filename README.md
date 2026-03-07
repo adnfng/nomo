@@ -108,3 +108,23 @@ You can also wrap markdown links:
 ```md
 (([x](https://x.com/adnfng)))
 ```
+
+## Gallery
+
+Use the gallery block syntax for mixed image and video grids:
+
+```md
+[[gallery]]
+/assets/one.jpg
+/assets/two.mp4
+/assets/three.jpg
+[[/gallery]]
+```
+
+Behavior:
+
+- up to 3 columns
+- rows align to the top
+- media keeps aspect ratio with `max-height: 125px`
+- click opens a lightbox with a blurred overlay
+- videos autoplay, loop, and stay muted by default

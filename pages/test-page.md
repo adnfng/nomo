@@ -1,5 +1,5 @@
 ---
-theme: dark
+theme: light
 font: system
 fontsize: 14.4px
 ---
@@ -104,6 +104,14 @@ Sized image with width only:
 Plain badge: ((design))
 
 Linked badge: (([x](https://x.com/adnfng)))
+
+## Gallery
+
+[[gallery]]
+https://github.com/adnfng.png
+https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4
+/assets/chatcut.jpg
+[[/gallery]]
 
 ## Horizontal Rule
 
