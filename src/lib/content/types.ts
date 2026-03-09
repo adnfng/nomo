@@ -1,4 +1,5 @@
-export type ThemeName = "light" | "dark";
+export type ThemeName = "adn" | "dark" | "light";
+export type PageAlign = "top" | "middle" | "bottom";
 
 export type ThemeSemantic = {
   background: string;
@@ -16,6 +17,7 @@ export type ThemeDefinition = {
 };
 
 export type PageFrontmatter = {
+  align: PageAlign;
   theme: ThemeName;
   font: string;
   fontsize: string;
@@ -36,6 +38,7 @@ export type PageRecord = {
 };
 
 export const DEFAULT_FRONTMATTER: PageFrontmatter = {
+  align: "top",
   theme: "light",
   font: "system",
   fontsize: "14.4px",

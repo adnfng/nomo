@@ -10,35 +10,38 @@ function App() {
   const location = useLocation();
   const { slug, page } = getPageContent(location.pathname);
   const markdownComponents = createMarkdownComponents(page?.galleries ?? {});
+  const pageAlign = page?.frontmatter.align ?? "top";
 
   usePagePresentation(page);
 
   return (
-    <main className="app-shell">
+    <main className={`app-shell app-shell--${pageAlign}`}>
       <div className="page-wrap">
-        <article className="markdown">
-          {page ? (
-            <ReactMarkdown
-              components={markdownComponents}
-              remarkPlugins={markdownRemarkPlugins}
-            >
-              {page.content}
-            </ReactMarkdown>
-          ) : (
-            <>
-              <h1>Page Not Found</h1>
-              <p>
-                No markdown file exists for <code>{slug}</code>.
-              </p>
-              <p>
-                Create <code>pages/{slug}.md</code> and refresh.
-              </p>
-              <p>
-                <Link to="/">Back home</Link>
-              </p>
-            </>
-          )}
-        </article>
+        <div className="page-content">
+          <article className="markdown">
+            {page ? (
+              <ReactMarkdown
+                components={markdownComponents}
+                remarkPlugins={markdownRemarkPlugins}
+              >
+                {page.content}
+              </ReactMarkdown>
+            ) : (
+              <>
+                <h1>Page Not Found</h1>
+                <p>
+                  No markdown file exists for <code>{slug}</code>.
+                </p>
+                <p>
+                  Create <code>pages/{slug}.md</code> and refresh.
+                </p>
+                <p>
+                  <Link to="/">Back home</Link>
+                </p>
+              </>
+            )}
+          </article>
+        </div>
         <footer className="app-footer">
           <span className="markdown-muted">Created with</span>{" "}
           <a

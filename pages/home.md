@@ -1,15 +1,28 @@
 ---
-theme: light
+theme: dark
 font: system
 fontsize: 14.4px
+align: middle
 ---
 
-# Nomo
 
-This is a fresh markdown-first frontend.
 
-- Add files in `pages/`
-- URL maps to file name
-- Example: `pages/test-page.md` -> `/test-page`
+![nomo:28](/nomo.svg)
 
-[Open test page](/test-page)
+
+
+The open-source profile page that starts with a ((human.md)).
+
+Instead of creating yet another account, just create a public `.nomo` repo on GitHub and a single `human.md` file. Nomo turns it into a personal page automatically.
+
+It stays *simple* because it is *simple*. Your content lives in your repo, written in markdown, and stays fully under your control.
+
+Example: [(nomo.md/adnfng)](https://nomo.md/adnfng)
+
+
+### How to get started?
+
+- Create a public GitHub repo named `.nomo`
+- Add `human.md` to the root
+- Write what you want people to see
+- Open your profile at `nomo.md/githubusername`

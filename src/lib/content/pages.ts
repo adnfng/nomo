@@ -8,6 +8,7 @@ import {
   DEFAULT_FRONTMATTER,
   type GalleryDefinition,
   type GalleryMap,
+  type PageAlign,
   type PageFrontmatter,
   type PageRecord,
   type ThemeName,
@@ -24,7 +25,11 @@ const pageModules = import.meta.glob("/pages/*.md", {
 }) as PageMap;
 
 function normalizeTheme(value: unknown): ThemeName {
-  return value === "dark" ? "dark" : "light";
+  return value === "dark" || value === "adn" ? value : "light";
+}
+
+function normalizeAlign(value: unknown): PageAlign {
+  return value === "middle" || value === "bottom" ? value : "top";
 }
 
 function normalizeFont(value: unknown): string {
@@ -55,6 +60,7 @@ function normalizeFontSize(value: unknown): string {
 
 function parseFrontmatter(frontmatter: Record<string, unknown>): PageFrontmatter {
   return {
+    align: normalizeAlign(frontmatter.align),
     theme: normalizeTheme(frontmatter.theme),
     font: normalizeFont(frontmatter.font),
     fontsize: normalizeFontSize(
@@ -88,21 +94,21 @@ function extractGalleryBlocks(content: string): { content: string; galleries: Ga
   const nextContent = content.replace(
     GALLERY_BLOCK_PATTERN,
     (_, widthValue: string | undefined, heightValue: string | undefined, body: string) => {
-    const items = body
-      .split(/\r?\n/)
-      .map((line) => line.trim())
-      .filter(Boolean)
-      .map((line) => line.match(/^!\[[^\]]*]\((.+?)\)$/)?.[1] ?? line);
+      const items = body
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .map((line) => line.match(/^!\[[^\]]*]\((.+?)\)$/)?.[1] ?? line);
 
-    if (items.length === 0) {
-      return "";
-    }
+      if (items.length === 0) {
+        return "";
+      }
 
-    const token = `@@GALLERY:${galleryIndex}@@`;
+      const token = `@@GALLERY:${galleryIndex}@@`;
       galleries[token] = parseGalleryDefinition(widthValue, heightValue, items);
-    galleryIndex += 1;
+      galleryIndex += 1;
 
-    return `\n\n${token}\n\n`;
+      return `\n\n${token}\n\n`;
     },
   );
 

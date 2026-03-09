@@ -2,6 +2,8 @@
 
 Nomo is a markdown-first site renderer built with React and Vite. Each file in `pages/` becomes a route, and YAML frontmatter controls presentation for that page.
 
+The product model is simple: a public `.nomo` repo on GitHub with a `human.md` file as the source for a profile page.
+
 ## Getting Started
 
 ```bash
@@ -30,6 +32,7 @@ Each page can define presentation options in YAML frontmatter:
 
 ```yaml
 ---
+align: top
 theme: light
 font: system
 fontsize: 14.4px
@@ -38,11 +41,14 @@ fontsize: 14.4px
 
 Supported keys:
 
-- `theme`: `light` or `dark`
+- `align`: `top`, `middle`, or `bottom` to vertically place the page content within the viewport
+- `theme`: `light`, `dark`, or `adn`
 - `font`: `system` for the system stack, or a Google Font family name like `Open Sans`
 - `fontsize`: base page font size; numbers are treated as pixel values
 
 `fontSize` is still accepted as a compatibility fallback, but `fontsize` is the canonical key.
+
+The app-level `Created with nomo.` footer stays pinned to the bottom of the page regardless of content alignment.
 
 ## Themes
 
@@ -79,7 +85,7 @@ Markdown styling now lives in a single file:
 
 ## Image Sizing
 
-You can size markdown images by adding dimensions to the alt text:
+Markdown images and videos support inline sizing by adding dimensions to the alt text:
 
 ```md
 ![avatar:100x170](https://github.com/adnfng.png)
@@ -158,3 +164,4 @@ Behavior:
 - fixed width and height uses a cover frame
 - click opens a lightbox with a blurred overlay
 - videos autoplay, loop, and stay muted by default
+- gallery items support both images and videos

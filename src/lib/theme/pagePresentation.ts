@@ -4,6 +4,7 @@ import type { PageRecord, ThemeDefinition, ThemeName } from "../content/types";
 
 const SYSTEM_FONT_STACK = '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif';
 const THEME_URLS: Record<ThemeName, string> = {
+  adn: "/themes/adn.json",
   light: "/themes/light.json",
   dark: "/themes/dark.json",
 };

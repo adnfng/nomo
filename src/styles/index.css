@@ -45,11 +45,31 @@ a {
 .app-shell {
   min-height: 100vh;
   padding: 3rem 1.5rem;
+  display: flex;
 }
 
 .page-wrap {
+  width: 100%;
   margin: 0 auto;
   max-width: 35em;
+  min-height: calc(100vh - 6rem);
+  display: flex;
+  flex-direction: column;
+}
+
+.page-content {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.app-shell--middle .page-content {
+  justify-content: center;
+}
+
+.app-shell--bottom .page-content {
+  justify-content: flex-end;
 }
 
 .app-footer {
@@ -90,6 +110,10 @@ a {
 
 .markdown strong {
   font-weight: 550;
+}
+
+.markdown em {
+  font-weight: 400;
 }
 
 /* Inline Elements */
