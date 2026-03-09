@@ -1,39 +1,66 @@
-# Nomo
+<div align="center">
+  <img src="./public/nomo.svg" alt="Nomo logo" width="64" height="64" />
+  <h3>NOMO</h3>
+  <p>A markdown-first frontend for GitHub-backed profile pages.</p>
+  <a href="https://nomo.md">Website</a> | <a href="https://nomo.md/docs">Docs</a>
+  <br/><br/>
+  <div>
+    <a href="https://gitviews.com/">
+      <img src="https://gitviews.com/repo/adnfng/nomo.svg" alt="Repo Views" />
+    </a>
+  </div>
+</div>
 
-Nomo is a markdown-first frontend for GitHub-backed profile pages.
+---
 
-The app has a small native shell:
+### What Is Nomo?
 
-- `/` for the landing page
-- `/docs` for end-user docs
-- `/404` as the not-found fallback
+**Nomo** turns a public `.nomo` GitHub repo into a profile page.
 
-Everything else is treated as a GitHub username. Nomo fetches `human.md` from that user's public `.nomo` repo and renders it as a page.
-
-## Local Development
-
-```bash
-bun install
-bun run dev
-```
-
-Other useful commands:
-
-```bash
-bun run build
-bun run lint
-```
-
-## How It Works
-
-The profile route model is:
+The route model is simple:
 
 - `/:username` -> `.nomo/human.md`
 - `/:username/:slug` -> `.nomo/content/:slug.md`
 
-When profile content references `/assets/...`, Nomo rewrites that path against the same GitHub repo.
+When profile content references `/assets/...`, Nomo rewrites that path against the same repo automatically.
 
-## Project Structure
+The app also ships with a small native shell:
+
+- `/` for the landing page
+- `/docs` for end-user docs
+- `/404` for the not-found fallback
+
+---
+
+### Getting Started
+
+1. Install dependencies:
+
+```bash
+bun install
+```
+
+2. Start the dev server:
+
+```bash
+bun run dev
+```
+
+3. Build for production:
+
+```bash
+bun run build
+```
+
+4. Run lint:
+
+```bash
+bun run lint
+```
+
+---
+
+### Project Structure
 
 ```txt
 src/
@@ -54,7 +81,7 @@ src/
       └─ pagePresentation.ts
 ```
 
-Native app pages live in `pages/`:
+Native app pages live in:
 
 ```txt
 pages/
@@ -63,9 +90,15 @@ pages/
 └─ 404.md
 ```
 
-Theme JSON files live in `public/themes/`.
+Theme files live in:
 
-## Content Rules
+```txt
+public/themes/
+```
+
+---
+
+### Content Rules
 
 Frontmatter supports:
 
@@ -74,7 +107,7 @@ Frontmatter supports:
 - `font`
 - `fontsize`
 
-Custom markdown currently supports:
+Custom markdown supports:
 
 - badges with `((...))`
 - muted text with `{{...}}`
@@ -89,8 +122,10 @@ Custom markdown currently supports:
 [[/gallery]]
 ```
 
-## Notes
+---
+
+### Notes
 
 - `.nomo` is ignored locally so you can keep a personal test repo shape in the project root without committing it
-- `public/nomo.svg` is the shared app icon/favicon
-- Vite is configured to split markdown, router, and React into separate chunks for cleaner production output
+- `public/nomo.svg` is the shared app icon and favicon
+- Vite splits markdown, router, and React into separate chunks for production
