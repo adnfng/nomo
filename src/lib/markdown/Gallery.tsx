@@ -1,4 +1,4 @@
-import { type CSSProperties, type PointerEvent, type ReactNode, useEffect, useRef, useState } from "react";
+import { type PointerEvent, type ReactNode, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { type GalleryDefinition } from "../content/types";
@@ -6,7 +6,6 @@ import { isVideoSource } from "./media";
 
 type GalleryItemProps = {
   children: ReactNode;
-  frameStyle: CSSProperties;
   onClick: () => void;
 };
 
@@ -28,7 +27,7 @@ function closeLightboxState(state: LightboxState): LightboxState {
   return state ? { ...state, status: "closing" } : null;
 }
 
-function GalleryItem({ children, frameStyle, onClick }: GalleryItemProps) {
+function GalleryItem({ children, onClick }: GalleryItemProps) {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const frameRef = useRef<number | null>(null);
   const targetRef = useRef({ x: 0, y: 0 });
@@ -88,7 +87,6 @@ function GalleryItem({ children, frameStyle, onClick }: GalleryItemProps) {
       onClick={onClick}
       onPointerLeave={handlePointerLeave}
       onPointerMove={handlePointerMove}
-      style={frameStyle}
       type="button"
     >
       {children}
@@ -96,7 +94,7 @@ function GalleryItem({ children, frameStyle, onClick }: GalleryItemProps) {
   );
 }
 
-export function Gallery({ height, items, width }: GalleryDefinition) {
+export function Gallery({ items }: GalleryDefinition) {
   const [lightbox, setLightbox] = useState<LightboxState>(null);
 
   const mediaItems = items.map((src) => ({
@@ -135,34 +133,18 @@ export function Gallery({ height, items, width }: GalleryDefinition) {
     };
   }, [lightbox]);
 
-  const galleryStyle = width
-    ? ({ gridTemplateColumns: `repeat(auto-fill, ${width}px)` } as CSSProperties)
-    : undefined;
-
-  const frameStyle: CSSProperties = width
-    ? {
-        width: `${width}px`,
-        ...(height ? { height: `${height}px` } : {}),
-      }
-    : { width: "100%" };
-
-  const mediaClassName = height
-    ? "markdown-gallery__media markdown-gallery__media--fixed-height"
-    : "markdown-gallery__media";
-
   return (
     <>
-      <div className="markdown-gallery" data-custom-width={width ? "true" : undefined} style={galleryStyle}>
+      <div className="markdown-gallery">
         {mediaItems.map((item, index) => (
           <GalleryItem
             key={`${item.src}-${index}`}
-            frameStyle={frameStyle}
             onClick={() => setLightbox({ index, status: "open" })}
           >
             {item.isVideo ? (
-              <video autoPlay className={mediaClassName} loop muted playsInline src={item.src} />
+              <video autoPlay className="markdown-gallery__media" loop muted playsInline src={item.src} />
             ) : (
-              <img alt="" className={mediaClassName} src={item.src} />
+              <img alt="" className="markdown-gallery__media" src={item.src} />
             )}
           </GalleryItem>
         ))}

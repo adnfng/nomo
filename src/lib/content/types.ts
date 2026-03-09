@@ -1,4 +1,4 @@
-export type ThemeName = "adn" | "dark" | "light";
+export type ThemeName = "adn" | "dark" | "light" | "system";
 export type PageAlign = "top" | "middle" | "bottom";
 
 export type ThemeSemantic = {
@@ -25,16 +25,16 @@ export type PageFrontmatter = {
 
 export type GalleryDefinition = {
   items: string[];
-  width?: number;
-  height?: number;
 };
 
 export type GalleryMap = Record<string, GalleryDefinition>;
 
 export type PageRecord = {
+  assetBase?: string;
   content: string;
   frontmatter: PageFrontmatter;
   galleries: GalleryMap;
+  profileRoot?: string;
 };
 
 export const DEFAULT_FRONTMATTER: PageFrontmatter = {

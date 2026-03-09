@@ -1,16 +1,45 @@
 import ReactMarkdown from "react-markdown";
-import { Link, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
-import { getPageContent } from "./lib/content/pages";
+import { loadPageContent, resolveSlug } from "./lib/content/pages";
+import type { PageRecord } from "./lib/content/types";
 import { createMarkdownComponents } from "./lib/markdown/components";
 import { markdownRemarkPlugins } from "./lib/markdown/plugins";
 import { usePagePresentation } from "./lib/theme/pagePresentation";
 
 function App() {
   const location = useLocation();
-  const { slug, page } = getPageContent(location.pathname);
-  const markdownComponents = createMarkdownComponents(page?.galleries ?? {});
+  const routeSlug = resolveSlug(location.pathname);
+  const [pageState, setPageState] = useState<{ page: PageRecord | null; slug: string } | null>(null);
+  const slug = pageState?.slug ?? routeSlug;
+  const page = pageState?.slug === routeSlug ? pageState.page : null;
+  const markdownComponents = createMarkdownComponents(
+    page?.galleries ?? {},
+    page?.assetBase,
+    page?.profileRoot,
+  );
   const pageAlign = page?.frontmatter.align ?? "top";
+  const isHomePage = slug === "home";
+  const footerPrefix = isHomePage ? "See nomo on" : "Created with";
+  const footerLabel = isHomePage ? "github" : "nomo";
+  const footerHref = isHomePage ? "https://github.com/adnfng/nomo" : "https://nomo.md";
+
+  useEffect(() => {
+    let cancelled = false;
+
+    loadPageContent(location.pathname).then((next) => {
+      if (cancelled) {
+        return;
+      }
+
+      setPageState(next);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [location.pathname]);
 
   usePagePresentation(page);
 
@@ -26,31 +55,18 @@ function App() {
               >
                 {page.content}
               </ReactMarkdown>
-            ) : (
-              <>
-                <h1>Page Not Found</h1>
-                <p>
-                  No markdown file exists for <code>{slug}</code>.
-                </p>
-                <p>
-                  Create <code>pages/{slug}.md</code> and refresh.
-                </p>
-                <p>
-                  <Link to="/">Back home</Link>
-                </p>
-              </>
-            )}
+            ) : null}
           </article>
         </div>
         <footer className="app-footer">
-          <span className="markdown-muted">Created with</span>{" "}
+          <span className="markdown-muted">{footerPrefix}</span>{" "}
           <a
             className="markdown-link"
-            href="https://nomo.md"
+            href={footerHref}
             rel="noreferrer"
             target="_blank"
           >
-            <span className="markdown-link__label">nomo</span>
+            <span className="markdown-link__label">{footerLabel}</span>
             <svg
               aria-hidden="true"
               className="markdown-link__icon"
@@ -68,7 +84,7 @@ function App() {
               <path d="M7 17 17 7" />
             </svg>
           </a>
-          .
+          {!isHomePage ? "." : null}
         </footer>
       </div>
     </main>

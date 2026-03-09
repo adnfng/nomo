@@ -193,13 +193,14 @@ a {
 /* Block Code */
 
 .markdown pre {
-  margin: 0.7em 0;
+  margin: 1em 0;
   overflow-x: auto;
   background: var(--code);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 0.95rem 0.85rem;
-  font-family: inherit;
+  padding: 0.8rem 1rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
 }
 
 .markdown pre code {
@@ -228,20 +229,19 @@ a {
   object-position: center;
 }
 
+.markdown .markdown-media--nomo {
+  color: var(--text);
+}
+
 /* Gallery */
 
 .markdown-gallery {
   --gallery-gap: 0.4rem;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  justify-content: start;
   align-items: start;
   gap: var(--gallery-gap);
   margin: 0.85em 0;
-}
-
-.markdown-gallery[data-custom-width="true"] {
-  justify-content: start;
 }
 
 .markdown-gallery__item {
@@ -280,11 +280,6 @@ a {
   object-fit: cover;
   background: transparent;
   backface-visibility: hidden;
-}
-
-.markdown-gallery__media--fixed-height {
-  height: 100%;
-  aspect-ratio: auto;
 }
 
 /* Lightbox */

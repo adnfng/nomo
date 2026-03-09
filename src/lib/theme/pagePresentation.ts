@@ -3,13 +3,15 @@ import { useEffect } from "react";
 import type { PageRecord, ThemeDefinition, ThemeName } from "../content/types";
 
 const SYSTEM_FONT_STACK = '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif';
-const THEME_URLS: Record<ThemeName, string> = {
+type ResolvedThemeName = Exclude<ThemeName, "system">;
+
+const THEME_URLS: Record<ResolvedThemeName, string> = {
   adn: "/themes/adn.json",
   light: "/themes/light.json",
   dark: "/themes/dark.json",
 };
 
-const themeCache = new Map<ThemeName, Promise<ThemeDefinition>>();
+const themeCache = new Map<ResolvedThemeName, Promise<ThemeDefinition>>();
 
 function hexToOverlay(color: string): string {
   const normalized = color.replace("#", "");
@@ -36,7 +38,7 @@ function buildGoogleFontUrl(fontName: string): string {
   return `https://fonts.googleapis.com/css2?family=${family}:wght@400;500;600;700&display=swap`;
 }
 
-function loadTheme(theme: ThemeName): Promise<ThemeDefinition> {
+function loadTheme(theme: ResolvedThemeName): Promise<ThemeDefinition> {
   const cached = themeCache.get(theme);
   if (cached) {
     return cached;
@@ -77,6 +79,31 @@ function applyFont(font: string) {
   }
 }
 
+function resolveThemeName(theme: ThemeName): ResolvedThemeName {
+  if (theme !== "system") {
+    return theme;
+  }
+
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
+function applyTheme(theme: ThemeDefinition, themeName: ResolvedThemeName) {
+  const root = document.documentElement;
+
+  root.style.colorScheme = themeName;
+  root.style.removeProperty("--surface");
+  root.style.removeProperty("--accent");
+
+  for (const [key, value] of Object.entries(theme.semantic)) {
+    root.style.setProperty(`--${key}`, value);
+  }
+
+  root.style.setProperty(
+    "--background-overlay",
+    hexToOverlay(theme.semantic.background ?? "#000000"),
+  );
+}
+
 export function usePagePresentation(page: PageRecord | null) {
   useEffect(() => {
     if (!page) {
@@ -84,37 +111,40 @@ export function usePagePresentation(page: PageRecord | null) {
     }
 
     let cancelled = false;
+    let mediaQuery: MediaQueryList | null = null;
 
     document.documentElement.style.setProperty("--page-font-size", page.frontmatter.fontsize);
     applyFont(page.frontmatter.font);
 
-    loadTheme(page.frontmatter.theme)
-      .then((theme) => {
-        if (cancelled) {
-          return;
-        }
+    const updateTheme = () => {
+      const resolvedTheme = resolveThemeName(page.frontmatter.theme);
 
-        const root = document.documentElement;
+      loadTheme(resolvedTheme)
+        .then((theme) => {
+          if (cancelled) {
+            return;
+          }
 
-        root.style.colorScheme = page.frontmatter.theme;
-        root.style.removeProperty("--surface");
-        root.style.removeProperty("--accent");
+          applyTheme(theme, resolvedTheme);
+        })
+        .catch((error: unknown) => {
+          console.error(error);
+        });
+    };
 
-        for (const [key, value] of Object.entries(theme.semantic)) {
-          root.style.setProperty(`--${key}`, value);
-        }
+    updateTheme();
 
-        root.style.setProperty(
-          "--background-overlay",
-          hexToOverlay(theme.semantic.background ?? "#000000"),
-        );
-      })
-      .catch((error: unknown) => {
-        console.error(error);
-      });
+    if (page.frontmatter.theme === "system") {
+      mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      mediaQuery.addEventListener("change", updateTheme);
+    }
 
     return () => {
       cancelled = true;
+
+      if (mediaQuery) {
+        mediaQuery.removeEventListener("change", updateTheme);
+      }
     };
   }, [page]);
 }

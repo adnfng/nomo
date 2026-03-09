@@ -4,6 +4,7 @@ import { unified } from "unified";
 import { visit } from "unist-util-visit";
 import { parse as parseYaml } from "yaml";
 
+import { buildGitHubRawBase, buildGitHubRawUrl, resolveAssetUrl } from "./paths";
 import {
   DEFAULT_FRONTMATTER,
   type GalleryDefinition,
@@ -14,18 +15,28 @@ import {
   type ThemeName,
 } from "./types";
 
+type NativeSlug = "404" | "docs" | "home";
 type PageMap = Record<string, string>;
+type RouteMatch =
+  | { slug: NativeSlug; type: "native" }
+  | { slug: string; type: "profile-content"; username: string; contentPath: string }
+  | { slug: string; type: "profile-root"; username: string }
+  | { slug: "404"; type: "not-found" };
 
-const GALLERY_BLOCK_PATTERN = /\[\[gallery(?::(\d+)(?:x(\d+))?)?\]\]\s*([\s\S]*?)\s*\[\[\/gallery\]\]/g;
+const GITHUB_BRANCHES = ["main", "master"] as const;
+const NATIVE_SLUGS = new Set<NativeSlug>(["home", "docs", "404"]);
+const GITHUB_USERNAME_PATTERN = /^(?!-)(?!.*--)[a-z\d-]{1,39}(?<!-)$/i;
 
 const pageModules = import.meta.glob("/pages/*.md", {
-  query: "?raw",
-  import: "default",
   eager: true,
+  import: "default",
+  query: "?raw",
 }) as PageMap;
 
+const remotePageCache = new Map<string, Promise<PageRecord | null>>();
+
 function normalizeTheme(value: unknown): ThemeName {
-  return value === "dark" || value === "adn" ? value : "light";
+  return value === "dark" || value === "adn" || value === "system" ? value : "light";
 }
 
 function normalizeAlign(value: unknown): PageAlign {
@@ -72,53 +83,89 @@ function parseFrontmatter(frontmatter: Record<string, unknown>): PageFrontmatter
   };
 }
 
-function parseGalleryDefinition(
-  widthValue: string | undefined,
-  heightValue: string | undefined,
-  items: string[],
-): GalleryDefinition {
-  const width = widthValue ? Number(widthValue) : undefined;
-  const height = heightValue ? Number(heightValue) : undefined;
-
-  return {
-    items,
-    width: width && width > 0 ? width : undefined,
-    height: height && height > 0 ? height : undefined,
-  };
+function parseGalleryDefinition(items: string[]): GalleryDefinition {
+  return { items };
 }
 
-function extractGalleryBlocks(content: string): { content: string; galleries: GalleryMap } {
+function extractGalleryBlocks(content: string, assetBase?: string): {
+  content: string;
+  galleries: GalleryMap;
+} {
   const galleries: GalleryMap = {};
   let galleryIndex = 0;
+  let inFence = false;
+  let fenceMarker: string | null = null;
+  const lines = content.split(/\r?\n/);
+  const output: string[] = [];
 
-  const nextContent = content.replace(
-    GALLERY_BLOCK_PATTERN,
-    (_, widthValue: string | undefined, heightValue: string | undefined, body: string) => {
-      const items = body
-        .split(/\r?\n/)
-        .map((line) => line.trim())
-        .filter(Boolean)
-        .map((line) => line.match(/^!\[[^\]]*]\((.+?)\)$/)?.[1] ?? line);
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index];
+    const trimmed = line.trim();
+    const fenceMatch = trimmed.match(/^(```+|~~~+)/);
 
-      if (items.length === 0) {
-        return "";
+    if (fenceMatch) {
+      const marker = fenceMatch[1];
+
+      if (!inFence) {
+        inFence = true;
+        fenceMarker = marker;
+      } else if (fenceMarker === marker) {
+        inFence = false;
+        fenceMarker = null;
       }
 
+      output.push(line);
+      continue;
+    }
+
+    if (inFence) {
+      output.push(line);
+      continue;
+    }
+
+    const galleryStart = trimmed === "[[gallery]]";
+    if (!galleryStart) {
+      output.push(line);
+      continue;
+    }
+
+    const items: string[] = [];
+    let endIndex = index + 1;
+
+    while (endIndex < lines.length) {
+      const candidate = lines[endIndex].trim();
+
+      if (candidate === "[[/gallery]]") {
+        break;
+      }
+
+      if (candidate) {
+        const source = candidate.match(/^!\[[^\]]*]\((.+?)\)$/)?.[1] ?? candidate;
+        items.push(resolveAssetUrl(source, assetBase) ?? source);
+      }
+
+      endIndex += 1;
+    }
+
+    if (endIndex >= lines.length || lines[endIndex].trim() !== "[[/gallery]]") {
+      output.push(line);
+      continue;
+    }
+
+    if (items.length > 0) {
       const token = `@@GALLERY:${galleryIndex}@@`;
-      galleries[token] = parseGalleryDefinition(widthValue, heightValue, items);
+      galleries[token] = parseGalleryDefinition(items);
+      output.push("", token, "");
       galleryIndex += 1;
+    }
 
-      return `\n\n${token}\n\n`;
-    },
-  );
+    index = endIndex;
+  }
 
-  return {
-    content: nextContent,
-    galleries,
-  };
+  return { content: output.join("\n"), galleries };
 }
 
-function extractFrontmatter(raw: string): PageRecord {
+function parsePageRecord(raw: string, assetBase?: string, profileRoot?: string): PageRecord {
   const file = unified().use(remarkParse).use(remarkFrontmatter, ["yaml"]).parse(raw);
 
   let body = raw;
@@ -140,42 +187,140 @@ function extractFrontmatter(raw: string): PageRecord {
     }
   });
 
-  const { content, galleries } = extractGalleryBlocks(body);
+  const { content, galleries } = extractGalleryBlocks(body, assetBase);
 
   return {
+    assetBase,
     content,
     frontmatter: parseFrontmatter(frontmatter),
     galleries,
+    profileRoot,
   };
 }
 
-function buildPages(modules: PageMap): Map<string, PageRecord> {
-  const pages = new Map<string, PageRecord>();
+function buildNativePages(modules: PageMap): Map<NativeSlug, PageRecord> {
+  const pages = new Map<NativeSlug, PageRecord>();
 
   for (const [filePath, raw] of Object.entries(modules)) {
     const match = filePath.match(/\/([^/]+)\.md$/);
-    const fileName = match?.[1]?.toLowerCase();
-    if (!fileName) {
+    const slug = match?.[1]?.toLowerCase();
+
+    if (!slug || !NATIVE_SLUGS.has(slug as NativeSlug)) {
       continue;
     }
 
-    pages.set(fileName, extractFrontmatter(raw));
+    pages.set(slug as NativeSlug, parsePageRecord(raw));
   }
 
   return pages;
 }
 
-const pages = buildPages(pageModules);
+const nativePages = buildNativePages(pageModules);
 
-export function resolveSlug(pathname: string): string {
-  const clean = pathname.replace(/^\/+|\/+$/g, "").toLowerCase();
-  return clean || "home";
+function matchRoute(pathname: string): RouteMatch {
+  const segments = pathname.split("/").filter(Boolean);
+
+  if (segments.length === 0) {
+    return { slug: "home", type: "native" };
+  }
+
+  const [segment, ...contentSegments] = segments;
+  const slug = segment.toLowerCase();
+
+  if (NATIVE_SLUGS.has(slug as NativeSlug)) {
+    if (contentSegments.length > 0) {
+      return { slug: "404", type: "not-found" };
+    }
+
+    return { slug: slug as NativeSlug, type: "native" };
+  }
+
+  if (GITHUB_USERNAME_PATTERN.test(segment)) {
+    if (contentSegments.length === 0) {
+      return { slug, type: "profile-root", username: segment };
+    }
+
+    return {
+      contentPath: contentSegments.join("/"),
+      slug: contentSegments[contentSegments.length - 1].toLowerCase(),
+      type: "profile-content",
+      username: segment,
+    };
+  }
+
+  return { slug: "404", type: "not-found" };
 }
 
-export function getPageContent(pathname: string): { slug: string; page: PageRecord | null } {
-  const slug = resolveSlug(pathname);
+async function loadRemotePage(username: string, contentPath?: string): Promise<PageRecord | null> {
+  const cacheKey = `${username.toLowerCase()}:${contentPath ?? "human"}`;
+  const cached = remotePageCache.get(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
+  const promise = (async () => {
+    for (const branch of GITHUB_BRANCHES) {
+      try {
+        const pagePath = contentPath ? `content/${contentPath}.md` : "human.md";
+        const response = await fetch(buildGitHubRawUrl(username, branch, pagePath));
+        if (!response.ok) {
+          continue;
+        }
+
+        return parsePageRecord(
+          await response.text(),
+          buildGitHubRawBase(username, branch),
+          `/${username.toLowerCase()}`,
+        );
+      } catch {
+        continue;
+      }
+    }
+
+    return null;
+  })();
+
+  remotePageCache.set(cacheKey, promise);
+  return promise;
+}
+
+export function resolveSlug(pathname: string): string {
+  return matchRoute(pathname).slug;
+}
+
+export async function loadPageContent(pathname: string): Promise<{
+  page: PageRecord | null;
+  slug: string;
+}> {
+  const route = matchRoute(pathname);
+
+  if (route.type === "native") {
+    return {
+      page: nativePages.get(route.slug) ?? nativePages.get("404") ?? null,
+      slug: route.slug,
+    };
+  }
+
+  if (route.type === "profile-root") {
+    const page = await loadRemotePage(route.username);
+
+    return {
+      page: page ?? nativePages.get("404") ?? null,
+      slug: page ? route.slug : "404",
+    };
+  }
+
+  if (route.type === "profile-content") {
+    const page = await loadRemotePage(route.username, route.contentPath);
+
+    return {
+      page: page ?? nativePages.get("404") ?? null,
+      slug: page ? route.slug : "404",
+    };
+  }
+
   return {
-    slug,
-    page: pages.get(slug) ?? null,
+    page: nativePages.get("404") ?? null,
+    slug: "404",
   };
 }

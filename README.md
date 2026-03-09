@@ -1,6 +1,6 @@
 # Nomo
 
-Nomo is a markdown-first site renderer built with React and Vite. Each file in `pages/` becomes a route, and YAML frontmatter controls presentation for that page.
+Nomo is a markdown-first site renderer built with React and Vite.
 
 The product model is simple: a public `.nomo` repo on GitHub with a `human.md` file as the source for a profile page.
 
@@ -20,11 +20,14 @@ bun run lint
 
 ## How Routing Works
 
-Every markdown file in `pages/` becomes a route based on its filename.
+Nomo has a small set of native routes and one GitHub-backed profile route:
 
 - `pages/home.md` -> `/`
-- `pages/test-page.md` -> `/test-page`
 - `pages/docs.md` -> `/docs`
+- `pages/404.md` -> not-found fallback
+- `/:username` -> `https://github.com/:username/.nomo/blob/main/human.md` (with `master` fallback)
+
+If a profile page references `/assets/...`, Nomo resolves that path against the same `.nomo` repo.
 
 ## Frontmatter
 
@@ -42,7 +45,7 @@ fontsize: 14.4px
 Supported keys:
 
 - `align`: `top`, `middle`, or `bottom` to vertically place the page content within the viewport
-- `theme`: `light`, `dark`, or `adn`
+- `theme`: `light`, `dark`, `adn`, or `system`
 - `font`: `system` for the system stack, or a Google Font family name like `Open Sans`
 - `fontsize`: base page font size; numbers are treated as pixel values
 
@@ -78,10 +81,6 @@ The `semantic` keys are applied directly to CSS variables on the document root.
 Markdown styling now lives in a single file:
 
 - `src/styles/index.css`: layout, tokens, and markdown rules
-
-## Previewing Markdown
-
-`pages/test-page.md` is the specimen page for markdown rendering. Use it to inspect headings, lists, tables, code blocks, blockquotes, rules, and footnotes while adjusting styles.
 
 ## Image Sizing
 
