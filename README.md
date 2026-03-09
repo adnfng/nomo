@@ -55,13 +55,11 @@ Theme shape:
   "name": "Light",
   "semantic": {
     "background": "#ffffff",
-    "surface": "#f5f5f5",
     "border": "#e5e5e5",
     "text": "#000000",
     "muted": "#737373",
     "subtle": "#a3a3a3",
     "link": "#000000",
-    "accent": "#60a5fa",
     "code": "#f5f5f5"
   }
 }
@@ -109,6 +107,20 @@ You can also wrap markdown links:
 (([x](https://x.com/adnfng)))
 ```
 
+## Muted Text
+
+You can render muted inline copy with double braces:
+
+```md
+{{muted text}}
+```
+
+Links also work inside muted spans:
+
+```md
+{{[docs](https://example.com)}}
+```
+
 ## Gallery
 
 Use the gallery block syntax for mixed image and video grids:
@@ -121,10 +133,28 @@ Use the gallery block syntax for mixed image and video grids:
 [[/gallery]]
 ```
 
+You can also set a fixed item width:
+
+```md
+[[gallery:64]]
+/assets/one.jpg
+/assets/two.jpg
+[[/gallery]]
+```
+
+Or a fixed width and height:
+
+```md
+[[gallery:64x96]]
+/assets/one.jpg
+/assets/two.jpg
+[[/gallery]]
+```
+
 Behavior:
 
-- up to 3 columns
-- rows align to the top
-- media keeps aspect ratio with `max-height: 125px`
+- default layout uses 3 columns with `16:9` media frames
+- custom widths increase or decrease the number of columns
+- fixed width and height uses a cover frame
 - click opens a lightbox with a blurred overlay
 - videos autoplay, loop, and stay muted by default

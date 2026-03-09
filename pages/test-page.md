@@ -30,6 +30,8 @@ This page is a full specimen for the markdown renderer. It covers copy, hierarch
 Regular body copy should feel calm and readable at the configured base size.
 You can mix **bold**, *italic*, ***bold italic***, ~~strikethrough~~, `inline code`, and bare URLs like https://example.com in the same paragraph.
 
+Muted styling uses double braces: {{This sentence sits quieter in the flow.}}
+
 Markdown also handles long-form writing:
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere, sapien sed cursus feugiat, arcu risus faucibus nibh, quis sodales nulla nibh sit amet velit. Curabitur volutpat, turpis vitae viverra blandit, metus mauris condimentum est, sed tincidunt enim nibh at ipsum.
@@ -86,7 +88,7 @@ bun run lint
 | Token | Purpose | Example |
 | --- | --- | --- |
 | `background` | Page background | Main canvas |
-| `surface` | Secondary panels | Cards, callouts |
+| `border` | Dividers and frames | Tables, rules, blockquotes |
 | `code` | Code treatment | Inline code, code blocks |
 
 ## Images
@@ -105,12 +107,30 @@ Plain badge: ((design))
 
 Linked badge: (([x](https://x.com/adnfng)))
 
+Muted link: {{[Reference link](https://example.com)}}
+
 ## Gallery
 
 [[gallery]]
 https://github.com/adnfng.png
 https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4
 /assets/chatcut.jpg
+[[/gallery]]
+
+Compact gallery:
+
+[[gallery:64]]
+https://github.com/adnfng.png
+https://github.com/adnfng.png
+https://github.com/adnfng.png
+https://github.com/adnfng.png
+[[/gallery]]
+
+Fixed-frame gallery:
+
+[[gallery:72x96]]
+https://github.com/adnfng.png
+https://github.com/adnfng.png
 [[/gallery]]
 
 ## Horizontal Rule
