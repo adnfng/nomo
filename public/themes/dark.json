@@ -1,14 +1,12 @@
 {
   "name": "Dark",
   "semantic": {
-    "background": "#000000",
-    "surface": "#171717",
-    "border": "#262626",
-    "text": "#ffffff",
-    "muted": "#a3a3a3",
-    "subtle": "#737373",
-    "link": "#ffffff",
-    "accent": "#60a5fa",
+    "background": "#161616",
+    "border": "#282523",
+    "text": "#fff5ed",
+    "muted": "#afa6a0",
+    "subtle": "#8A7D73",
+    "link": "#fff5ed",
     "code": "#333333"
   }
 }
