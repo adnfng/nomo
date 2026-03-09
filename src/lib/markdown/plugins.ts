@@ -66,6 +66,19 @@ function createBadgeNode(children: Array<Record<string, unknown>>) {
   };
 }
 
+function createMutedNode(children: Array<Record<string, unknown>>) {
+  return {
+    type: "muted",
+    children,
+    data: {
+      hName: "span",
+      hProperties: {
+        className: ["markdown-muted"],
+      },
+    },
+  };
+}
+
 function transformBadgeChildren(children: Array<Record<string, unknown>>) {
   const output: Array<Record<string, unknown>> = [];
   let isCollectingBadge = false;
@@ -139,6 +152,79 @@ function transformBadgeChildren(children: Array<Record<string, unknown>>) {
   return output;
 }
 
+function transformMutedChildren(children: Array<Record<string, unknown>>) {
+  const output: Array<Record<string, unknown>> = [];
+  let isCollectingMuted = false;
+  let mutedChildren: Array<Record<string, unknown>> = [];
+
+  const flushMutedAsText = () => {
+    output.push(createTextNode("{{"));
+    output.push(...mutedChildren);
+    mutedChildren = [];
+    isCollectingMuted = false;
+  };
+
+  const pushNode = (node: Record<string, unknown>) => {
+    if (isCollectingMuted) {
+      mutedChildren.push(node);
+      return;
+    }
+
+    output.push(node);
+  };
+
+  for (const child of children) {
+    if (child.type !== "text" || typeof child.value !== "string") {
+      pushNode(child);
+      continue;
+    }
+
+    let remaining = child.value;
+
+    while (remaining.length > 0) {
+      if (!isCollectingMuted) {
+        const startIndex = remaining.indexOf("{{");
+        if (startIndex === -1) {
+          pushNode(createTextNode(remaining));
+          remaining = "";
+          continue;
+        }
+
+        if (startIndex > 0) {
+          output.push(createTextNode(remaining.slice(0, startIndex)));
+        }
+
+        isCollectingMuted = true;
+        mutedChildren = [];
+        remaining = remaining.slice(startIndex + 2);
+        continue;
+      }
+
+      const endIndex = remaining.indexOf("}}");
+      if (endIndex === -1) {
+        mutedChildren.push(createTextNode(remaining));
+        remaining = "";
+        continue;
+      }
+
+      if (endIndex > 0) {
+        mutedChildren.push(createTextNode(remaining.slice(0, endIndex)));
+      }
+
+      output.push(createMutedNode(mutedChildren));
+      mutedChildren = [];
+      isCollectingMuted = false;
+      remaining = remaining.slice(endIndex + 2);
+    }
+  }
+
+  if (isCollectingMuted) {
+    flushMutedAsText();
+  }
+
+  return output;
+}
+
 function remarkBadges() {
   return (tree: unknown) => {
     visit(
@@ -161,11 +247,38 @@ function remarkBadges() {
   };
 }
 
+function remarkMuted() {
+  return (tree: unknown) => {
+    visit(
+      tree as { type: string; children?: Array<Record<string, unknown>> },
+      (node: unknown) =>
+        typeof node === "object" &&
+        node !== null &&
+        "children" in node &&
+        Array.isArray((node as { children?: unknown }).children),
+      (node: unknown) => {
+        const parent = node as { type?: string; children?: Array<Record<string, unknown>> };
+
+        if (
+          !Array.isArray(parent.children) ||
+          parent.type === "badge" ||
+          parent.type === "muted"
+        ) {
+          return;
+        }
+
+        parent.children = transformMutedChildren(parent.children);
+      },
+    );
+  };
+}
+
 export const markdownRemarkPlugins = [
   remarkFrontmatter,
   remarkBreaks,
   remarkGfm,
   remarkBadges,
+  remarkMuted,
   remarkLeadingImageBreak,
   remarkSourceSpacing,
 ];

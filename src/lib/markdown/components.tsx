@@ -10,7 +10,7 @@ import {
 } from "react";
 import type { Components } from "react-markdown";
 
-import type { GalleryMap } from "../content/types";
+import type { GalleryDefinition, GalleryMap } from "../content/types";
 import { Gallery } from "./Gallery";
 import { isVideoSource } from "./media";
 
@@ -63,7 +63,7 @@ function withBlockGap<T extends HTMLElement>(tagName: BlockTag) {
 function extractGalleryItems(
   children: ReactNode,
   galleries: GalleryMap,
-): string[] | null {
+): GalleryDefinition | null {
   const items = Children.toArray(children);
   if (items.length !== 1 || typeof items[0] !== "string") {
     return null;
@@ -208,9 +208,9 @@ export function createMarkdownComponents(galleries: GalleryMap): Components {
     img: MarkdownMedia,
     ol: withBlockGap("ol"),
     p: ({ children, node, style, ...props }) => {
-      const items = extractGalleryItems(children, galleries);
-      if (items) {
-        return <Gallery items={items} />;
+      const gallery = extractGalleryItems(children, galleries);
+      if (gallery) {
+        return <Gallery {...gallery} />;
       }
 
       return createElement("p", {

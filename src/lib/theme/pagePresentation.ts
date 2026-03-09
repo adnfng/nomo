@@ -93,13 +93,17 @@ export function usePagePresentation(page: PageRecord | null) {
           return;
         }
 
-        document.documentElement.style.colorScheme = page.frontmatter.theme;
+        const root = document.documentElement;
+
+        root.style.colorScheme = page.frontmatter.theme;
+        root.style.removeProperty("--surface");
+        root.style.removeProperty("--accent");
 
         for (const [key, value] of Object.entries(theme.semantic)) {
-          document.documentElement.style.setProperty(`--${key}`, value);
+          root.style.setProperty(`--${key}`, value);
         }
 
-        document.documentElement.style.setProperty(
+        root.style.setProperty(
           "--background-overlay",
           hexToOverlay(theme.semantic.background ?? "#000000"),
         );

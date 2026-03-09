@@ -1,8 +1,18 @@
 export type ThemeName = "light" | "dark";
 
+export type ThemeSemantic = {
+  background: string;
+  border: string;
+  code: string;
+  link: string;
+  muted: string;
+  subtle: string;
+  text: string;
+};
+
 export type ThemeDefinition = {
   name: string;
-  semantic: Record<string, string>;
+  semantic: ThemeSemantic;
 };
 
 export type PageFrontmatter = {
@@ -11,7 +21,13 @@ export type PageFrontmatter = {
   fontsize: string;
 };
 
-export type GalleryMap = Record<string, string[]>;
+export type GalleryDefinition = {
+  items: string[];
+  width?: number;
+  height?: number;
+};
+
+export type GalleryMap = Record<string, GalleryDefinition>;
 
 export type PageRecord = {
   content: string;

@@ -1,15 +1,13 @@
-import { type PointerEvent, type ReactNode, useEffect, useRef, useState } from "react";
+import { type CSSProperties, type PointerEvent, type ReactNode, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
+import { type GalleryDefinition } from "../content/types";
 import { isVideoSource } from "./media";
 
-type GalleryProps = {
-  items: string[];
-};
-
-type MediaMetadata = {
-  width: number;
-  height: number;
+type GalleryItemProps = {
+  children: ReactNode;
+  frameStyle: CSSProperties;
+  onClick: () => void;
 };
 
 type LightboxState = {
@@ -17,34 +15,7 @@ type LightboxState = {
   status: "open" | "closing";
 } | null;
 
-const MAX_GALLERY_HEIGHT = 125;
-const DESKTOP_COLUMNS = 3;
-const MOBILE_COLUMNS = 2;
-const MOBILE_BREAKPOINT = "(max-width: 720px)";
 const TILT_MAX_DEGREES = 9;
-
-type GalleryItemProps = {
-  children: ReactNode;
-  onClick: () => void;
-  width: string;
-};
-
-function getColumnCount(itemCount: number, isCompactViewport: boolean) {
-  const maxColumns = isCompactViewport ? MOBILE_COLUMNS : DESKTOP_COLUMNS;
-  return Math.max(1, Math.min(itemCount, maxColumns));
-}
-
-function getDisplayWidth(
-  metadata: MediaMetadata | undefined,
-  targetColumnWidth: number,
-): number {
-  if (!metadata || metadata.width <= 0 || metadata.height <= 0) {
-    return targetColumnWidth;
-  }
-
-  const aspectRatio = metadata.width / metadata.height;
-  return Math.min(targetColumnWidth, MAX_GALLERY_HEIGHT * aspectRatio);
-}
 
 function buildTiltTransform(offsetX: number, offsetY: number) {
   const rotateX = -offsetY * TILT_MAX_DEGREES;
@@ -57,7 +28,7 @@ function closeLightboxState(state: LightboxState): LightboxState {
   return state ? { ...state, status: "closing" } : null;
 }
 
-function GalleryItem({ children, onClick, width }: GalleryItemProps) {
+function GalleryItem({ children, frameStyle, onClick }: GalleryItemProps) {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const frameRef = useRef<number | null>(null);
   const targetRef = useRef({ x: 0, y: 0 });
@@ -73,20 +44,15 @@ function GalleryItem({ children, onClick, width }: GalleryItemProps) {
   const applyTilt = () => {
     frameRef.current = null;
 
-    const node = buttonRef.current;
-    if (!node) {
-      return;
+    if (buttonRef.current) {
+      buttonRef.current.style.transform = buildTiltTransform(targetRef.current.x, targetRef.current.y);
     }
-
-    node.style.transform = buildTiltTransform(targetRef.current.x, targetRef.current.y);
   };
 
   const queueTiltUpdate = () => {
-    if (frameRef.current !== null) {
-      return;
+    if (frameRef.current === null) {
+      frameRef.current = window.requestAnimationFrame(applyTilt);
     }
-
-    frameRef.current = window.requestAnimationFrame(applyTilt);
   };
 
   const handlePointerMove = (event: PointerEvent<HTMLButtonElement>) => {
@@ -95,12 +61,9 @@ function GalleryItem({ children, onClick, width }: GalleryItemProps) {
     }
 
     const rect = event.currentTarget.getBoundingClientRect();
-    const normalizedX = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    const normalizedY = ((event.clientY - rect.top) / rect.height) * 2 - 1;
-
     targetRef.current = {
-      x: Math.max(-1, Math.min(1, normalizedX)),
-      y: Math.max(-1, Math.min(1, normalizedY)),
+      x: Math.max(-1, Math.min(1, ((event.clientX - rect.left) / rect.width) * 2 - 1)),
+      y: Math.max(-1, Math.min(1, ((event.clientY - rect.top) / rect.height) * 2 - 1)),
     };
 
     event.currentTarget.dataset.tiltActive = "true";
@@ -125,7 +88,7 @@ function GalleryItem({ children, onClick, width }: GalleryItemProps) {
       onClick={onClick}
       onPointerLeave={handlePointerLeave}
       onPointerMove={handlePointerMove}
-      style={{ width }}
+      style={frameStyle}
       type="button"
     >
       {children}
@@ -133,59 +96,13 @@ function GalleryItem({ children, onClick, width }: GalleryItemProps) {
   );
 }
 
-export function Gallery({ items }: GalleryProps) {
+export function Gallery({ height, items, width }: GalleryDefinition) {
   const [lightbox, setLightbox] = useState<LightboxState>(null);
-  const [isCompactViewport, setIsCompactViewport] = useState(false);
-  const [containerWidth, setContainerWidth] = useState(0);
-  const [columnGap, setColumnGap] = useState(0);
-  const [mediaMetadata, setMediaMetadata] = useState<Record<string, MediaMetadata>>({});
-  const galleryRef = useRef<HTMLDivElement | null>(null);
 
   const mediaItems = items.map((src) => ({
     src,
     isVideo: isVideoSource(src),
   }));
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia(MOBILE_BREAKPOINT);
-    const updateViewport = () => {
-      setIsCompactViewport(mediaQuery.matches);
-    };
-
-    updateViewport();
-    mediaQuery.addEventListener("change", updateViewport);
-
-    return () => {
-      mediaQuery.removeEventListener("change", updateViewport);
-    };
-  }, []);
-
-  useEffect(() => {
-    const node = galleryRef.current;
-    if (!node) {
-      return;
-    }
-
-    const updateMetrics = () => {
-      const styles = window.getComputedStyle(node);
-      const nextGap = Number.parseFloat(styles.columnGap || styles.gap || "0");
-
-      setContainerWidth(node.clientWidth);
-      setColumnGap(Number.isFinite(nextGap) ? nextGap : 0);
-    };
-
-    updateMetrics();
-
-    const observer = new ResizeObserver(() => {
-      updateMetrics();
-    });
-
-    observer.observe(node);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
 
   useEffect(() => {
     if (!lightbox) {
@@ -218,90 +135,34 @@ export function Gallery({ items }: GalleryProps) {
     };
   }, [lightbox]);
 
-  const handleMediaMetadata = (src: string, width: number, height: number) => {
-    if (width <= 0 || height <= 0) {
-      return;
-    }
+  const galleryStyle = width
+    ? ({ gridTemplateColumns: `repeat(auto-fill, ${width}px)` } as CSSProperties)
+    : undefined;
 
-    setMediaMetadata((current) => {
-      const previous = current[src];
-      if (previous?.width === width && previous.height === height) {
-        return current;
+  const frameStyle: CSSProperties = width
+    ? {
+        width: `${width}px`,
+        ...(height ? { height: `${height}px` } : {}),
       }
+    : { width: "100%" };
 
-      return {
-        ...current,
-        [src]: { width, height },
-      };
-    });
-  };
-
-  const columnCount = getColumnCount(mediaItems.length, isCompactViewport);
-  const availableWidth = Math.max(containerWidth - columnGap * (columnCount - 1), 0);
-  const targetColumnWidth = columnCount > 0 ? availableWidth / columnCount : 0;
-
-  const itemWidths = mediaItems.map((item) =>
-    targetColumnWidth > 0 ? getDisplayWidth(mediaMetadata[item.src], targetColumnWidth) : 0,
-  );
-
-  const trackWidths = Array.from({ length: columnCount }, (_, columnIndex) => {
-    let widestItem = 0;
-
-    for (let itemIndex = columnIndex; itemIndex < itemWidths.length; itemIndex += columnCount) {
-      widestItem = Math.max(widestItem, itemWidths[itemIndex] ?? 0);
-    }
-
-    return widestItem;
-  });
-
-  const galleryStyle =
-    trackWidths.some((width) => width > 0) && trackWidths.length > 0
-      ? {
-          gridTemplateColumns: trackWidths.map((width) => `${width}px`).join(" "),
-        }
-      : {
-          gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))`,
-        };
+  const mediaClassName = height
+    ? "markdown-gallery__media markdown-gallery__media--fixed-height"
+    : "markdown-gallery__media";
 
   return (
     <>
-      <div className="markdown-gallery" ref={galleryRef} style={galleryStyle}>
+      <div className="markdown-gallery" data-custom-width={width ? "true" : undefined} style={galleryStyle}>
         {mediaItems.map((item, index) => (
           <GalleryItem
             key={`${item.src}-${index}`}
+            frameStyle={frameStyle}
             onClick={() => setLightbox({ index, status: "open" })}
-            width={itemWidths[index] ? `${itemWidths[index]}px` : "100%"}
           >
             {item.isVideo ? (
-              <video
-                autoPlay
-                className="markdown-gallery__media"
-                loop
-                muted
-                onLoadedMetadata={(event) =>
-                  handleMediaMetadata(
-                    item.src,
-                    event.currentTarget.videoWidth,
-                    event.currentTarget.videoHeight,
-                  )
-                }
-                playsInline
-                preload="metadata"
-                src={item.src}
-              />
+              <video autoPlay className={mediaClassName} loop muted playsInline src={item.src} />
             ) : (
-              <img
-                alt=""
-                className="markdown-gallery__media"
-                onLoad={(event) =>
-                  handleMediaMetadata(
-                    item.src,
-                    event.currentTarget.naturalWidth,
-                    event.currentTarget.naturalHeight,
-                  )
-                }
-                src={item.src}
-              />
+              <img alt="" className={mediaClassName} src={item.src} />
             )}
           </GalleryItem>
         ))}
@@ -315,10 +176,7 @@ export function Gallery({ items }: GalleryProps) {
               onClick={() => setLightbox(closeLightboxState)}
               type="button"
             >
-              <div
-                className="markdown-lightbox__media-wrap"
-                onClick={(event) => event.stopPropagation()}
-              >
+              <div className="markdown-lightbox__media-wrap" onClick={(event) => event.stopPropagation()}>
                 {mediaItems[lightbox.index]?.isVideo ? (
                   <video
                     autoPlay

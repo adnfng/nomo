@@ -6,6 +6,7 @@ import { parse as parseYaml } from "yaml";
 
 import {
   DEFAULT_FRONTMATTER,
+  type GalleryDefinition,
   type GalleryMap,
   type PageFrontmatter,
   type PageRecord,
@@ -14,7 +15,7 @@ import {
 
 type PageMap = Record<string, string>;
 
-const GALLERY_BLOCK_PATTERN = /\[\[gallery\]\]\s*([\s\S]*?)\s*\[\[\/gallery\]\]/g;
+const GALLERY_BLOCK_PATTERN = /\[\[gallery(?::(\d+)(?:x(\d+))?)?\]\]\s*([\s\S]*?)\s*\[\[\/gallery\]\]/g;
 
 const pageModules = import.meta.glob("/pages/*.md", {
   query: "?raw",
@@ -65,11 +66,28 @@ function parseFrontmatter(frontmatter: Record<string, unknown>): PageFrontmatter
   };
 }
 
+function parseGalleryDefinition(
+  widthValue: string | undefined,
+  heightValue: string | undefined,
+  items: string[],
+): GalleryDefinition {
+  const width = widthValue ? Number(widthValue) : undefined;
+  const height = heightValue ? Number(heightValue) : undefined;
+
+  return {
+    items,
+    width: width && width > 0 ? width : undefined,
+    height: height && height > 0 ? height : undefined,
+  };
+}
+
 function extractGalleryBlocks(content: string): { content: string; galleries: GalleryMap } {
   const galleries: GalleryMap = {};
   let galleryIndex = 0;
 
-  const nextContent = content.replace(GALLERY_BLOCK_PATTERN, (_, body: string) => {
+  const nextContent = content.replace(
+    GALLERY_BLOCK_PATTERN,
+    (_, widthValue: string | undefined, heightValue: string | undefined, body: string) => {
     const items = body
       .split(/\r?\n/)
       .map((line) => line.trim())
@@ -81,11 +99,12 @@ function extractGalleryBlocks(content: string): { content: string; galleries: Ga
     }
 
     const token = `@@GALLERY:${galleryIndex}@@`;
-    galleries[token] = items;
+      galleries[token] = parseGalleryDefinition(widthValue, heightValue, items);
     galleryIndex += 1;
 
     return `\n\n${token}\n\n`;
-  });
+    },
+  );
 
   return {
     content: nextContent,
