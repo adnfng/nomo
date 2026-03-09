@@ -39,6 +39,34 @@ function App() {
             </>
           )}
         </article>
+        <footer className="app-footer">
+          <span className="markdown-muted">Created with</span>{" "}
+          <a
+            className="markdown-link"
+            href="https://nomo.md"
+            rel="noreferrer"
+            target="_blank"
+          >
+            <span className="markdown-link__label">nomo</span>
+            <svg
+              aria-hidden="true"
+              className="markdown-link__icon"
+              fill="none"
+              height="12"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              width="12"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M7 7h10v10" />
+              <path d="M7 17 17 7" />
+            </svg>
+          </a>
+          .
+        </footer>
       </div>
     </main>
   );

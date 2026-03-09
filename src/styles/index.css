@@ -49,7 +49,14 @@ a {
 
 .page-wrap {
   margin: 0 auto;
-  max-width: 600px;
+  max-width: 35em;
+}
+
+.app-footer {
+  margin-top: 64px;
+  padding: 0 1.25rem;
+  color: var(--muted);
+  font-size: 0.95rem;
 }
 
 .page-header {
@@ -87,21 +94,24 @@ a {
 
 /* Inline Elements */
 
-.markdown .markdown-link {
+.markdown .markdown-link,
+.app-footer .markdown-link {
   display: inline-flex;
   align-items: center;
   gap: 0.1rem;
   color: var(--link);
-  font-weight: 400;
+  font-weight: 550;
   text-decoration: none;
   transition: opacity 160ms ease;
 }
 
-.markdown .markdown-link:hover {
-  opacity: 0.75;
+.markdown .markdown-link:hover,
+.app-footer .markdown-link:hover {
+  opacity: 0.8;
 }
 
-.markdown .markdown-link__icon {
+.markdown .markdown-link__icon,
+.app-footer .markdown-link__icon {
   flex: 0 0 auto;
   width: 12px;
   height: 12px;
@@ -121,7 +131,7 @@ a {
   gap: 0.2rem;
   background: var(--code);
   border-radius: 6px;
-  padding: 0.1rem 0.4rem;
+  padding: 0.0rem 0.4rem;
   margin-bottom: 0.1rem;
   font-family: inherit;
   font-size: 0.85em;
@@ -141,15 +151,18 @@ a {
   height: 12px;
 }
 
-.markdown .markdown-muted {
+.markdown .markdown-muted,
+.app-footer .markdown-muted {
   color: var(--muted);
 }
 
-.markdown .markdown-muted .markdown-link {
+.markdown .markdown-muted .markdown-link,
+.app-footer .markdown-muted .markdown-link {
   color: inherit;
 }
 
-.markdown .markdown-muted .markdown-link__label {
+.markdown .markdown-muted .markdown-link__label,
+.app-footer .markdown-muted .markdown-link__label {
   text-decoration-color: currentColor;
 }
 
