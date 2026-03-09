@@ -1,9 +1,11 @@
 /* eslint-disable react-refresh/only-export-components */
 import {
   Children,
+  cloneElement,
   createElement,
   type CSSProperties,
   type HTMLAttributes,
+  isValidElement,
   type ReactNode,
 } from "react";
 import type { Components } from "react-markdown";
@@ -14,10 +16,20 @@ import { isVideoSource } from "./media";
 
 type BlockTag = keyof Pick<
   HTMLElementTagNameMap,
-  "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "hr" | "ol" | "p" | "pre" | "table" | "ul"
+  | "blockquote"
+  | "h1"
+  | "h2"
+  | "h3"
+  | "h4"
+  | "h5"
+  | "h6"
+  | "hr"
+  | "ol"
+  | "p"
+  | "pre"
+  | "table"
+  | "ul"
 >;
-
-const MEDIA_MARGIN = "0.35em";
 
 function buildBlockStyle(
   properties: Record<string, unknown> | undefined,
@@ -48,7 +60,10 @@ function withBlockGap<T extends HTMLElement>(tagName: BlockTag) {
     });
 }
 
-function extractGalleryItems(children: ReactNode, galleries: GalleryMap): string[] | null {
+function extractGalleryItems(
+  children: ReactNode,
+  galleries: GalleryMap,
+): string[] | null {
   const items = Children.toArray(children);
   if (items.length !== 1 || typeof items[0] !== "string") {
     return null;
@@ -79,37 +94,36 @@ function parseImageDimensions(alt: string | null | undefined): {
   };
 }
 
-function buildMediaStyle(
-  style: CSSProperties | undefined,
-  width: number | undefined,
-  height: number | undefined,
-): CSSProperties {
-  const hasFixedFrame = Boolean(width && height);
+function mergeClassName(...classNames: Array<string | undefined>) {
+  return classNames.filter(Boolean).join(" ") || undefined;
+}
 
-  return {
-    ...style,
-    marginTop: MEDIA_MARGIN,
-    marginBottom: MEDIA_MARGIN,
-    objectFit: hasFixedFrame ? "cover" : style?.objectFit,
-    objectPosition: hasFixedFrame ? "center" : style?.objectPosition,
-    width: width ? `${width}px` : style?.width,
-    height: height ? `${height}px` : style?.height,
-  };
+function cleanNodeProp(props: { node?: unknown } & Record<string, unknown>) {
+  const { node, ...rest } = props;
+  void node;
+  return rest;
+}
+
+function withClassName(element: ReactNode, className: string) {
+  if (!isValidElement<{ className?: string }>(element)) {
+    return element;
+  }
+
+  return cloneElement(element, {
+    className: mergeClassName(element.props.className, className),
+  });
 }
 
 function MarkdownLink({
   children,
-  node,
   ...props
 }: HTMLAttributes<HTMLAnchorElement> & {
   children?: ReactNode;
   node?: unknown;
 }) {
-  void node;
-
   return (
-    <a {...props} className="markdown-link">
-      <span className="markdown-link__label">{children}</span>
+    <a {...cleanNodeProp(props)} className={mergeClassName(props.className, "markdown-link")}>
+      <span className="markdown-link__label">{withClassName(children, "markdown-link__label")}</span>
       <svg
         aria-hidden="true"
         className="markdown-link__icon"
@@ -133,9 +147,7 @@ function MarkdownLink({
 function MarkdownMedia({
   alt,
   className,
-  node,
   src,
-  style,
   title,
 }: HTMLAttributes<HTMLImageElement> & {
   alt?: string | null;
@@ -144,34 +156,38 @@ function MarkdownMedia({
   src?: string;
   title?: string;
 }) {
-  void node;
-
   const parsed = parseImageDimensions(alt);
   const isVideo = isVideoSource(src);
-  const mediaStyle = buildMediaStyle(style, parsed.width, parsed.height);
+  const mediaClassName = mergeClassName(
+    className,
+    "markdown-media",
+    parsed.width && parsed.height ? "markdown-media--framed" : undefined,
+  );
 
   if (isVideo) {
     return (
       <video
         autoPlay
-        className={className}
+        {...cleanNodeProp({ alt, className, src, title })}
+        className={mediaClassName}
+        height={parsed.height}
         loop
         muted
         playsInline
         src={src}
-        style={mediaStyle}
         title={title}
+        width={parsed.width}
       />
     );
   }
 
   return (
     <img
+      {...cleanNodeProp({ className, src, title })}
       alt={parsed.alt}
-      className={className}
+      className={mediaClassName}
       height={parsed.height}
       src={src}
-      style={mediaStyle}
       title={title}
       width={parsed.width}
     />
