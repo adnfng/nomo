@@ -11,9 +11,14 @@ import { usePagePresentation } from "./lib/theme/pagePresentation";
 function App() {
   const location = useLocation();
   const routeSlug = resolveSlug(location.pathname);
-  const [pageState, setPageState] = useState<{ page: PageRecord | null; slug: string } | null>(null);
-  const slug = pageState?.slug ?? routeSlug;
-  const page = pageState?.slug === routeSlug ? pageState.page : null;
+  const [pageState, setPageState] = useState<{
+    page: PageRecord | null;
+    pathname: string;
+    slug: string;
+  } | null>(null);
+  const hasResolvedPage = pageState?.pathname === location.pathname;
+  const slug = hasResolvedPage ? pageState.slug : routeSlug;
+  const page = hasResolvedPage ? pageState.page : null;
   const markdownComponents = createMarkdownComponents(
     page?.galleries ?? {},
     page?.assetBase,
@@ -33,7 +38,10 @@ function App() {
         return;
       }
 
-      setPageState(next);
+      setPageState({
+        ...next,
+        pathname: location.pathname,
+      });
     });
 
     return () => {
