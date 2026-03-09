@@ -26,3 +26,7 @@ Example: {{[nomo.md/adnfng](https://nomo.md/adnfng)}}
 - Add `human.md` to the root
 - Write what you want people to see
 - Open your profile at `nomo.md/githubusername`
+
+
+
+For more information on customizing your page, see the [docs](/docs).

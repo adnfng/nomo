@@ -8,9 +8,6 @@ align: top
 ![nomo:28](/nomo.svg)
 
 
-
-
-
 #### Content & Assets
 
 If you want local images or video or additional pages, add them to an `assets/` folder or `content/` folder respectively.
@@ -42,8 +39,6 @@ Nomo automatically handles content routing for you, so clicking the link will ta
 
 
 
-
-
 #### Frontmatter
 
 ```yaml
@@ -64,8 +59,6 @@ Frontmatter controls the presentation of the page, giving you control over the l
 `font` can be `system` or a Google Font name like `Open Sans`.
 
 `fontsize` sets the base font size.
-
-
 
 
 
@@ -109,7 +102,7 @@ https://images.unsplash.com/photo-1545285446-ff15b9e9b9b9?w=800&auto=format&fit=
 Nomo also has a custom component for image galleries. Images in a gallery with open as a lightbox when clicked and viewed.
 
 ```txt
-[[gallery]]
+[[gallery:192x108]]
 /assets/one.jpg
 /assets/two.mp4
 /assets/three.jpg
