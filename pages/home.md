@@ -16,8 +16,7 @@ Instead of creating yet another account, just create a public `.nomo` repo on Gi
 
 It stays *simple* because it is *simple*. Your content lives in your repo, written in markdown, and stays fully under your control.
 
-Example: {{[nomo.md/adnfng](https://nomo.md/adnfng)}}
-
+Example: [nomo.md/adnfng](https://nomo.md/adnfng)
 
 
 #### How to get started?
@@ -28,5 +27,7 @@ Example: {{[nomo.md/adnfng](https://nomo.md/adnfng)}}
 - Open your profile at `nomo.md/githubusername`
 
 
-
 For more information on customizing your page, see the [docs](/docs).
+
+
+###### Note: X is currently bugged when adding `.md` domains in bio links, you can use [nomo.fyi](https://nomo.fyi) as a redirect until resolved.

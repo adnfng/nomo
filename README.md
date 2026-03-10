@@ -17,6 +17,8 @@
 
 **Nomo** turns a public `.nomo` GitHub repo into a profile page.
 
+Primary routes live on `nomo.md`. There is also a `nomo.fyi` redirect layer for places like X that currently reject `.md` domains in profile links.
+
 The route model is simple:
 
 - `/:username` -> `.nomo/human.md`
