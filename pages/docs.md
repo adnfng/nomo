@@ -1,32 +1,22 @@
----
-nomo:
-  version: 2
-  layout: portfolio
-  name: Nomo
-  avatar: /nomo.png
-  pages:
-    - label: Nomo
-      href: /
-    - label: Docs
-      href: /content/docs
-    - label: Changelog
-      href: /content/changelog
-theme: light
----
+===== Getting started =====
 
-Nomo starts with one public GitHub repo: `.nomo`.
+Nomo turns a public GitHub repo named `.nomo` into a profile page.
 
-Inside it, you add `human.md`. That file is your page at `nomo.md/yourusername`.
+Fork [the `.nomo` template](https://github.com/adnfng/.nomo) and keep the name `.nomo`. Then open `nomo.md/yourusername`.
 
-If a platform refuses `.md` links, you can use `nomo.fyi/yourusername` as a redirect for now.
+```bash
+gh repo fork adnfng/.nomo --clone
+```
 
-#### One file
+If a platform refuses `.md` links, use `nomo.fyi/yourusername` as a redirect for now.
 
-Create a public repo named `.nomo`.
+See [Aidan’s page](/adnfng) for a live example.
 
-Add `human.md` to the root and write in markdown.
+===== Your page =====
 
-Open it at `nomo.md/yourusername`.
+The template is a `human.md` you edit. That file is your page.
+
+You can also start from an empty public repo named `.nomo` and add `human.md` yourself.
 
 ```txt
 .nomo/
@@ -35,34 +25,35 @@ Open it at `nomo.md/yourusername`.
 
 That is enough. One file, one page.
 
-#### More tabs
-
-To add another tab, put a heading like this at the bottom of the same `human.md`:
+A photo at the top of the file becomes the header. Use a normal markdown image, and size it if you want:
 
 ```md
+![image:100x140](/assets/me.jpg)
+```
+
+`/nomo.png` or `/nomo.svg` in that spot renders the Nomo mark.
+
+Start with a tab for your name. That is the home page.
+
+```md
+![image:100x140](/assets/me.jpg)
+
+===== Joe Bloggs =====
+
+Designer in London.
+
 ===== Timeline =====
 
 ### 2026
 
 Started something new.
-
-===== Gallery =====
-
-[[gallery]]
-/assets/one.jpg
-/assets/two.webm
-[[/gallery]]
 ```
 
-Everything above the first `=====` is your main page. Each `===== Name =====` becomes a tab. The name in the heading is the tab label, and the URL is `/yourusername/name`.
-
-So `===== Timeline =====` is `nomo.md/yourusername/timeline`. Opening that link goes straight to that tab.
+Each `===== Name =====` is a tab. The first one is home. The rest get URLs like `/yourusername/timeline`.
 
 You do not need extra files for this. Keep using one `human.md`.
 
 If you already have pages in a `content/` folder, those still work.
-
-#### Images and files
 
 Add an `assets/` folder for images and video.
 
@@ -80,26 +71,7 @@ Add an `assets/` folder for images and video.
 
 Internal Nomo links stay in the same tab. External links open in a new tab.
 
-#### Frontmatter
-
-Optional settings at the top of `human.md`:
-
-```yaml
----
-nomo:
-  version: 2
-  layout: portfolio
-  name: Your Name
-  avatar: /assets/me.jpg
-theme: light
----
-```
-
-`name` is the first tab. `avatar` is the photo above the tabs.
-
-`theme` can be `light`, `dark`, or `system`. `font` can be `system`, `Helvetica Neue`, or a Google Font name. `fontsize` sets the base size.
-
-#### Markdown extras
+===== Syntax =====
 
 Muted text looks like {{this}}.
 
@@ -123,11 +95,11 @@ Galleries:
 [[gallery]]
 https://images.unsplash.com/photo-1626470601402-5c6e8b2dc8d7?w=800&auto=format&fit=crop&q=60
 https://images.unsplash.com/photo-1625039162908-19d625adbaac?w=800&auto=format&fit=crop&q=60
-https://images.unsplash.com/photo-1545285446-ff15b9e9b9b9?w=800&auto=format&fit=crop&q=60
+https://images.unsplash.com/photo-1545285446-ff15b9e9b9b9?q=80&w=1470&auto=format&fit=crop&q=60
 https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=60
 [[/gallery]]
 
-```txt
+```md
 [[gallery]]
 /assets/one.jpg
 /assets/two.webm
@@ -155,4 +127,4 @@ Started something new.
 [[/timeline]]
 ```
 
-Older `((badge))` and `(( [link](https://nomo.md) ))` syntax still works. Badges now render as muted text, and linked badges render as ordinary links.
+Older `((badge))` syntax is just text. A badge that was a link is still a link.

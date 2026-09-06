@@ -21,8 +21,8 @@ Primary routes live on `nomo.md`. There is also a `nomo.fyi` redirect layer for 
 
 The route model is simple:
 
-- `/:username` -> `.nomo/human.md`
-- `/:username/:slug` -> `.nomo/content/:slug.md`
+- `/:username` -> that user’s public `.nomo` repo (`human.md`)
+- `/:username/:slug` -> a tab in `human.md`, or `.nomo/content/:slug.md`
 
 When profile content references `/assets/...`, Nomo rewrites that path against the same repo automatically.
 
@@ -30,6 +30,7 @@ The app also ships with a small native shell:
 
 - `/` for the landing page
 - `/docs` for end-user docs
+- `/adnfng` for the site owner’s page, loaded from this repo, not GitHub
 - `/404` for the not-found fallback
 
 ---
@@ -89,6 +90,7 @@ Native app pages live in:
 pages/
 ├─ home.md
 ├─ docs.md
+├─ changelog.md
 └─ 404.md
 ```
 
@@ -102,16 +104,10 @@ public/themes/
 
 ### Content Rules
 
-Frontmatter supports:
-
-- `align`
-- `theme`
-- `font`
-- `fontsize`
+A leading markdown image becomes the header photo. Tabs come from `===== Name =====` headings in the same file. Theme follows the system color scheme.
 
 Custom markdown supports:
 
-- badges with `((...))`
 - muted text with `{{...}}`
 - inline image sizing like `![image:100]` and `![image:100x140]`
 - gallery blocks with:

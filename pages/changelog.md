@@ -1,19 +1,3 @@
----
-nomo:
-  version: 2
-  layout: portfolio
-  name: Nomo
-  avatar: /nomo.png
-  pages:
-    - label: Nomo
-      href: /
-    - label: Docs
-      href: /content/docs
-    - label: Changelog
-      href: /content/changelog
-theme: light
----
-
 [[timeline]]
 ### Sep 6, 2026
 
@@ -26,6 +10,16 @@ Play gallery videos on a silent loop
 Share a header across profile pages
 
 Add tabs inside human.md
+
+Drop frontmatter, badges, and the old layout switch
+
+Move docs and changelog onto their own pages
+
+Load /adnfng from the app repo
+
+Point new pages at the .nomo template
+
+Color markdown in code examples
 
 ### Mar 10, 2026
 
