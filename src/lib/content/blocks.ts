@@ -1,8 +1,39 @@
 import remarkParse from 'remark-parse';
 import { unified } from 'unified';
 import { visit } from 'unist-util-visit';
+import { safeAvatar } from './config';
 import { resolveAssetUrl } from './paths';
 import type { GalleryMap, PageSection } from './types';
+
+const LEADING_IMAGE = /^(?:\s*\n)*!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)[ \t]*(?:\n[ \t]*\n+|$)/;
+const LEADING_BALLS = /^(?:\s*\n)*\[\[●\s*([^●]+?)\s*●\]\][ \t]*(?:\n[ \t]*\n+|$)/;
+
+export function extractLeadingBalls(content: string) {
+  const match = content.match(LEADING_BALLS);
+  if (!match) return { content };
+  const letters = match[1].replace(/\s+/g, '');
+  if (!letters) return { content };
+  return { balls: letters.slice(0, 8), content: content.slice(match[0].length) };
+}
+
+function imageSize(alt: string) {
+  const match = alt.match(/:(\d+)(?:x(\d+))?$/);
+  if (!match) return {};
+  return { avatarWidth: Number(match[1]), avatarHeight: match[2] ? Number(match[2]) : undefined };
+}
+
+export function extractLeadingImage(content: string): {
+  avatar?: string;
+  avatarWidth?: number;
+  avatarHeight?: number;
+  content: string;
+} {
+  const match = content.match(LEADING_IMAGE);
+  if (!match) return { content };
+  const src = match[2];
+  if (!safeAvatar(src)) return { content };
+  return { avatar: src, ...imageSize(match[1]), content: content.slice(match[0].length) };
+}
 
 function codeLines(content: string) {
   const protectedLines = new Set<number>();
