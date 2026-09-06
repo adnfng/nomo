@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Footer } from './components/Footer';
 import { ProfileHeader } from './components/ProfileHeader';
+import { ThemeToggle } from './components/ThemeToggle';
+import { isNativeSite } from './lib/content/routes';
 import { usePage } from './lib/content/usePage';
 import type { PageResult } from './lib/content/resolver';
 import type { PageRecord } from './lib/content/types';
@@ -12,7 +14,7 @@ function App() {
   const { pathname } = useLocation();
   const { result, loading, retry } = usePage(pathname);
   const page = result?.page ?? null;
-  usePagePresentation();
+  const { theme, toggle } = usePagePresentation();
   useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
   return <main className="app-shell" data-layout="portfolio">
     <div className="page-wrap">
@@ -20,8 +22,9 @@ function App() {
         {page && <ProfileHeader page={page} />}
         <PageBody page={page} result={result} loading={loading} retry={retry} />
       </div>
-      <Footer />
+      <Footer native={isNativeSite(pathname)} />
     </div>
+    <ThemeToggle theme={theme} onToggle={toggle} />
   </main>;
 }
 function PageBody({ page, result, loading, retry }: { page: PageRecord | null; result?: PageResult; loading: boolean; retry: () => void }) {
