@@ -62,7 +62,7 @@ function createTextNode(value: string) {
 
 type InlineNode = { type: string; value?: string; children?: InlineNode[]; data?: Record<string, unknown> };
 
-function transformDelimited(children: InlineNode[], open: string, close: string, kind: string) {
+function transformDelimited(children: InlineNode[], open: string, close: string, kind?: string) {
   const output: InlineNode[] = [];
   const state: { collected: InlineNode[] | null } = { collected: null };
   const push = (node: InlineNode) => (state.collected ?? output).push(node);
@@ -74,7 +74,8 @@ function transformDelimited(children: InlineNode[], open: string, close: string,
       if (index < 0) { push(createTextNode(remaining)); return; }
       if (index > 0) push(createTextNode(remaining.slice(0, index)));
       if (state.collected) {
-        output.push({ type: kind, children: state.collected, data: { hName: 'span', hProperties: { className: [`markdown-${kind}`] } } });
+        if (kind) output.push({ type: kind, children: state.collected, data: { hName: 'span', hProperties: { className: [`markdown-${kind}`] } } });
+        else output.push(...state.collected);
         state.collected = null;
       } else {
         state.collected = [];
@@ -90,7 +91,7 @@ function transformDelimited(children: InlineNode[], open: string, close: string,
   return output;
 }
 
-function delimiterPlugin(open: string, close: string, kind: string, skip: string[]) {
+function delimiterPlugin(open: string, close: string, kind?: string, skip: string[] = []) {
   return () => (tree: unknown) => {
     visit(tree as InlineNode, (node: InlineNode) => {
       if (!node.children || skip.includes(node.type)) return;
@@ -98,31 +99,14 @@ function delimiterPlugin(open: string, close: string, kind: string, skip: string
     });
   };
 }
-const remarkBadges = delimiterPlugin('((', '))', 'badge', ['badge']);
-const remarkMuted = delimiterPlugin('{{', '}}', 'muted', ['badge', 'muted']);
-
-function remarkUnwrapBadges() {
-  return (tree: unknown) => {
-    visit(tree as InlineNode, 'badge', (node: InlineNode, index, parent: InlineNode | undefined) => {
-      if (!parent?.children || index == null) return;
-      const children = node.children ?? [];
-      const meaningful = children.filter(child => !(child.type === 'text' && !child.value?.trim()));
-      if (meaningful.length === 1 && meaningful[0].type === 'link') {
-        parent.children.splice(index, 1, meaningful[0]);
-        return;
-      }
-      node.type = 'muted';
-      node.data = { hName: 'span', hProperties: { className: ['markdown-muted'] } };
-    });
-  };
-}
+const remarkBadges = delimiterPlugin('((', '))');
+const remarkMuted = delimiterPlugin('{{', '}}', 'muted', ['muted']);
 
 export const markdownRemarkPlugins = [
   remarkFrontmatter,
   remarkBreaks,
   remarkGfm,
   remarkBadges,
-  remarkUnwrapBadges,
   remarkMuted,
   remarkLeadingImageBreak,
   remarkSourceSpacing,

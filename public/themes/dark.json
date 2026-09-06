@@ -2,11 +2,14 @@
   "name": "Dark",
   "semantic": {
     "background": "#171717",
-    "border": "#262626",
+    "border": "#3a3a3a",
     "text": "#fafafa",
     "muted": "#a3a3a3",
-    "subtle": "#737373",
-    "link": "#fafafa",
-    "code": "#262626"
+    "subtle": "#8a8a8a",
+    "link": "#6bb0ff",
+    "code": "#262626",
+    "syntax-pink": "#ff5cad",
+    "syntax-green": "#3dd68c",
+    "syntax-blue": "#6bb0ff"
   }
 }

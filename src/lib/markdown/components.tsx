@@ -15,6 +15,7 @@ import type { Components } from "react-markdown";
 import { isExternalHref, resolveAssetUrl, resolveContentHref } from "../content/paths";
 import type { GalleryDefinition, GalleryMap } from "../content/types";
 import { NOMO_MARK_PATH } from "../theme/nomoMark";
+import { MarkdownPre } from "./CodeBlock";
 import { Gallery } from "./Gallery";
 import { isVideoSource, silentLoopVideoProps } from "./media";
 
@@ -334,7 +335,7 @@ export function createMarkdownComponents(
         children,
       });
     },
-    pre: withBlockGap("pre"),
+    pre: MarkdownPre,
     table: withBlockGap("table"),
     ul: withBlockGap("ul"),
   };
