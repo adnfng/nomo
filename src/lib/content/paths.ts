@@ -6,6 +6,14 @@ export function buildGitHubRawUrl(username: string, branch: string, path: string
   return `${buildGitHubRawBase(username, branch)}/${path.replace(/^\/+/, "")}`;
 }
 
+export function buildJsDelivrBase(username: string, branch: string): string {
+  return `https://cdn.jsdelivr.net/gh/${username}/.nomo@${branch}`;
+}
+
+export function buildJsDelivrUrl(username: string, branch: string, path: string): string {
+  return `${buildJsDelivrBase(username, branch)}/${path.replace(/^\/+/, "")}`;
+}
+
 export function resolveAssetUrl(value: string | undefined, assetBase?: string): string | undefined {
   if (!value || !assetBase || !value.startsWith("/assets/")) {
     return value;
