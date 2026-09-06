@@ -2,10 +2,10 @@ import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-const SIZE = 96;
+const SIZE = 60;
 const REST = { x: -0.16, y: 0.3 };
 const FORCE = 0.24;
-const VIEW = 78;
+const CAMERA_Z = 210;
 const STUDIO_LIGHT = 1.9;
 const STUDIO_SHINE = 0.17;
 
@@ -57,12 +57,32 @@ function prepareLogo(object: THREE.Object3D, color: string) {
   });
 }
 
-function fitToView(object: THREE.Object3D) {
-  const box = new THREE.Box3().setFromObject(object);
+function visibleBox(object: THREE.Object3D) {
+  object.updateWorldMatrix(true, true);
+  const box = new THREE.Box3();
+  object.traverse(node => {
+    if (!node.visible || !(node instanceof THREE.Mesh)) return;
+    node.geometry.computeBoundingBox();
+    box.union(node.geometry.boundingBox!.clone().applyMatrix4(node.matrixWorld));
+  });
+  return box;
+}
+
+function frameLogo(logo: THREE.Object3D, renderer: THREE.WebGLRenderer, camera: THREE.OrthographicCamera) {
+  logo.rotation.set(REST.x, REST.y, 0);
+  const box = visibleBox(logo);
   const size = box.getSize(new THREE.Vector3());
   const center = box.getCenter(new THREE.Vector3());
-  object.position.sub(center);
-  object.scale.multiplyScalar(VIEW / Math.max(size.y, 0.001));
+  logo.position.sub(center);
+  const width = Math.max(size.x, 0.001);
+  const height = Math.max(size.y, 0.001);
+  camera.left = -width / 2;
+  camera.right = width / 2;
+  camera.top = height / 2;
+  camera.bottom = -height / 2;
+  camera.updateProjectionMatrix();
+  const scale = SIZE / Math.max(width, height);
+  renderer.setSize(Math.round(width * scale), Math.round(height * scale));
 }
 
 function disposeObject(object: THREE.Object3D) {
@@ -100,10 +120,9 @@ export function mountNomoMark3D(host: HTMLElement, color: string, onError?: () =
   const renderer = createRenderer(host);
   const scene = new THREE.Scene();
   const studio = applyStudio(renderer, scene);
-  const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 1000);
-  camera.position.z = 210;
+  const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 1000);
+  camera.position.z = CAMERA_Z;
   const root = new THREE.Group();
-  root.rotation.set(REST.x, REST.y, 0);
   scene.add(root);
   const angularVelocity = new THREE.Vector3();
   const axis = new THREE.Vector3();
@@ -155,8 +174,8 @@ export function mountNomoMark3D(host: HTMLElement, color: string, onError?: () =
       return;
     }
     prepareLogo(gltf.scene, color);
-    fitToView(gltf.scene);
     root.add(gltf.scene);
+    frameLogo(gltf.scene, renderer, camera);
     renderer.render(scene, camera);
   }, undefined, () => onError?.());
 

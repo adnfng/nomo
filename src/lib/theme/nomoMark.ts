@@ -1,4 +1,5 @@
 export const LOGO_PALETTE = ['#6797FF', '#FFA01A', '#52ED6A', '#333333', '#FE5CF9', '#4AF4F4', '#A073FF', '#FFE658', '#FF3636'] as const;
+export const BALL_PALETTE = ['#EB4A41', '#FBE770', '#7196F8'] as const;
 
 export const sessionLogoColor = LOGO_PALETTE[Math.floor(Math.random() * LOGO_PALETTE.length)];
 
