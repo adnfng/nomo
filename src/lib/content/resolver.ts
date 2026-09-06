@@ -11,15 +11,26 @@ export function createPageResolver(native: Map<NativeSlug, PageRecord>, load: Lo
   return async function resolve(pathname: string): Promise<PageResult> {
     const route = matchRoute(pathname);
     if (route.type === 'not-found') return fallback('missing');
-    if (route.type === 'native') {
-      const page = native.get(route.slug);
-      if (!page) return fallback('missing');
-      return { page: presentPage(page), slug: route.slug, isHome: route.slug === 'home', status: 'ready' };
-    }
+    if (route.type === 'native') return resolveNative(route.slug, route.section, native, fallback);
     const result = await resolveProfile(route, load);
     if (result.status !== 'ready') return fallback(result.status);
     return { page: result.page, slug: route.slug, isHome: false, status: 'ready' };
   };
+}
+
+function resolveNative(slug: NativeSlug, section: string | undefined, native: Map<NativeSlug, PageRecord>, fallback: (status: 'missing' | 'error') => PageResult): PageResult {
+  if (slug === '404') {
+    const page = native.get('404');
+    return page ? { page: presentPage(page), slug, isHome: false, status: 'ready' } : fallback('missing');
+  }
+  const home = native.get('home');
+  if (!home) return fallback('missing');
+  if (slug === 'home') return { page: presentPage(selectSection(home) ?? home), slug, isHome: true, status: 'ready' };
+  const record = native.get(slug);
+  if (!record) return fallback('missing');
+  const selected = selectSection(record, section);
+  if (!selected) return fallback('missing');
+  return { page: inheritPortfolio(selected, home), slug: section ?? slug, isHome: false, status: 'ready' };
 }
 
 async function resolveProfile(route: Extract<ReturnType<typeof matchRoute>, { username: string }>, load: Loader): Promise<RemoteResult> {
@@ -32,5 +43,5 @@ async function resolveProfile(route: Extract<ReturnType<typeof matchRoute>, { us
   const result = await load(route.username, route.contentPath);
   if (result.status !== 'ready') return result;
   const rootPage = root.status === 'ready' ? root.page : undefined;
-  return { ...result, page: inheritPortfolio(result.page, rootPage, `/${route.username.toLowerCase()}/${route.contentPath}`) };
+  return { ...result, page: inheritPortfolio(result.page, rootPage) };
 }

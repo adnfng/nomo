@@ -1,24 +1,12 @@
 import { extractGalleries, extractTimelines } from './blocks';
 import { resolveAssetUrl, resolveContentHref } from './paths';
-import { PORTFOLIO_FRONTMATTER, type PageRecord, type PageSection, type PortfolioConfig } from './types';
-
-export function attachSectionPages(portfolio: PortfolioConfig | undefined, sections: PageSection[]): PortfolioConfig | undefined {
-  if (!portfolio) return;
-  if (portfolio.pages.length) return portfolio;
-  return {
-    ...portfolio,
-    pages: [
-      { label: portfolio.name, href: '/' },
-      ...sections.map(section => ({ label: section.label, href: `/content/${section.slug}` })),
-    ],
-  };
-}
+import type { PageRecord } from './types';
 
 export function selectSection(page: PageRecord, slug?: string): PageRecord | undefined {
   if (!page.sections?.length) return slug ? undefined : page;
-  const raw = slug ? page.sections.find(section => section.slug === slug)?.content : page.intro;
-  if (raw == null) return;
-  return { ...page, ...extractGalleries(raw, page.assetBase) };
+  const section = slug ? page.sections.find(item => item.slug === slug) : page.sections[0];
+  if (!section) return;
+  return { ...page, ...extractGalleries(section.content, page.assetBase) };
 }
 
 export function navigationHref(href: string, root = '') {
@@ -26,18 +14,41 @@ export function navigationHref(href: string, root = '') {
 }
 
 export function presentPage(page: PageRecord, root = page): PageRecord {
-  const portfolio = page.portfolio ?? root.portfolio;
-  if (!portfolio) return page;
+  const source = page.portfolio.avatar ? page.portfolio : root.portfolio;
   return {
     ...page,
     ...extractTimelines(page.content),
-    portfolio: { ...portfolio, avatar: resolveAssetUrl(portfolio.avatar, root.assetBase) },
-    frontmatter: { ...PORTFOLIO_FRONTMATTER, ...root.explicit, ...page.explicit },
+    portfolio: {
+      avatar: resolveAssetUrl(source.avatar, root.assetBase),
+      avatarWidth: source.avatarWidth,
+      avatarHeight: source.avatarHeight,
+      balls: page.portfolio.balls ?? root.portfolio.balls,
+      pages: page.portfolio.pages.length ? page.portfolio.pages : root.portfolio.pages,
+    },
   };
 }
 
-export function inheritPortfolio(page: PageRecord, root: PageRecord | undefined, pathname: string): PageRecord {
-  if (page.portfolio) return presentPage(page);
-  const listed = root?.portfolio?.pages.some(item => navigationHref(item.href, root.profileRoot) === pathname.replace(/\/$/, ''));
-  return root && listed ? presentPage(page, root) : page;
+export function inheritPortfolio(page: PageRecord, root?: PageRecord): PageRecord {
+  return presentPage(page, root ?? page);
+}
+
+const SITE_TABS = [{ label: 'Docs', href: '/docs' }, { label: 'Changelog', href: '/changelog' }];
+
+export function withSiteTabs(page: PageRecord): PageRecord {
+  const pages = page.portfolio.pages;
+  const extra = SITE_TABS.filter(tab => !pages.some(item => item.href === tab.href || item.href === `/content${tab.href}`));
+  return { ...page, portfolio: { ...page.portfolio, pages: [...pages, ...extra] } };
+}
+
+export function rebaseTabs(page: PageRecord, base: string): PageRecord {
+  return {
+    ...page,
+    portfolio: {
+      ...page.portfolio,
+      pages: page.portfolio.pages.map((item, index) => ({
+        ...item,
+        href: index === 0 ? base : `${base}/${item.href.replace(/^\/content\//, '')}`,
+      })),
+    },
+  };
 }
