@@ -20,4 +20,5 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  { files: ['src/**/*.{ts,tsx}'], rules: { complexity: ['error', 10] } },
 ])
