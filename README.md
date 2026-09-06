@@ -126,6 +126,5 @@ Custom markdown supports:
 
 ### Notes
 
-- `.nomo` is ignored locally so you can keep a personal test repo shape in the project root without committing it
 - `public/nomo.svg` is the shared app icon and favicon
 - Vite splits markdown, router, and React into separate chunks for production
