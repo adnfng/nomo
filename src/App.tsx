@@ -12,10 +12,9 @@ function App() {
   const { pathname } = useLocation();
   const { result, loading, retry } = usePage(pathname);
   const page = result?.page ?? null;
-  const layout = page?.portfolio ? 'portfolio' : 'legacy';
-  usePagePresentation(page);
+  usePagePresentation();
   useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
-  return <main className={`app-shell app-shell--${page?.frontmatter.align ?? 'top'}`} data-layout={layout}>
+  return <main className="app-shell" data-layout="portfolio">
     <div className="page-wrap">
       <div className="page-content">
         {page && <ProfileHeader page={page} />}

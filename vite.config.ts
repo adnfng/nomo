@@ -4,9 +4,9 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), "NOMO_");
-  const preview = command === "serve" && env.NOMO_PREVIEW_DIR && env.NOMO_PREVIEW_USERNAME;
+  const preview = command === "serve" && env.NOMO_PREVIEW_DIR;
   return {
-  define: { __NOMO_PREVIEW__: preview ? JSON.stringify({ username: env.NOMO_PREVIEW_USERNAME, base: "/__nomo-local" }) : "undefined" },
+  define: { __NOMO_PREVIEW__: preview ? JSON.stringify({ username: "preview", base: "/__nomo-local" }) : "undefined" },
   build: {
     rollupOptions: {
       output: {

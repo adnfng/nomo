@@ -1,14 +1,17 @@
 :root {
   --background: #ffffff;
   --border: #e5e5e5;
-  --text: #000000;
-  --muted: #737373;
-  --subtle: #a3a3a3;
-  --link: #000000;
-  --code: #f5f5f5;
+  --text: #333333;
+  --muted: #767676;
+  --subtle: #767676;
+  --link: #2684ff;
+  --code: #f0f0f0;
+  --syntax-pink: #e9348b;
+  --syntax-green: #12a566;
+  --syntax-blue: #2684ff;
   --background-overlay: rgb(255 255 255 / 0.2);
-  --page-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-  --page-font-size: 14.4px;
+  --page-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --page-font-size: 15px;
 }
 
 /* Global */
@@ -46,6 +49,7 @@ a {
   min-height: 100vh;
   padding: 3rem 1.5rem;
   display: flex;
+  flex-direction: column;
 }
 
 .page-wrap {
@@ -64,19 +68,17 @@ a {
   justify-content: flex-start;
 }
 
-.app-shell--middle .page-content {
-  justify-content: center;
-}
-
-.app-shell--bottom .page-content {
-  justify-content: flex-end;
-}
-
 .app-footer {
   margin-top: 64px;
   padding: 0 1.25rem;
   color: var(--muted);
-  font-size: 0.95rem;
+  font-size: 1em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.3em;
+  width: 100%;
+  text-align: center;
 }
 
 .page-header {
@@ -143,36 +145,11 @@ a {
 
 .markdown code {
   background: var(--code);
-  border-radius: 4px;
-  padding: 0.1rem 0.35rem;
-  font-family: inherit;
-  font-size: 0.85em;
-}
-
-.markdown .markdown-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.2rem;
-  background: var(--code);
-  border-radius: 6px;
-  padding: 0.0rem 0.4rem;
-  margin-bottom: 0.1rem;
-  font-family: inherit;
-  font-size: 0.85em;
-}
-
-.markdown .markdown-badge .markdown-link {
-  gap: 0;
-  font-weight: 500;
-}
-
-.markdown .markdown-badge .markdown-link__label {
-  text-decoration: none;
-}
-
-.markdown .markdown-badge .markdown-link__icon {
-  width: 12px;
-  height: 12px;
+  border-radius: 2px;
+  padding: 0.08em 0.28em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.87em;
+  letter-spacing: 0;
 }
 
 .markdown .markdown-muted,
@@ -182,7 +159,7 @@ a {
 
 .markdown .markdown-muted .markdown-link,
 .app-footer .markdown-muted .markdown-link {
-  color: inherit;
+  color: var(--link);
 }
 
 .markdown .markdown-muted .markdown-link__label,
@@ -192,22 +169,53 @@ a {
 
 /* Block Code */
 
-.markdown pre {
+.markdown .code-block {
+  position: relative;
   margin: 1em 0;
-  overflow-x: auto;
   background: var(--code);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 0.8rem 1rem;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
-    "Courier New", monospace;
+  border-radius: 2px;
 }
-
-.markdown pre code {
+.markdown .code-block pre {
+  margin: 0;
+  overflow-x: auto;
+  padding: 8px 42px 8px 12px;
+  border: 0;
+  background: transparent;
+  font: 400 13px/1.6 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.markdown .code-block code {
   padding: 0;
   background: transparent;
-  font-family: inherit;
+  font: inherit;
+  color: inherit;
 }
+.command-prompt { color: var(--muted); user-select: none; }
+.syntax-pink { color: var(--syntax-pink); }
+.syntax-green { color: var(--syntax-green); }
+.syntax-blue { color: var(--syntax-blue); }
+.code-copy-button {
+  position: absolute;
+  top: 5px;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  border-radius: 2px;
+  cursor: pointer;
+  opacity: 0;
+  transition: color 150ms, background-color 150ms, opacity 150ms;
+}
+.code-block:hover .code-copy-button,
+.code-copy-button:focus-visible { opacity: 1; }
+.code-copy-button:hover { color: var(--text); background: var(--border); }
+.code-copy-button svg { width: 14px; height: 14px; }
 
 /* Markdown Media */
 
@@ -465,13 +473,15 @@ a {
   text-decoration: none;
 }
 
-/* Optional portfolio presentation. Legacy typography and spacing stay above. */
 .app-shell[data-layout="portfolio"] {
-  --profile-anchor: max(48px, calc(50svh - 100px - 96px - 16px));
   position: relative;
-  padding: var(--profile-anchor) 24px max(56px, var(--profile-anchor));
+  min-height: 100svh;
+  padding: 48px 24px 72px;
+  align-items: center;
+  justify-content: safe center;
 }
 [data-layout="portfolio"] .page-wrap {
+  width: 100%;
   max-width: 450px;
   min-height: 0;
 }
@@ -483,18 +493,42 @@ a {
   letter-spacing: -0.1px;
   overflow-wrap: anywhere;
 }
-.profile-avatar-wrap { height: 96px; margin-bottom: 16px; display: flex; align-items: center; }
+.profile-avatar-wrap { margin-bottom: 32px; display: flex; align-items: center; }
+.profile-balls { display: flex; align-items: center; gap: 6px; }
+.pool-balls-3d,
+.pool-balls-3d canvas { display: block; }
+.pool-ball {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--ball-color);
+  color: #0d0d0d;
+  transform: rotate(var(--ball-rotation, 0deg));
+  transition: transform 140ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.pool-ball > span {
+  display: grid;
+  place-items: center;
+  width: 59%;
+  height: 59%;
+  border-radius: 50%;
+  background: #f5f5f5;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+}
 .profile-avatar-link {
   display: inline-flex;
-  border-radius: 50%;
   transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .profile-avatar-link:active { transform: scale(0.97); }
-.profile-avatar-link--mark,
-.profile-avatar-link--mark:active { border-radius: 0; transform: none; }
-.profile-avatar { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; }
+.profile-avatar-link--mark:active { transform: none; }
+.profile-avatar { display: block; object-fit: cover; border-radius: 10px; }
 .nomo-mark-3d,
-.nomo-mark-3d canvas { display: block; width: 96px; height: 96px; }
+.nomo-mark-3d canvas { display: block; }
+svg.nomo-mark-3d { width: 57px; height: 60px; }
 .profile-navigation { display: flex; flex-wrap: wrap; align-items: baseline; gap: 14px; margin-bottom: 48px; font-size: var(--page-font-size); line-height: 1.25; letter-spacing: -0.1px; }
 .profile-navigation a { color: var(--muted); white-space: nowrap; }
 .profile-navigation a[aria-current="page"] { color: var(--text); }
@@ -504,7 +538,8 @@ a {
 [data-layout="portfolio"] .markdown ol,
 [data-layout="portfolio"] .markdown blockquote,
 [data-layout="portfolio"] .markdown table,
-[data-layout="portfolio"] .markdown hr {
+[data-layout="portfolio"] .markdown hr,
+[data-layout="portfolio"] .markdown .code-block {
   margin: 0 0 clamp(10px, 2.3vh, 21px);
   margin-top: 0 !important;
   letter-spacing: inherit;
@@ -530,16 +565,15 @@ a {
 [data-layout="portfolio"] .app-footer {
   position: fixed;
   bottom: 12px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
   margin: 0;
-  padding: 2px 8px;
+  padding: 0;
   font-size: 1em;
   line-height: 1.25;
   letter-spacing: -0.1px;
   white-space: nowrap;
   z-index: 2;
-  background: var(--background);
 }
 [data-layout="portfolio"] .app-footer .markdown-link { color: var(--link); font-weight: 400; }
 [data-layout="portfolio"] .markdown .markdown-muted .markdown-link { color: var(--link); }
@@ -560,18 +594,20 @@ dialog.markdown-lightbox { width: 100vw; height: 100dvh; max-width: none; max-he
 dialog.markdown-lightbox::backdrop { background: transparent; }
 .lightbox-close { position: absolute; top: 16px; right: 16px; width: 44px; height: 44px; border: 0; border-radius: 0; background: transparent; color: var(--text); font: 28px/1 sans-serif; cursor: pointer; }
 @media (max-width: 540px) {
-  .app-shell[data-layout="portfolio"] { --profile-anchor: 64px; padding-left: 28px; padding-right: 28px; }
-  .profile-avatar-wrap { height: 96px; margin-bottom: 12px; }
+  .app-shell[data-layout="portfolio"] { padding-left: 28px; padding-right: 28px; }
+  .profile-avatar-wrap { margin-bottom: 12px; }
 }
-@media (max-height: 500px) and (orientation: landscape) {
-  .app-shell[data-layout="portfolio"] { --profile-anchor: 32px; }
+@media (hover: none) {
+  .code-copy-button { opacity: 0.7; }
 }
 @media (hover: hover) and (pointer: fine) {
   .profile-avatar-link:hover { transform: scale(0.97); }
   .profile-avatar-link--mark:hover { transform: none; }
+  .profile-balls:hover .pool-ball { transform: translateY(var(--ball-hover-y, -3px)) rotate(var(--ball-rotation, 0deg)); }
 }
 @media (prefers-reduced-motion: reduce) {
   .markdown-gallery__item { transform: none !important; transition: none; }
   .markdown-lightbox, .markdown-lightbox__media-wrap { transition: none; transform: none; }
   .profile-avatar-link { transition: none; }
+  .pool-ball { transition: none; }
 }
