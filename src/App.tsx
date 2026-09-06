@@ -1,102 +1,34 @@
-import ReactMarkdown from "react-markdown";
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-
-import { loadPageContent, resolveSlug } from "./lib/content/pages";
-import type { PageRecord } from "./lib/content/types";
-import { createMarkdownComponents } from "./lib/markdown/components";
-import { markdownRemarkPlugins } from "./lib/markdown/plugins";
-import { usePagePresentation } from "./lib/theme/pagePresentation";
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { Footer } from './components/Footer';
+import { ProfileHeader } from './components/ProfileHeader';
+import { usePage } from './lib/content/usePage';
+import type { PageResult } from './lib/content/resolver';
+import type { PageRecord } from './lib/content/types';
+import { Markdown } from './lib/markdown/Markdown';
+import { usePagePresentation } from './lib/theme/pagePresentation';
 
 function App() {
-  const location = useLocation();
-  const routeSlug = resolveSlug(location.pathname);
-  const [pageState, setPageState] = useState<{
-    page: PageRecord | null;
-    pathname: string;
-    slug: string;
-  } | null>(null);
-  const hasResolvedPage = pageState?.pathname === location.pathname;
-  const slug = hasResolvedPage ? pageState.slug : routeSlug;
-  const page = hasResolvedPage ? pageState.page : null;
-  const markdownComponents = createMarkdownComponents(
-    page?.galleries ?? {},
-    page?.assetBase,
-    page?.profileRoot,
-  );
-  const pageAlign = page?.frontmatter.align ?? "top";
-  const isHomePage = slug === "home";
-  const footerPrefix = isHomePage ? "See nomo on" : "Created with";
-  const footerLabel = isHomePage ? "github" : "nomo";
-  const footerHref = isHomePage ? "https://github.com/adnfng/nomo" : "https://nomo.md";
-
-  useEffect(() => {
-    let cancelled = false;
-
-    loadPageContent(location.pathname).then((next) => {
-      if (cancelled) {
-        return;
-      }
-
-      setPageState({
-        ...next,
-        pathname: location.pathname,
-      });
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [location.pathname]);
-
+  const { pathname } = useLocation();
+  const { result, loading, retry } = usePage(pathname);
+  const page = result?.page ?? null;
+  const layout = page?.portfolio ? 'portfolio' : 'legacy';
   usePagePresentation(page);
-
-  return (
-    <main className={`app-shell app-shell--${pageAlign}`}>
-      <div className="page-wrap">
-        <div className="page-content">
-          <article className="markdown">
-            {page ? (
-              <ReactMarkdown
-                components={markdownComponents}
-                remarkPlugins={markdownRemarkPlugins}
-              >
-                {page.content}
-              </ReactMarkdown>
-            ) : null}
-          </article>
-        </div>
-        <footer className="app-footer">
-          <span className="markdown-muted">{footerPrefix}</span>{" "}
-          <a
-            className="markdown-link"
-            href={footerHref}
-            rel="noreferrer"
-            target="_blank"
-          >
-            <span className="markdown-link__label">{footerLabel}</span>
-            <svg
-              aria-hidden="true"
-              className="markdown-link__icon"
-              fill="none"
-              height="12"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              width="12"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M7 7h10v10" />
-              <path d="M7 17 17 7" />
-            </svg>
-          </a>
-          {!isHomePage ? "." : null}
-        </footer>
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return <main className={`app-shell app-shell--${page?.frontmatter.align ?? 'top'}`} data-layout={layout}>
+    <div className="page-wrap">
+      <div className="page-content">
+        {page && <ProfileHeader page={page} />}
+        <PageBody page={page} result={result} loading={loading} retry={retry} />
       </div>
-    </main>
-  );
+      <Footer />
+    </div>
+  </main>;
 }
-
+function PageBody({ page, result, loading, retry }: { page: PageRecord | null; result?: PageResult; loading: boolean; retry: () => void }) {
+  return <article className="markdown" aria-busy={!result}>
+    {result?.status === 'error' ? <div role="alert"><p>This page couldn’t be loaded. Please try again.</p><button className="retry-button" type="button" onClick={retry}>Try again</button></div> : page && <Markdown page={page} />}
+    {loading && <p role="status" className="markdown-muted">Loading…</p>}
+  </article>;
+}
 export default App;
