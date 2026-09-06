@@ -1,4 +1,5 @@
 import { defineConfig, loadEnv } from "vite";
+import { localAnalytics } from "./scripts/analytics-plugin";
 import { localProfilePreview } from "./scripts/preview-plugin";
 import react from "@vitejs/plugin-react";
 
@@ -34,6 +35,6 @@ export default defineConfig(({ command, mode }) => {
       },
     },
   },
-  plugins: [react(), ...(preview ? [localProfilePreview(env.NOMO_PREVIEW_DIR)] : [])],
+  plugins: [react(), localAnalytics(), ...(preview ? [localProfilePreview(env.NOMO_PREVIEW_DIR)] : [])],
   };
 });

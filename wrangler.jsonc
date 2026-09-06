@@ -2,10 +2,19 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "nomo",
   "compatibility_date": "2026-03-10",
+  "main": "worker.ts",
   "assets": {
     "directory": "./dist",
-    "not_found_handling": "single-page-application"
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
   },
+  "kv_namespaces": [
+    {
+      "binding": "ANALYTICS",
+      "id": "ANALYTICS"
+    }
+  ],
   "observability": {
     "enabled": true
   }

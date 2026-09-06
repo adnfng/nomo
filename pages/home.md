@@ -26,4 +26,4 @@ Can you help me set up my Nomo page. Check here https://nomo.md/AGENTS.md for ge
 
 
 {{::If a site blocks [.md](nomo.md) links, use [nomo.fyi](nomo.fyi)::}}
-{{::See an [example profile](/adnfng)}}
+{{::See an (([example profile](/adnfng)))::}}

@@ -1,14 +1,14 @@
-export type NativeSlug = "404" | "changelog" | "docs" | "home";
+export type NativeSlug = "404" | "analytics" | "changelog" | "docs" | "home";
 export type RouteMatch =
   | { slug: NativeSlug; type: "native"; section?: string }
   | { slug: string; type: "profile-content"; username: string; contentPath: string }
   | { slug: string; type: "profile-root"; username: string }
   | { slug: "404"; type: "not-found" };
-const NATIVE_SLUGS = new Set<NativeSlug>(["home", "docs", "changelog", "404"]);
+const NATIVE_SLUGS = new Set<NativeSlug>(["home", "docs", "changelog", "analytics", "404"]);
 const GITHUB_USERNAME_PATTERN = /^(?!-)(?!.*--)[a-z\d-]{1,39}(?<!-)$/i;
 
 function matchNative(slug: NativeSlug, contentSegments: string[]): RouteMatch {
-  if (contentSegments.length > 1 || (slug === "404" && contentSegments.length)) {
+  if (contentSegments.length > 1 || ((slug === "404" || slug === "analytics") && contentSegments.length)) {
     return { slug: "404", type: "not-found" };
   }
   return { slug, type: "native", section: contentSegments[0]?.toLowerCase() };
@@ -47,5 +47,9 @@ export function matchRoute(pathname: string): RouteMatch {
 export function isNativeSite(pathname: string) {
   const type = matchRoute(pathname).type;
   return type === "native" || type === "not-found";
+}
+
+export function isAnalyticsPath(pathname: string) {
+  return pathname === "/analytics" || pathname === "/analytics/";
 }
 

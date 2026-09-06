@@ -39,6 +39,11 @@ export function withSiteTabs(page: PageRecord): PageRecord {
   return { ...page, portfolio: { ...page.portfolio, pages: [...pages, ...extra] } };
 }
 
+export function withHomeTab(page: PageRecord, label = 'Nomo'): PageRecord {
+  if (page.portfolio.pages.some(item => item.href === '/')) return page;
+  return { ...page, portfolio: { ...page.portfolio, pages: [{ label, href: '/' }, ...page.portfolio.pages] } };
+}
+
 export function rebaseTabs(page: PageRecord, base: string): PageRecord {
   return {
     ...page,

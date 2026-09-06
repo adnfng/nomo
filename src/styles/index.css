@@ -506,6 +506,34 @@ a {
   font-weight: 600;
 }
 
+.markdown.analytics {
+  width: 100%;
+}
+
+.markdown.analytics ul {
+  list-style: none;
+  padding-left: 0;
+  width: 100%;
+}
+
+.markdown.analytics ul + ul {
+  margin-top: calc(2 * var(--page-line-height));
+}
+
+.markdown.analytics ul > li,
+.markdown.analytics ul > li > p {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  width: 100%;
+  margin: 0;
+  gap: 16px;
+}
+
+.markdown.analytics ul > li::before {
+  content: none;
+}
+
 /* Footnotes */
 
 .markdown sup {
@@ -531,9 +559,9 @@ a {
 .app-shell[data-layout="portfolio"] {
   position: relative;
   min-height: 100svh;
-  padding: 48px 24px 72px;
+  padding: 200px 24px 72px;
   align-items: center;
-  justify-content: safe center;
+  justify-content: flex-start;
 }
 [data-layout="portfolio"] .page-wrap {
   width: 100%;
@@ -625,7 +653,6 @@ svg.nomo-mark-3d { width: 57px; height: 60px; }
   width: 12px;
   height: 12px;
 }
-[data-layout="portfolio"] .app-footer .markdown-link__icon { display: none; }
 [data-layout="portfolio"] .markdown .markdown-link:hover { opacity: 1; text-decoration: underline; }
 [data-layout="portfolio"] .app-footer {
   position: fixed;

@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { MemoryRouter } from 'react-router-dom';
 import { parsePageRecord } from '../src/lib/content/parse';
 import { extractGalleries } from '../src/lib/content/blocks';
-import { presentPage, inheritPortfolio, selectSection, rebaseTabs, withSiteTabs } from '../src/lib/content/presentation';
+import { presentPage, inheritPortfolio, selectSection, rebaseTabs, withHomeTab, withSiteTabs } from '../src/lib/content/presentation';
 import { Markdown } from '../src/lib/markdown/Markdown';
 import { isNativeSite, matchRoute } from '../src/lib/content/routes';
 import { createBundledLoader } from '../src/lib/content/bundled';
@@ -136,6 +136,8 @@ describe('routes and remote loading', () => {
   test('native, profile, nested, and invalid routes', () => {
     expect(matchRoute('/')).toMatchObject({ type: 'native', slug: 'home' });
     expect(matchRoute('/changelog')).toMatchObject({ type: 'native', slug: 'changelog' });
+    expect(matchRoute('/analytics')).toMatchObject({ type: 'native', slug: 'analytics' });
+    expect(matchRoute('/analytics/extra')).toMatchObject({ type: 'not-found' });
     expect(matchRoute('/docs/syntax')).toMatchObject({ type: 'native', slug: 'docs', section: 'syntax' });
     expect(matchRoute('/docs/a/b')).toMatchObject({ type: 'not-found' });
     expect(matchRoute('/-bad')).toMatchObject({ type: 'not-found' });
@@ -145,6 +147,7 @@ describe('routes and remote loading', () => {
     expect(isNativeSite('/')).toBe(true);
     expect(isNativeSite('/docs/syntax')).toBe(true);
     expect(isNativeSite('/changelog')).toBe(true);
+    expect(isNativeSite('/analytics')).toBe(true);
     expect(isNativeSite('/-bad')).toBe(true);
     expect(isNativeSite('/adnfng')).toBe(false);
     expect(isNativeSite('/preview')).toBe(false);
@@ -215,11 +218,11 @@ describe('routes and remote loading', () => {
   });
   test('native docs and changelog are their own pages', async () => {
     const home = withSiteTabs(parsePageRecord('===== Nomo =====\n\nHome'));
-    const docs = rebaseTabs(parsePageRecord('===== Customization =====\n\nStart\n\n===== Syntax =====\n\nCode'), '/docs');
+    const docs = withHomeTab(rebaseTabs(parsePageRecord('===== Customization =====\n\nStart\n\n===== Syntax =====\n\nCode'), '/docs'));
     const changelog = parsePageRecord('Log');
     const resolve = createPageResolver(new Map([['home', home], ['docs', docs], ['changelog', changelog]]), async () => ({ status: 'missing' }));
     expect(await resolve('/')).toMatchObject({ isHome: true, page: { content: 'Home', portfolio: { pages: [{ href: '/' }, { href: '/docs' }, { href: '/changelog' }] } } });
-    expect(await resolve('/docs')).toMatchObject({ slug: 'docs', page: { content: 'Start', portfolio: { pages: [{ href: '/docs' }, { href: '/docs/syntax' }] } } });
+    expect(await resolve('/docs')).toMatchObject({ slug: 'docs', page: { content: 'Start', portfolio: { pages: [{ href: '/' }, { href: '/docs' }, { href: '/docs/syntax' }] } } });
     expect(await resolve('/docs/syntax')).toMatchObject({ slug: 'syntax', page: { content: 'Code' } });
     expect(await resolve('/changelog')).toMatchObject({ slug: 'changelog', page: { content: 'Log' } });
     expect(await resolve('/docs/missing')).toMatchObject({ status: 'missing' });
