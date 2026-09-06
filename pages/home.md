@@ -1,15 +1,29 @@
 ![](/nomo.png)
 
 ===== Nomo =====
+**An open-source profile page that starts with a Markdown file.**
 
-The open-source profile page that starts with a human.md.
+Instead of another account, just create a public `.nomo` repo 
+and add a single `human.md` file. Nomo turns it into a personal
+page automatically.
 
-Fork [the `.nomo` template](https://github.com/adnfng/.nomo) and keep the name `.nomo`. Then open `nomo.md/yourusername`.
+It stays *simple* because it is *simple*. Your content lives in your repo, written in markdown, and stays fully under your control.
 
+
+
+**How simple?**
+
+Clone the template repo:
 ```bash
-gh repo fork adnfng/.nomo --clone
+git clone https://github.com/adnfng/.nomo.git
 ```
 
-See [Aidan’s page](/adnfng). The [docs](/docs) walk through the rest.
+Or ask your agent to set it up:
+```
+Can you help me set up my Nomo page. Check here https://nomo.md/AGENTS.md for getting started.
+```
 
-{{If a platform refuses a `.md` link, use `nomo.fyi/yourusername` as a redirect.}}
+
+
+{{::If a site blocks [.md](nomo.md) links, use [nomo.fyi](nomo.fyi)::}}
+{{::See an [example profile](/adnfng)}}

@@ -1,101 +1,82 @@
-===== Getting started =====
+===== Customization =====
+**Your page is a file.**
 
-Nomo turns a public GitHub repo named `.nomo` into a profile page.
-
-Fork [the `.nomo` template](https://github.com/adnfng/.nomo) and keep the name `.nomo`. Then open `nomo.md/yourusername`.
-
-```bash
-gh repo fork adnfng/.nomo --clone
-```
-
-If a platform refuses `.md` links, use `nomo.fyi/yourusername` as a redirect for now.
-
-See [Aidan’s page](/adnfng) for a live example.
-
-===== Your page =====
-
-The template is a `human.md` you edit. That file is your page.
-
-You can also start from an empty public repo named `.nomo` and add `human.md` yourself.
-
-```txt
-.nomo/
-├─ human.md
-```
-
-That is enough. One file, one page.
-
-A photo at the top of the file becomes the header. Use a normal markdown image, and size it if you want:
-
-```md
-![image:100x140](/assets/me.jpg)
-```
-
-`/nomo.png` or `/nomo.svg` in that spot renders the Nomo mark.
-
-Start with a tab for your name. That is the home page.
-
-```md
-![image:100x140](/assets/me.jpg)
-
-===== Joe Bloggs =====
-
-Designer in London.
-
-===== Timeline =====
-
-### 2026
-
-Started something new.
-```
-
-Each `===== Name =====` is a tab. The first one is home. The rest get URLs like `/yourusername/timeline`.
-
-You do not need extra files for this. Keep using one `human.md`.
-
-If you already have pages in a `content/` folder, those still work.
-
-Add an `assets/` folder for images and video.
-
-```md
-![portrait](/assets/me.jpg)
-```
+The template is a .nomo repo with `human.md` and an `assets/` folder.
+Drop photos and video in assets/. In the file, point at them with `/assets/me.jpg`.
 
 ```txt
 .nomo/
 ├─ human.md
 └─ assets/
-   ├─ me.jpg
-   └─ film.webm
+   └─ me.jpg
 ```
 
-Internal Nomo links stay in the same tab. External links open in a new tab.
 
-===== Syntax =====
 
-Muted text looks like {{this}}.
+**The photo**
+
+A normal image at the top of `human.md` becomes the header.
+Size it if you want. Swap `assets/me.jpg` for yours.
+
+![portrait:100x140](https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&auto=format&fit=crop)
+
+```md
+![image:100x140](/assets/me.jpg)
+```
+
+`/nomo.png` or `/nomo.svg` in that spot is the Nomo mark.
+
+
+
+**Tabs**
+
+`===== Name =====` is a tab. The first one is home.
+The rest get URLs like `/yourusername/work`.
+
+```md
+===== Nina Park =====
+
+Designer in Copenhagen.
+
+===== Work =====
+
+{{::2026::}}
+
+Started something new.
+```
+
+Keep it in one `human.md`. Extra files in `content/` still work if you already have them.
+
+
+
+**Mute, small, arrows**
+
+`{{this}}` goes quiet. Useful for dates, roles, or links you don’t want to shout.
+
+{{September 2026 — present}}
 
 ```md
 {{muted text}}
 ```
 
-Images can be sized by width, or given a fixed frame:
+`::this::` is smaller than the body.
+Dates often stack it with mute: `{{::2026::}}`.
 
-![portrait:180](https://images.unsplash.com/photo-1545285446-ff15b9e9b9b9?q=80&w=1470&auto=format&fit=crop) ![portrait:100x140](https://images.unsplash.com/photo-1545285446-ff15b9e9b9b9?q=80&w=1470&auto=format&fit=crop)
+A normal `[link](url)` has no icon.
+`(([nomo](https://nomo.md)))` adds the up-right arrow.
 
-```md
-![image:180](/assets/me.jpg)
-![image:100x140](/assets/me.jpg)
-```
+The [syntax](/docs/syntax) tab is the short list.
 
-The same syntax works with a video file. Videos loop, muted, with no controls.
 
-Galleries:
+
+**Gallery**
+
+A list of images or video. Click one to open it.
 
 [[gallery]]
 https://images.unsplash.com/photo-1626470601402-5c6e8b2dc8d7?w=800&auto=format&fit=crop&q=60
 https://images.unsplash.com/photo-1625039162908-19d625adbaac?w=800&auto=format&fit=crop&q=60
-https://images.unsplash.com/photo-1545285446-ff15b9e9b9b9?q=80&w=1470&auto=format&fit=crop&q=60
+https://images.unsplash.com/photo-1545285446-ff15b9e9b9b9?w=800&auto=format&fit=crop&q=60
 https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=60
 [[/gallery]]
 
@@ -107,24 +88,71 @@ https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&f
 [[/gallery]]
 ```
 
-A timeline block turns headings into quiet labels:
+Videos loop, with no controls.
 
-[[timeline]]
-### 2026
+===== Syntax =====
+**The marks.**
 
-Started something new.
-
-### 2025
-
-Shipped the first version.
-[[/timeline]]
+Mute, small, or both:
 
 ```md
-[[timeline]]
-### 2026
-
-Started something new.
-[[/timeline]]
+{{muted text}}
+::small text::
+{{::muted and small::}}
 ```
 
-Older `((badge))` syntax is just text. A badge that was a link is still a link.
+{{muted text}}
+::small text::
+{{::muted and small::}}
+
+
+
+**Links**
+
+A normal link stays a normal link.
+Wrap it in `(( ))` for the up-right arrow.
+
+```md
+[nomo](https://nomo.md)
+(([nomo](https://nomo.md)))
+```
+
+[nomo](https://nomo.md)
+(([nomo](https://nomo.md)))
+
+
+
+**Images**
+
+```md
+![image:180](/assets/me.jpg)
+![image:100x140](/assets/me.jpg)
+```
+
+![portrait:180](https://images.unsplash.com/photo-1545285446-ff15b9e9b9b9?q=80&w=1470&auto=format&fit=crop) ![portrait:100x140](https://images.unsplash.com/photo-1545285446-ff15b9e9b9b9?q=80&w=1470&auto=format&fit=crop)
+
+
+
+**Gallery**
+
+```md
+[[gallery]]
+/assets/one.jpg
+/assets/two.webm
+[[/gallery]]
+```
+
+
+
+**Tabs**
+
+```md
+===== Home =====
+
+===== Work =====
+```
+
+
+
+`((this))` is still plain text.
+`(([nomo](https://nomo.md)))` is the arrow link.
