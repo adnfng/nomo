@@ -1,86 +1,105 @@
 ---
-theme: system
-font: system
-fontsize: 15px
-align: top
+nomo:
+  version: 2
+  layout: portfolio
+  name: Nomo
+  avatar: /nomo.png
+  pages:
+    - label: Nomo
+      href: /
+    - label: Docs
+      href: /content/docs
+    - label: Changelog
+      href: /content/changelog
+theme: light
 ---
-
-![nomo:28](/nomo.svg)
 
 Nomo starts with one public GitHub repo: `.nomo`.
 
-Inside it, you add `human.md`. That becomes your main page at `nomo.md/githubusername`.
+Inside it, you add `human.md`. That file is your page at `nomo.md/yourusername`.
 
-If a platform refuses `.md` links, you can use `nomo.fyi/githubusername` as a redirect for now.
+If a platform refuses `.md` links, you can use `nomo.fyi/yourusername` as a redirect for now.
 
-#### Repo setup
+#### One file
 
 Create a public repo named `.nomo`.
 
-Add `human.md` to the root.
+Add `human.md` to the root and write in markdown.
 
-Write your page in markdown.
-
-Open it at `nomo.md/githubusername`.
+Open it at `nomo.md/yourusername`.
 
 ```txt
 .nomo/
 ├─ human.md
 ```
 
-#### Content & assets
+That is enough. One file, one page.
 
-If you want local images or video, add an `assets/` folder.
+#### More tabs
 
-If you want more pages, add a `content/` folder.
+To add another tab, put a heading like this at the bottom of the same `human.md`:
 
-```txt
-.nomo/
-├─ human.md
-├─ content/
-│  ├─ blogpost.md
-│  └─ project.md
-└─ assets/
-   ├─ image.png
-   └─ avatar.png
+```md
+===== Timeline =====
+
+### 2026
+
+Started something new.
+
+===== Gallery =====
+
+[[gallery]]
+/assets/one.jpg
+/assets/two.webm
+[[/gallery]]
 ```
 
-Reference local files like this:
+Everything above the first `=====` is your main page. Each `===== Name =====` becomes a tab. The name in the heading is the tab label, and the URL is `/yourusername/name`.
+
+So `===== Timeline =====` is `nomo.md/yourusername/timeline`. Opening that link goes straight to that tab.
+
+You do not need extra files for this. Keep using one `human.md`.
+
+If you already have pages in a `content/` folder, those still work.
+
+#### Images and files
+
+Add an `assets/` folder for images and video.
 
 ```md
 ![portrait](/assets/me.jpg)
 ```
 
-Link to extra pages like this:
-
-```md
-[blogpost](/content/blogpost)
+```txt
+.nomo/
+├─ human.md
+└─ assets/
+   ├─ me.jpg
+   └─ film.webm
 ```
-
-That route becomes `nomo.md/githubusername/blogpost`.
 
 Internal Nomo links stay in the same tab. External links open in a new tab.
 
 #### Frontmatter
 
+Optional settings at the top of `human.md`:
+
 ```yaml
 ---
-align: top
-theme: system
-font: system
-fontsize: 14.4px
+nomo:
+  version: 2
+  layout: portfolio
+  name: Your Name
+  avatar: /assets/me.jpg
+theme: light
 ---
 ```
 
-`align` can be `top`, `middle`, or `bottom`.
+`name` is the first tab. `avatar` is the photo above the tabs.
 
-`theme` can be `light`, `dark`, `adn`, or `system`.
+`theme` can be `light`, `dark`, or `system`. `font` can be `system`, `Helvetica Neue`, or a Google Font name. `fontsize` sets the base size.
 
-`font` can be `system` or a Google Font name like `Open Sans`.
-
-`fontsize` sets the base font size.
-
-#### Custom markdown
+#### Markdown extras
 
 Muted text looks like {{this}}.
 
@@ -88,36 +107,52 @@ Muted text looks like {{this}}.
 {{muted text}}
 ```
 
-Badges look like ((this)).
+Images can be sized by width, or given a fixed frame:
 
-Linked badges work too: (([example](https://example.com))).
-
-```md
-((this))
-(([example](https://example.com)))
-```
-
-Images support sizing with a fixed width or a fixed frame:
-
-![nomo:180](https://images.unsplash.com/photo-1545285446-ff15b9e9b9b9?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D) ![nomo:100x140](https://images.unsplash.com/photo-1545285446-ff15b9e9b9b9?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)
+![portrait:180](https://images.unsplash.com/photo-1545285446-ff15b9e9b9b9?q=80&w=1470&auto=format&fit=crop) ![portrait:100x140](https://images.unsplash.com/photo-1545285446-ff15b9e9b9b9?q=80&w=1470&auto=format&fit=crop)
 
 ```md
-![image:180](image.png)
-![image:100x140](image.png)
+![image:180](/assets/me.jpg)
+![image:100x140](/assets/me.jpg)
 ```
 
-Galleries use the same markdown-first block syntax:
+The same syntax works with a video file. Videos loop, muted, with no controls.
+
+Galleries:
 
 [[gallery]]
-https://images.unsplash.com/photo-1626470601402-5c6e8b2dc8d7?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8ZXhwZXJpbWVudGFsfGVufDB8fDB8fHww
-https://images.unsplash.com/photo-1625039162908-19d625adbaac?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGV4cGVyaW1lbnRhbHxlbnwwfHwwfHx8MA%3D%3D
-https://images.unsplash.com/photo-1545285446-ff15b9e9b9b9?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8ZXhwZXJpbWVudGFsfGVufDB8fDB8fHww
+https://images.unsplash.com/photo-1626470601402-5c6e8b2dc8d7?w=800&auto=format&fit=crop&q=60
+https://images.unsplash.com/photo-1625039162908-19d625adbaac?w=800&auto=format&fit=crop&q=60
+https://images.unsplash.com/photo-1545285446-ff15b9e9b9b9?w=800&auto=format&fit=crop&q=60
+https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=60
 [[/gallery]]
 
 ```txt
 [[gallery]]
 /assets/one.jpg
-/assets/two.mp4
+/assets/two.webm
 /assets/three.jpg
 [[/gallery]]
 ```
+
+A timeline block turns headings into quiet labels:
+
+[[timeline]]
+### 2026
+
+Started something new.
+
+### 2025
+
+Shipped the first version.
+[[/timeline]]
+
+```md
+[[timeline]]
+### 2026
+
+Started something new.
+[[/timeline]]
+```
+
+Older `((badge))` and `(( [link](https://nomo.md) ))` syntax still works. Badges now render as muted text, and linked badges render as ordinary links.
