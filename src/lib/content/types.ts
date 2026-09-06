@@ -38,7 +38,6 @@ export type PortfolioConfig = {
 
 export type PageRecord = {
   portfolio: PortfolioConfig;
-  timelines?: Record<string, string>;
   intro?: string;
   sections?: PageSection[];
   assetBase?: string;

@@ -47,7 +47,7 @@ function buildBlockStyle(
 
   return {
     ...style,
-    marginTop: `${gapValue}em`,
+    marginTop: `calc(${gapValue} * var(--page-paragraph))`,
   };
 }
 
@@ -130,9 +130,41 @@ function withClassName(element: ReactNode, className: string) {
   });
 }
 
+function hasClass(value: unknown, name: string) {
+  if (Array.isArray(value)) return value.includes(name);
+  return typeof value === "string" && value.split(/\s+/).includes(name);
+}
+
+function isArrowLink(className?: string, node?: unknown) {
+  const fromNode = (node as { properties?: { className?: unknown } } | undefined)?.properties?.className;
+  return hasClass(className, "markdown-link--arrow") || hasClass(fromNode, "markdown-link--arrow");
+}
+
+function LinkArrow() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="markdown-link__icon"
+      fill="none"
+      height="12"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+      width="12"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M7 7h10v10" />
+      <path d="M7 17 17 7" />
+    </svg>
+  );
+}
+
 function MarkdownLink({
   assetBase,
   children,
+  className,
   href,
   profileRoot,
   ...props
@@ -143,25 +175,11 @@ function MarkdownLink({
   profileRoot?: string;
 }) {
   const resolvedHref = resolveAssetUrl(resolveContentHref(href, profileRoot), assetBase);
+  const arrow = isArrowLink(className, props.node);
   const content = (
     <>
       <span className="markdown-link__label">{withClassName(children, "markdown-link__label")}</span>
-      <svg
-        aria-hidden="true"
-        className="markdown-link__icon"
-        fill="none"
-        height="12"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-        viewBox="0 0 24 24"
-        width="12"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path d="M7 7h10v10" />
-        <path d="M7 17 17 7" />
-      </svg>
+      {arrow ? <LinkArrow /> : null}
     </>
   );
 
@@ -169,7 +187,7 @@ function MarkdownLink({
     return (
       <Link
         {...cleanNodeProp(props)}
-        className={mergeClassName(props.className, "markdown-link")}
+        className={mergeClassName(className, "markdown-link")}
         to={resolvedHref}
       >
         {content}
@@ -180,7 +198,7 @@ function MarkdownLink({
   return (
     <a
       {...cleanNodeProp(props)}
-      className={mergeClassName(props.className, "markdown-link")}
+      className={mergeClassName(className, "markdown-link")}
       href={resolvedHref}
       rel={isExternalHref(resolvedHref) ? "noreferrer" : props.rel}
       target={isExternalHref(resolvedHref) ? "_blank" : props.target}
@@ -294,7 +312,6 @@ export function createMarkdownComponents(
   galleries: GalleryMap,
   assetBase?: string,
   profileRoot?: string,
-  renderTimeline?: (token: string) => ReactNode,
 ): Components {
   return {
     a: ({ href, ...props }) => (
@@ -311,8 +328,6 @@ export function createMarkdownComponents(
     img: (props) => <MarkdownMedia {...props} assetBase={assetBase} />,
     ol: withBlockGap("ol"),
     p: ({ children, node, style, ...props }) => {
-      const timeline = typeof children === 'string' ? renderTimeline?.(children.trim()) : null;
-      if (timeline) return <div className="markdown-timeline-block">{timeline}</div>;
       const gallery = extractGalleryItems(children, galleries);
       if (gallery) {
         return (

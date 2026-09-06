@@ -62,7 +62,18 @@ function createTextNode(value: string) {
 
 type InlineNode = { type: string; value?: string; children?: InlineNode[]; data?: Record<string, unknown> };
 
-function transformDelimited(children: InlineNode[], open: string, close: string, kind?: string) {
+function markArrowLinks(nodes: InlineNode[]) {
+  for (const node of nodes) {
+    if (node.type === 'link') {
+      node.data ??= {};
+      const props = (node.data.hProperties ??= {}) as { className?: string[] };
+      props.className = [...(props.className ?? []), 'markdown-link--arrow'];
+    }
+    if (node.children) markArrowLinks(node.children);
+  }
+}
+
+function transformDelimited(children: InlineNode[], open: string, close: string, kind?: string, onClose?: (nodes: InlineNode[]) => void) {
   const output: InlineNode[] = [];
   const state: { collected: InlineNode[] | null } = { collected: null };
   const push = (node: InlineNode) => (state.collected ?? output).push(node);
@@ -74,6 +85,7 @@ function transformDelimited(children: InlineNode[], open: string, close: string,
       if (index < 0) { push(createTextNode(remaining)); return; }
       if (index > 0) push(createTextNode(remaining.slice(0, index)));
       if (state.collected) {
+        onClose?.(state.collected);
         if (kind) output.push({ type: kind, children: state.collected, data: { hName: 'span', hProperties: { className: [`markdown-${kind}`] } } });
         else output.push(...state.collected);
         state.collected = null;
@@ -91,22 +103,24 @@ function transformDelimited(children: InlineNode[], open: string, close: string,
   return output;
 }
 
-function delimiterPlugin(open: string, close: string, kind?: string, skip: string[] = []) {
+function delimiterPlugin(open: string, close: string, kind?: string, skip: string[] = [], onClose?: (nodes: InlineNode[]) => void) {
   return () => (tree: unknown) => {
     visit(tree as InlineNode, (node: InlineNode) => {
       if (!node.children || skip.includes(node.type)) return;
-      node.children = transformDelimited(node.children, open, close, kind);
+      node.children = transformDelimited(node.children, open, close, kind, onClose);
     });
   };
 }
-const remarkBadges = delimiterPlugin('((', '))');
+const remarkArrows = delimiterPlugin('((', '))', undefined, ['muted', 'small'], markArrowLinks);
+const remarkSmall = delimiterPlugin('::', '::', 'small', ['small']);
 const remarkMuted = delimiterPlugin('{{', '}}', 'muted', ['muted']);
 
 export const markdownRemarkPlugins = [
   remarkFrontmatter,
   remarkBreaks,
   remarkGfm,
-  remarkBadges,
+  remarkArrows,
+  remarkSmall,
   remarkMuted,
   remarkLeadingImageBreak,
   remarkSourceSpacing,

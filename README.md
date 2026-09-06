@@ -109,6 +109,8 @@ A leading markdown image becomes the header photo. Tabs come from `===== Name ==
 Custom markdown supports:
 
 - muted text with `{{...}}`
+- small text with `::...::`
+- arrow links with `(( [nomo](https://nomo.md) ))`
 - inline image sizing like `![image:100]` and `![image:100x140]`
 - gallery blocks with:
 

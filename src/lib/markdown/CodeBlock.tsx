@@ -80,12 +80,25 @@ function highlightMarkdown(text: string) {
   });
 }
 
+function highlightUrls(text: string) {
+  const pattern = /https?:\/\/[^\s]+/g;
+  const tokens: ReactNode[] = [];
+  let cursor = 0;
+  for (const match of text.matchAll(pattern)) {
+    if (match.index > cursor) tokens.push(text.slice(cursor, match.index));
+    tokens.push(paint('syntax-blue', match[0], String(match.index)));
+    cursor = match.index + match[0].length;
+  }
+  if (cursor < text.length) tokens.push(text.slice(cursor));
+  return tokens.length ? tokens : text;
+}
+
 function highlight(language: string | undefined, text: string) {
   if (language === 'bash' || language === 'shell' || language === 'sh' || language === 'zsh') return highlightShell(text);
   if (language === 'json') return highlightJson(text);
   if (language === 'yaml' || language === 'yml') return highlightYaml(text);
   if (language === 'md' || language === 'markdown') return highlightMarkdown(text);
-  return text;
+  return highlightUrls(text);
 }
 
 function isShell(language?: string) {

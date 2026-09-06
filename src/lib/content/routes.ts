@@ -44,3 +44,8 @@ export function matchRoute(pathname: string): RouteMatch {
   return { slug: "404", type: "not-found" };
 }
 
+export function isNativeSite(pathname: string) {
+  const type = matchRoute(pathname).type;
+  return type === "native" || type === "not-found";
+}
+

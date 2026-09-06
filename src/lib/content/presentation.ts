@@ -1,4 +1,4 @@
-import { extractGalleries, extractTimelines } from './blocks';
+import { extractGalleries } from './blocks';
 import { resolveAssetUrl, resolveContentHref } from './paths';
 import type { PageRecord } from './types';
 
@@ -17,7 +17,6 @@ export function presentPage(page: PageRecord, root = page): PageRecord {
   const source = page.portfolio.avatar ? page.portfolio : root.portfolio;
   return {
     ...page,
-    ...extractTimelines(page.content),
     portfolio: {
       avatar: resolveAssetUrl(source.avatar, root.assetBase),
       avatarWidth: source.avatarWidth,

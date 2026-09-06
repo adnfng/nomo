@@ -122,14 +122,3 @@ export function extractSections(content: string) {
   });
   return { intro: lines.slice(0, markers[0].index).join('\n').replace(/\s+$/, ''), sections };
 }
-
-export function extractTimelines(content: string) {
-  const timelines: Record<string, string> = {};
-  let index = 0;
-  const body = extractBlocks(content, 'timeline', lines => {
-    const token = `@@TIMELINE:${index++}@@`;
-    timelines[token] = lines.join('\n');
-    return token;
-  });
-  return { content: body, timelines };
-}

@@ -1,25 +1,31 @@
 ![image:100x140](/assets/me.jpg)
 
-===== Joe Bloggs =====
+===== Nina Park =====
 
-Designer in London.
+Designer in Copenhagen.
 
-I make websites, type, and the occasional poster.
+I make websites and printed things. I care about type, spacing, and the last 10%.
 
-[Email](mailto:joe@example.com) · [Are.na](https://www.are.na)
+Lately I work with small software companies on their sites.
+
+[Email](mailto:nina@example.com) · [Are.na](https://www.are.na)
+
+###### Selected work
+
+Harbor — website, 2026
+Kite — identity, 2025
+Weekend — own type project, since 2024
 
 ===== Timeline =====
 
-[[timeline]]
-### 2026
+{{::2026::}}
 
-Started a new studio.
+Started working independently.
 
-### 2024
+{{::2024::}}
 
-Shipped a typeface and a small site for it.
+Left the studio.
 
-### 2022
+{{::2021::}}
 
-Left the agency and started working independently.
-[[/timeline]]
+First job at a design office.

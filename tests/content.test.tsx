@@ -5,7 +5,7 @@ import { parsePageRecord } from '../src/lib/content/parse';
 import { extractGalleries } from '../src/lib/content/blocks';
 import { presentPage, inheritPortfolio, selectSection, rebaseTabs, withSiteTabs } from '../src/lib/content/presentation';
 import { Markdown } from '../src/lib/markdown/Markdown';
-import { matchRoute } from '../src/lib/content/routes';
+import { isNativeSite, matchRoute } from '../src/lib/content/routes';
 import { createBundledLoader } from '../src/lib/content/bundled';
 import { createRemoteLoader } from '../src/lib/content/remote';
 import { createPageResolver } from '../src/lib/content/resolver';
@@ -86,26 +86,37 @@ describe('header, tabs, and extras', () => {
     const html = render(parsePageRecord('((a badge)) (([nomo](https://nomo.md)))'));
     expect(html).toContain('a badge');
     expect(html).toContain('href="https://nomo.md"');
+    expect(html).toContain('markdown-link--arrow');
+    expect(html).toContain('markdown-link__icon');
     expect(html).not.toContain('markdown-badge');
     expect(html).not.toContain('markdown-muted');
     expect(html).not.toContain('((');
   });
+  test('::text:: is small and can nest with mute', () => {
+    const html = render(parsePageRecord('::small copy:: {{::quiet date::}}'));
+    expect(html).toContain('markdown-small');
+    expect(html).toContain('small copy');
+    expect(html).toContain('quiet date');
+    expect(html).toContain('markdown-muted');
+    expect(html).not.toContain('::small');
+  });
+  test('a normal link has no arrow; ((link)) does', () => {
+    const html = render(parsePageRecord('[plain](https://nomo.md) (([arrow](https://nomo.md)))'));
+    expect(html.match(/markdown-link__icon/g)?.length).toBe(1);
+    expect(html).toContain('markdown-link--arrow');
+    expect(html).toContain('>plain<');
+  });
   test('subpages inherit the root header', () => {
-    const page = parsePageRecord('[[timeline]]\n### 2026\n\nWork\n[[/timeline]]', 'https://other.com', '/alex');
+    const page = parsePageRecord('{{::2026::}}\n\nWork', 'https://other.com', '/alex');
     const result = inheritPortfolio(page, root);
     expect(result.portfolio.avatar).toBe('https://example.com/root/assets/me.jpg');
     expect(result.portfolio.pages).toEqual([{ label: 'Alex', href: '/' }, { label: 'Timeline', href: '/content/timeline' }]);
-    expect(render(result)).toContain('class="markdown-timeline"');
-    expect(render(result)).not.toContain('[[timeline]]');
+    expect(render(result)).toContain('Work');
+    expect(render(result)).toContain('markdown-small');
   });
   test('a missing root still presents the page', () => {
     const page = parsePageRecord('Hello');
     expect(inheritPortfolio(page).content).toBe('Hello');
-  });
-  test('timeline examples inside code and unclosed wrappers remain literal', () => {
-    for (const body of ['```md\n[[timeline]]\n### 2026\n[[/timeline]]\n```', '[[timeline]]\n### 2026']) {
-      expect(render(presentPage({ ...root, content: body }))).not.toContain('class="markdown-timeline"');
-    }
   });
   test('gallery videos loop silently without controls', () => {
     const html = render(parsePageRecord('[[gallery]]\n/assets/clip.webm\n[[/gallery]]'));
@@ -115,8 +126,8 @@ describe('header, tabs, and extras', () => {
     expect(html).toContain('autoPlay');
     expect(html).not.toContain('controls');
   });
-  test('gallery works inside timeline', () => {
-    const page = parsePageRecord('[[timeline]]\n### Work\n\n[[gallery]]\n/assets/me.jpg\n[[/gallery]]\n[[/timeline]]');
+  test('gallery works next to small labels', () => {
+    const page = parsePageRecord('{{::Work::}}\n\n[[gallery]]\n/assets/me.jpg\n[[/gallery]]');
     expect(render(presentPage(page))).toContain('markdown-gallery__item');
   });
 });
@@ -131,6 +142,12 @@ describe('routes and remote loading', () => {
     expect(matchRoute('/Alex/nested/work')).toMatchObject({ type: 'profile-content', username: 'Alex', contentPath: 'nested/work' });
     expect(matchRoute('/preview')).toMatchObject({ type: 'profile-root', username: 'preview' });
     expect(matchRoute('/preview/timeline')).toMatchObject({ type: 'profile-content', username: 'preview', contentPath: 'timeline' });
+    expect(isNativeSite('/')).toBe(true);
+    expect(isNativeSite('/docs/syntax')).toBe(true);
+    expect(isNativeSite('/changelog')).toBe(true);
+    expect(isNativeSite('/-bad')).toBe(true);
+    expect(isNativeSite('/adnfng')).toBe(false);
+    expect(isNativeSite('/preview')).toBe(false);
   });
   test('the shipped adnfng page does not fetch GitHub', async () => {
     const urls: string[] = [];
@@ -198,7 +215,7 @@ describe('routes and remote loading', () => {
   });
   test('native docs and changelog are their own pages', async () => {
     const home = withSiteTabs(parsePageRecord('===== Nomo =====\n\nHome'));
-    const docs = rebaseTabs(parsePageRecord('===== Getting started =====\n\nStart\n\n===== Syntax =====\n\nCode'), '/docs');
+    const docs = rebaseTabs(parsePageRecord('===== Customization =====\n\nStart\n\n===== Syntax =====\n\nCode'), '/docs');
     const changelog = parsePageRecord('Log');
     const resolve = createPageResolver(new Map([['home', home], ['docs', docs], ['changelog', changelog]]), async () => ({ status: 'missing' }));
     expect(await resolve('/')).toMatchObject({ isHome: true, page: { content: 'Home', portfolio: { pages: [{ href: '/' }, { href: '/docs' }, { href: '/changelog' }] } } });
