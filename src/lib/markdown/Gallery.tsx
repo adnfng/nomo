@@ -2,17 +2,13 @@ import { type PointerEvent, type ReactNode, useEffect, useRef, useState } from "
 import { createPortal } from "react-dom";
 
 import { type GalleryDefinition } from "../content/types";
-import { isVideoSource } from "./media";
+import { isVideoSource, silentLoopVideoProps } from "./media";
 
 type GalleryItemProps = {
   children: ReactNode;
-  onClick: () => void;
+  onClick: (button: HTMLButtonElement) => void;
+  label: string;
 };
-
-type LightboxState = {
-  index: number;
-  status: "open" | "closing";
-} | null;
 
 const TILT_MAX_DEGREES = 9;
 
@@ -23,11 +19,7 @@ function buildTiltTransform(offsetX: number, offsetY: number) {
   return `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translate3d(0, 0, 0)`;
 }
 
-function closeLightboxState(state: LightboxState): LightboxState {
-  return state ? { ...state, status: "closing" } : null;
-}
-
-function GalleryItem({ children, onClick }: GalleryItemProps) {
+function GalleryItem({ children, onClick, label }: GalleryItemProps) {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const frameRef = useRef<number | null>(null);
   const targetRef = useRef({ x: 0, y: 0 });
@@ -55,7 +47,7 @@ function GalleryItem({ children, onClick }: GalleryItemProps) {
   };
 
   const handlePointerMove = (event: PointerEvent<HTMLButtonElement>) => {
-    if (event.pointerType === "touch") {
+    if (event.pointerType === "touch" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       return;
     }
 
@@ -81,10 +73,11 @@ function GalleryItem({ children, onClick }: GalleryItemProps) {
 
   return (
     <button
+      aria-label={label}
       ref={buttonRef}
       className="markdown-gallery__item"
       data-tilt-active="false"
-      onClick={onClick}
+      onClick={event => onClick(event.currentTarget)}
       onPointerLeave={handlePointerLeave}
       onPointerMove={handlePointerMove}
       type="button"
@@ -94,92 +87,51 @@ function GalleryItem({ children, onClick }: GalleryItemProps) {
   );
 }
 
-export function Gallery({ items }: GalleryDefinition) {
-  const [lightbox, setLightbox] = useState<LightboxState>(null);
-
-  const mediaItems = items.map((src) => ({
-    src,
-    isVideo: isVideoSource(src),
-  }));
-
+function Lightbox({ src, isVideo, onClose, returnFocus }: { src: string; isVideo: boolean; onClose: () => void; returnFocus: HTMLElement | null }) {
+  const dialog = useRef<HTMLDialogElement>(null);
+  const [closing, setClosing] = useState(false);
   useEffect(() => {
-    if (!lightbox) {
-      return;
-    }
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setLightbox(closeLightboxState);
-      }
-    };
-
-    window.addEventListener("keydown", onKeyDown);
+    const previousOverflow = document.body.style.overflow;
+    const element = dialog.current;
+    element?.showModal();
+    document.body.style.overflow = 'hidden';
     return () => {
-      window.removeEventListener("keydown", onKeyDown);
+      element?.close();
+      document.body.style.overflow = previousOverflow;
+      queueMicrotask(() => returnFocus?.focus());
     };
-  }, [lightbox]);
-
+  }, [returnFocus]);
   useEffect(() => {
-    if (lightbox?.status !== "closing") {
-      return;
-    }
-
-    const timer = window.setTimeout(() => {
-      setLightbox(null);
-    }, 180);
-
-    return () => {
-      window.clearTimeout(timer);
-    };
-  }, [lightbox]);
-
-  return (
-    <>
-      <div className="markdown-gallery">
-        {mediaItems.map((item, index) => (
-          <GalleryItem
-            key={`${item.src}-${index}`}
-            onClick={() => setLightbox({ index, status: "open" })}
-          >
-            {item.isVideo ? (
-              <video autoPlay className="markdown-gallery__media" loop muted playsInline src={item.src} />
-            ) : (
-              <img alt="" className="markdown-gallery__media" src={item.src} />
-            )}
-          </GalleryItem>
-        ))}
+    if (!closing) return;
+    const timer = window.setTimeout(onClose, 180);
+    return () => window.clearTimeout(timer);
+  }, [closing, onClose]);
+  return createPortal(
+    <dialog ref={dialog} aria-label="Gallery preview" className="markdown-lightbox" data-state={closing ? 'closing' : 'open'}
+      onCancel={event => { event.preventDefault(); setClosing(true); }}
+      onClick={event => { if (event.target === event.currentTarget) setClosing(true); }}>
+      <button autoFocus className="lightbox-close" type="button" onClick={() => setClosing(true)} aria-label="Close preview">×</button>
+      <div className="markdown-lightbox__media-wrap">
+        {isVideo ? <video {...silentLoopVideoProps} className="markdown-lightbox__media" src={src} />
+          : <img alt="Gallery image" className="markdown-lightbox__media" src={src} />}
       </div>
+    </dialog>, document.body);
+}
 
-      {lightbox
-        ? createPortal(
-            <button
-              className="markdown-lightbox"
-              data-state={lightbox.status}
-              onClick={() => setLightbox(closeLightboxState)}
-              type="button"
-            >
-              <div className="markdown-lightbox__media-wrap" onClick={(event) => event.stopPropagation()}>
-                {mediaItems[lightbox.index]?.isVideo ? (
-                  <video
-                    autoPlay
-                    className="markdown-lightbox__media"
-                    loop
-                    muted
-                    playsInline
-                    src={mediaItems[lightbox.index].src}
-                  />
-                ) : (
-                  <img
-                    alt=""
-                    className="markdown-lightbox__media"
-                    src={mediaItems[lightbox.index]?.src}
-                  />
-                )}
-              </div>
-            </button>,
-            document.body,
-          )
-        : null}
-    </>
-  );
+export function Gallery({ items }: GalleryDefinition) {
+  const [active, setActive] = useState<number | null>(null);
+  const [returnFocus, setReturnFocus] = useState<HTMLButtonElement | null>(null);
+  const open = (index: number, button: HTMLButtonElement) => {
+    setReturnFocus(button);
+    setActive(index);
+  };
+  return <>
+    <div className="markdown-gallery">
+      {items.map((src, index) => <GalleryItem key={`${src}-${index}`} label={`Open ${isVideoSource(src) ? 'video' : 'image'} ${index + 1}`} onClick={button => open(index, button)}>
+        {isVideoSource(src) ? <video {...silentLoopVideoProps} className="markdown-gallery__media" src={src} />
+          : <img alt="" className="markdown-gallery__media" src={src} />}
+      </GalleryItem>)}
+    </div>
+    {active !== null && <Lightbox src={items[active]} isVideo={isVideoSource(items[active])} onClose={() => setActive(null)} returnFocus={returnFocus} />}
+  </>;
 }

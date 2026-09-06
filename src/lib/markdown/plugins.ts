@@ -3,6 +3,16 @@ import remarkGfm from "remark-gfm";
 import remarkFrontmatter from "remark-frontmatter";
 import { visit } from "unist-util-visit";
 
+function sourceGap(start: number, previous: number | null) {
+  return previous === null ? 0 : Math.max(start - previous - 1, 0);
+}
+
+function setLineGap(node: { data?: { hProperties?: Record<string, string> } }, gap: number) {
+  node.data ??= {};
+  node.data.hProperties ??= {};
+  node.data.hProperties['data-line-gap'] = String(gap);
+}
+
 function remarkSourceSpacing() {
   return (tree: {
     children?: Array<{
@@ -18,12 +28,9 @@ function remarkSourceSpacing() {
         continue;
       }
 
-      const lineGap =
-        previousEndLine === null ? 0 : Math.max(child.position.start.line - previousEndLine - 1, 0);
+      const lineGap = sourceGap(child.position.start.line, previousEndLine);
 
-      child.data ??= {};
-      child.data.hProperties ??= {};
-      child.data.hProperties["data-line-gap"] = String(lineGap);
+      setLineGap(child, lineGap);
 
       previousEndLine = child.position?.end?.line ?? child.position.start.line;
     }
@@ -53,223 +60,60 @@ function createTextNode(value: string) {
   return { type: "text", value };
 }
 
-function createBadgeNode(children: Array<Record<string, unknown>>) {
-  return {
-    type: "badge",
-    children,
-    data: {
-      hName: "span",
-      hProperties: {
-        className: ["markdown-badge"],
-      },
-    },
-  };
-}
+type InlineNode = { type: string; value?: string; children?: InlineNode[]; data?: Record<string, unknown> };
 
-function createMutedNode(children: Array<Record<string, unknown>>) {
-  return {
-    type: "muted",
-    children,
-    data: {
-      hName: "span",
-      hProperties: {
-        className: ["markdown-muted"],
-      },
-    },
-  };
-}
-
-function transformBadgeChildren(children: Array<Record<string, unknown>>) {
-  const output: Array<Record<string, unknown>> = [];
-  let isCollectingBadge = false;
-  let badgeChildren: Array<Record<string, unknown>> = [];
-
-  const flushBadgeAsText = () => {
-    output.push(createTextNode("(("));
-    output.push(...badgeChildren);
-    badgeChildren = [];
-    isCollectingBadge = false;
-  };
-
-  const pushNode = (node: Record<string, unknown>) => {
-    if (isCollectingBadge) {
-      badgeChildren.push(node);
-      return;
+function transformDelimited(children: InlineNode[], open: string, close: string, kind: string) {
+  const output: InlineNode[] = [];
+  const state: { collected: InlineNode[] | null } = { collected: null };
+  const push = (node: InlineNode) => (state.collected ?? output).push(node);
+  function consume(text: string) {
+    let remaining = text;
+    while (remaining) {
+      const marker = state.collected ? close : open;
+      const index = remaining.indexOf(marker);
+      if (index < 0) { push(createTextNode(remaining)); return; }
+      if (index > 0) push(createTextNode(remaining.slice(0, index)));
+      if (state.collected) {
+        output.push({ type: kind, children: state.collected, data: { hName: 'span', hProperties: { className: [`markdown-${kind}`] } } });
+        state.collected = null;
+      } else {
+        state.collected = [];
+      }
+      remaining = remaining.slice(index + marker.length);
     }
-
-    output.push(node);
-  };
-
+  }
   for (const child of children) {
-    if (child.type !== "text" || typeof child.value !== "string") {
-      pushNode(child);
-      continue;
-    }
-
-    let remaining = child.value;
-
-    while (remaining.length > 0) {
-      if (!isCollectingBadge) {
-        const startIndex = remaining.indexOf("((");
-        if (startIndex === -1) {
-          pushNode(createTextNode(remaining));
-          remaining = "";
-          continue;
-        }
-
-        if (startIndex > 0) {
-          output.push(createTextNode(remaining.slice(0, startIndex)));
-        }
-
-        isCollectingBadge = true;
-        badgeChildren = [];
-        remaining = remaining.slice(startIndex + 2);
-        continue;
-      }
-
-      const endIndex = remaining.indexOf("))");
-      if (endIndex === -1) {
-        badgeChildren.push(createTextNode(remaining));
-        remaining = "";
-        continue;
-      }
-
-      if (endIndex > 0) {
-        badgeChildren.push(createTextNode(remaining.slice(0, endIndex)));
-      }
-
-      output.push(createBadgeNode(badgeChildren));
-      badgeChildren = [];
-      isCollectingBadge = false;
-      remaining = remaining.slice(endIndex + 2);
-    }
+    if (child.type === 'text' && typeof child.value === 'string') consume(child.value);
+    else push(child);
   }
-
-  if (isCollectingBadge) {
-    flushBadgeAsText();
-  }
-
+  if (state.collected) output.push(createTextNode(open), ...state.collected);
   return output;
 }
 
-function transformMutedChildren(children: Array<Record<string, unknown>>) {
-  const output: Array<Record<string, unknown>> = [];
-  let isCollectingMuted = false;
-  let mutedChildren: Array<Record<string, unknown>> = [];
-
-  const flushMutedAsText = () => {
-    output.push(createTextNode("{{"));
-    output.push(...mutedChildren);
-    mutedChildren = [];
-    isCollectingMuted = false;
-  };
-
-  const pushNode = (node: Record<string, unknown>) => {
-    if (isCollectingMuted) {
-      mutedChildren.push(node);
-      return;
-    }
-
-    output.push(node);
-  };
-
-  for (const child of children) {
-    if (child.type !== "text" || typeof child.value !== "string") {
-      pushNode(child);
-      continue;
-    }
-
-    let remaining = child.value;
-
-    while (remaining.length > 0) {
-      if (!isCollectingMuted) {
-        const startIndex = remaining.indexOf("{{");
-        if (startIndex === -1) {
-          pushNode(createTextNode(remaining));
-          remaining = "";
-          continue;
-        }
-
-        if (startIndex > 0) {
-          output.push(createTextNode(remaining.slice(0, startIndex)));
-        }
-
-        isCollectingMuted = true;
-        mutedChildren = [];
-        remaining = remaining.slice(startIndex + 2);
-        continue;
-      }
-
-      const endIndex = remaining.indexOf("}}");
-      if (endIndex === -1) {
-        mutedChildren.push(createTextNode(remaining));
-        remaining = "";
-        continue;
-      }
-
-      if (endIndex > 0) {
-        mutedChildren.push(createTextNode(remaining.slice(0, endIndex)));
-      }
-
-      output.push(createMutedNode(mutedChildren));
-      mutedChildren = [];
-      isCollectingMuted = false;
-      remaining = remaining.slice(endIndex + 2);
-    }
-  }
-
-  if (isCollectingMuted) {
-    flushMutedAsText();
-  }
-
-  return output;
-}
-
-function remarkBadges() {
-  return (tree: unknown) => {
-    visit(
-      tree as { type: string; children?: Array<Record<string, unknown>> },
-      (node: unknown) =>
-        typeof node === "object" &&
-        node !== null &&
-        "children" in node &&
-        Array.isArray((node as { children?: unknown }).children),
-      (node: unknown) => {
-        const parent = node as { type?: string; children?: Array<Record<string, unknown>> };
-
-        if (!Array.isArray(parent.children) || parent.type === "badge") {
-          return;
-        }
-
-        parent.children = transformBadgeChildren(parent.children);
-      },
-    );
+function delimiterPlugin(open: string, close: string, kind: string, skip: string[]) {
+  return () => (tree: unknown) => {
+    visit(tree as InlineNode, (node: InlineNode) => {
+      if (!node.children || skip.includes(node.type)) return;
+      node.children = transformDelimited(node.children, open, close, kind);
+    });
   };
 }
+const remarkBadges = delimiterPlugin('((', '))', 'badge', ['badge']);
+const remarkMuted = delimiterPlugin('{{', '}}', 'muted', ['badge', 'muted']);
 
-function remarkMuted() {
+function remarkUnwrapBadges() {
   return (tree: unknown) => {
-    visit(
-      tree as { type: string; children?: Array<Record<string, unknown>> },
-      (node: unknown) =>
-        typeof node === "object" &&
-        node !== null &&
-        "children" in node &&
-        Array.isArray((node as { children?: unknown }).children),
-      (node: unknown) => {
-        const parent = node as { type?: string; children?: Array<Record<string, unknown>> };
-
-        if (
-          !Array.isArray(parent.children) ||
-          parent.type === "badge" ||
-          parent.type === "muted"
-        ) {
-          return;
-        }
-
-        parent.children = transformMutedChildren(parent.children);
-      },
-    );
+    visit(tree as InlineNode, 'badge', (node: InlineNode, index, parent: InlineNode | undefined) => {
+      if (!parent?.children || index == null) return;
+      const children = node.children ?? [];
+      const meaningful = children.filter(child => !(child.type === 'text' && !child.value?.trim()));
+      if (meaningful.length === 1 && meaningful[0].type === 'link') {
+        parent.children.splice(index, 1, meaningful[0]);
+        return;
+      }
+      node.type = 'muted';
+      node.data = { hName: 'span', hProperties: { className: ['markdown-muted'] } };
+    });
   };
 }
 
@@ -278,6 +122,7 @@ export const markdownRemarkPlugins = [
   remarkBreaks,
   remarkGfm,
   remarkBadges,
+  remarkUnwrapBadges,
   remarkMuted,
   remarkLeadingImageBreak,
   remarkSourceSpacing,
