@@ -100,6 +100,12 @@ describe('header, tabs, and extras', () => {
     expect(html).toContain('markdown-muted');
     expect(html).not.toContain('::small');
   });
+  test('a middle dot becomes a square', () => {
+    const html = render(parsePageRecord('[IG](https://instagram.com) · [Github](https://github.com)'));
+    expect(html).toContain('markdown-dot');
+    expect(html).not.toContain('·');
+    expect(render(parsePageRecord('`a · b`'))).toContain('·');
+  });
   test('a normal link has no arrow; ((link)) does', () => {
     const html = render(parsePageRecord('[plain](https://nomo.md) (([arrow](https://nomo.md)))'));
     expect(html.match(/markdown-link__icon/g)?.length).toBe(1);

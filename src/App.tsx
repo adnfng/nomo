@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Footer } from './components/Footer';
+import { PageFade } from './components/PageFade';
 import { ProfileHeader } from './components/ProfileHeader';
 import { ThemeToggle } from './components/ThemeToggle';
 import { emptyStats, fillStats } from './lib/analytics/store';
@@ -14,18 +15,18 @@ import { usePagePresentation } from './lib/theme/pagePresentation';
 
 function App() {
   const { pathname } = useLocation();
-  const { result, loading, retry } = usePage(pathname);
-  const page = result?.page ?? null;
+  const { result, view, viewPath, loading, retry } = usePage(pathname);
+  const page = view?.page ?? null;
   const { theme, toggle } = usePagePresentation();
-  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  useEffect(() => { window.scrollTo(0, 0); }, [viewPath]);
   useEffect(() => { if (result) trackReady(pathname, result); }, [pathname, result]);
   return <main className="app-shell" data-layout="portfolio">
     <div className="page-wrap">
       <div className="page-content">
         {page && <ProfileHeader page={page} />}
-        <PageBody page={page} pathname={pathname} result={result} loading={loading} retry={retry} />
+        <PageBody page={page} pathname={viewPath} result={view} loading={loading} retry={retry} />
       </div>
-      <Footer native={isNativeSite(pathname)} />
+      <Footer native={isNativeSite(viewPath)} />
     </div>
     <ThemeToggle theme={theme} onToggle={toggle} />
   </main>;
@@ -42,8 +43,10 @@ function trackReady(pathname: string, result: PageResult) {
 
 function PageBody({ page, pathname, result, loading, retry }: { page: PageRecord | null; pathname: string; result?: PageResult; loading: boolean; retry: () => void }) {
   const content = useFilledContent(pathname, page);
-  return <article className={isAnalyticsPath(pathname) ? 'markdown analytics' : 'markdown'} aria-busy={!result}>
-    {result?.status === 'error' ? <div role="alert"><p>This page couldn’t be loaded. Please try again.</p><button className="retry-button" type="button" onClick={retry}>Try again</button></div> : page && <Markdown page={page} content={content} />}
+  return <article className={isAnalyticsPath(pathname) ? 'markdown analytics' : 'markdown'} aria-busy={loading}>
+    <PageFade id={pathname}>
+      {result?.status === 'error' ? <div role="alert"><p>This page couldn’t be loaded. Please try again.</p><button className="retry-button" type="button" onClick={retry}>Try again</button></div> : page && <Markdown page={page} content={content} />}
+    </PageFade>
     {loading && <p role="status" className="markdown-muted">Loading…</p>}
   </article>;
 }

@@ -29,6 +29,6 @@ describe('analytics store', () => {
   });
   test('markdown tokens fill with live counts', () => {
     const stats = applyHit(emptyStats(), { path: '/adnfng', profile: 'adnfng', session: 'aaaa-bbbb-cccc-dddd' });
-    expect(fillStats('{{::views::}}\n%views%\n\n%seen%', stats)).toBe('{{::views::}}\n1\n\n<!-- -->\n- [adnfng](/adnfng) {{1}}');
+    expect(fillStats('{{::views::}}\n%views%\n\n%seen%', stats)).toBe('{{::views::}}\n1\n\n- [adnfng](/adnfng) {{1}}');
   });
 });

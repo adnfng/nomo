@@ -6,7 +6,7 @@ import { isVideoSource, silentLoopVideoProps } from "./media";
 
 type GalleryItemProps = {
   children: ReactNode;
-  onClick: (button: HTMLButtonElement) => void;
+  onClick: () => void;
   label: string;
 };
 
@@ -77,7 +77,7 @@ function GalleryItem({ children, onClick, label }: GalleryItemProps) {
       ref={buttonRef}
       className="markdown-gallery__item"
       data-tilt-active="false"
-      onClick={event => onClick(event.currentTarget)}
+      onClick={onClick}
       onPointerLeave={handlePointerLeave}
       onPointerMove={handlePointerMove}
       type="button"
@@ -87,7 +87,7 @@ function GalleryItem({ children, onClick, label }: GalleryItemProps) {
   );
 }
 
-function Lightbox({ src, isVideo, onClose, returnFocus }: { src: string; isVideo: boolean; onClose: () => void; returnFocus: HTMLElement | null }) {
+function Lightbox({ src, isVideo, onClose }: { src: string; isVideo: boolean; onClose: () => void }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [closing, setClosing] = useState(false);
   useEffect(() => {
@@ -98,9 +98,9 @@ function Lightbox({ src, isVideo, onClose, returnFocus }: { src: string; isVideo
     return () => {
       element?.close();
       document.body.style.overflow = previousOverflow;
-      queueMicrotask(() => returnFocus?.focus());
+      if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
     };
-  }, [returnFocus]);
+  }, []);
   useEffect(() => {
     if (!closing) return;
     const timer = window.setTimeout(onClose, 180);
@@ -120,18 +120,13 @@ function Lightbox({ src, isVideo, onClose, returnFocus }: { src: string; isVideo
 
 export function Gallery({ items }: GalleryDefinition) {
   const [active, setActive] = useState<number | null>(null);
-  const [returnFocus, setReturnFocus] = useState<HTMLButtonElement | null>(null);
-  const open = (index: number, button: HTMLButtonElement) => {
-    setReturnFocus(button);
-    setActive(index);
-  };
   return <>
     <div className="markdown-gallery">
-      {items.map((src, index) => <GalleryItem key={`${src}-${index}`} label={`Open ${isVideoSource(src) ? 'video' : 'image'} ${index + 1}`} onClick={button => open(index, button)}>
+      {items.map((src, index) => <GalleryItem key={`${src}-${index}`} label={`Open ${isVideoSource(src) ? 'video' : 'image'} ${index + 1}`} onClick={() => setActive(index)}>
         {isVideoSource(src) ? <video {...silentLoopVideoProps} className="markdown-gallery__media" src={src} />
           : <img alt="" className="markdown-gallery__media" src={src} />}
       </GalleryItem>)}
     </div>
-    {active !== null && <Lightbox src={items[active]} isVideo={isVideoSource(items[active])} onClose={() => setActive(null)} returnFocus={returnFocus} />}
+    {active !== null && <Lightbox src={items[active]} isVideo={isVideoSource(items[active])} onClose={() => setActive(null)} />}
   </>;
 }

@@ -115,6 +115,25 @@ const remarkArrows = delimiterPlugin('((', '))', undefined, ['muted', 'small'], 
 const remarkSmall = delimiterPlugin('::', '::', 'small', ['small']);
 const remarkMuted = delimiterPlugin('{{', '}}', 'muted', ['muted']);
 
+function splitDotText(node: InlineNode): InlineNode[] {
+  if (node.type !== 'text' || !node.value?.includes('·')) return [node];
+  return node.value.split(/\s*·\s*/).flatMap((part, index) => {
+    const nodes: InlineNode[] = [];
+    if (index) nodes.push({ type: 'dot', children: [], data: { hName: 'span', hProperties: { className: ['markdown-dot'] } } });
+    if (part) nodes.push(createTextNode(part));
+    return nodes;
+  });
+}
+
+function remarkSquareDots() {
+  return (tree: unknown) => {
+    visit(tree as InlineNode, (node: InlineNode) => {
+      if (!node.children || node.type === 'code' || node.type === 'inlineCode') return;
+      node.children = node.children.flatMap(splitDotText);
+    });
+  };
+}
+
 export const markdownRemarkPlugins = [
   remarkFrontmatter,
   remarkBreaks,
@@ -122,6 +141,7 @@ export const markdownRemarkPlugins = [
   remarkArrows,
   remarkSmall,
   remarkMuted,
+  remarkSquareDots,
   remarkLeadingImageBreak,
   remarkSourceSpacing,
 ];

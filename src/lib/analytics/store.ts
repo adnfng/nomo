@@ -92,9 +92,7 @@ export function publicStats(stats: Stats) {
 }
 
 export function fillStats(source: string, stats: Pick<Stats, 'views' | 'visits' | 'profiles'>) {
-  const seen = stats.profiles.length
-    ? `<!-- -->\n${stats.profiles.map(item => `- [${item.name}](/${item.name}) {{${item.views}}}`).join('\n')}`
-    : '';
+  const seen = stats.profiles.map(item => `- [${item.name}](/${item.name}) {{${item.views}}}`).join('\n');
   return source
     .replaceAll('%visits%', String(stats.visits))
     .replaceAll('%views%', String(stats.views))

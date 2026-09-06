@@ -101,6 +101,31 @@ a {
   justify-content: flex-start;
 }
 
+.page-fade {
+  position: relative;
+  overflow: hidden;
+}
+
+.page-fade__leave {
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  pointer-events: none;
+  animation: page-fade-out 160ms cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+.page-fade__live {
+  animation: page-fade-in 200ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+@keyframes page-fade-out {
+  to { opacity: 0; filter: blur(2px); }
+}
+
+@keyframes page-fade-in {
+  from { opacity: 0; filter: blur(2px); }
+}
+
 .app-footer {
   margin-top: 64px;
   padding: 0;
@@ -203,6 +228,15 @@ a {
 .markdown .markdown-muted .markdown-link__label,
 .app-footer .markdown-muted .markdown-link__label {
   text-decoration-color: currentColor;
+}
+
+.markdown-dot {
+  display: inline-block;
+  width: 3px;
+  height: 3px;
+  margin: 0 0.4em;
+  vertical-align: middle;
+  background: currentColor;
 }
 
 /* Block Code */
@@ -516,7 +550,8 @@ a {
   width: 100%;
 }
 
-.markdown.analytics ul + ul {
+.markdown.analytics ul + ul,
+.markdown.analytics ul > li:nth-child(4) {
   margin-top: calc(2 * var(--page-line-height));
 }
 
@@ -559,9 +594,9 @@ a {
 .app-shell[data-layout="portfolio"] {
   position: relative;
   min-height: 100svh;
-  padding: 200px 24px 72px;
+  padding: 72px 24px;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: safe center;
 }
 [data-layout="portfolio"] .page-wrap {
   width: 100%;
@@ -577,7 +612,7 @@ a {
   letter-spacing: var(--page-letter-spacing);
   overflow-wrap: anywhere;
 }
-.profile-avatar-wrap { margin-bottom: 32px; display: flex; align-items: center; }
+.profile-avatar-wrap { margin-bottom: 24px; display: flex; align-items: center; }
 .profile-balls { display: flex; align-items: center; gap: 6px; }
 .pool-balls-3d,
 .pool-balls-3d canvas { display: block; }
@@ -715,4 +750,5 @@ dialog.markdown-lightbox::backdrop { background: transparent; }
   .profile-avatar-link { transition: none; }
   .pool-ball { transition: none; }
   .theme-toggle:active { transform: none; }
+  .page-fade__leave, .page-fade__live { animation: none; filter: none; }
 }
