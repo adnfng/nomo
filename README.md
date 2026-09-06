@@ -1,130 +1,53 @@
 <div align="center">
-  <img src="./public/nomo.svg" alt="Nomo logo" width="64" height="64" />
-  <h3>NOMO</h3>
-  <p>A markdown-first frontend for GitHub-backed profile pages.</p>
-  <a href="https://nomo.md">Website</a> | <a href="https://nomo.md/docs">Docs</a>
-  <br/><br/>
-  <div>
-    <a href="https://gitviews.com/">
-      <img src="https://gitviews.com/repo/adnfng/nomo.svg" alt="Repo Views" />
-    </a>
-  </div>
+  <img src="./public/nomo.svg" alt="Nomo" width="64" height="64" />
+  <h3>Nomo</h3>
+  <p>An open-source profile page that starts with a Markdown file.</p>
+  <a href="https://nomo.md">Website</a>
+  ·
+  <a href="https://nomo.md/docs">Docs</a>
+  ·
+  <a href="https://nomo.md/changelog">Changelog</a>
 </div>
 
----
+A public GitHub repo named `.nomo` with a `human.md` is the page at `nomo.md/username`. No account. No CMS.
 
-### What Is Nomo?
-
-**Nomo** turns a public `.nomo` GitHub repo into a profile page.
-
-Primary routes live on `nomo.md`. There is also a `nomo.fyi` redirect layer for places like X that currently reject `.md` domains in profile links.
-
-The route model is simple:
-
-- `/:username` -> that user’s public `.nomo` repo (`human.md`)
-- `/:username/:slug` -> a tab in `human.md`, or `.nomo/content/:slug.md`
-
-When profile content references `/assets/...`, Nomo rewrites that path against the same repo automatically.
-
-The app also ships with a small native shell:
-
-- `/` for the landing page
-- `/docs` for end-user docs
-- `/adnfng` for the site owner’s page, loaded from this repo, not GitHub
-- `/404` for the not-found fallback
+If a site blocks `.md` links, use [nomo.fyi](https://nomo.fyi).
 
 ---
 
-### Getting Started
+## Changelog
 
-1. Install dependencies:
+### 0.2.0
 
-```bash
-bun install
-```
+- Tabs now live in `human.md` to keep it simple in a single page
+- Updated the docs for template support and syntax
+- Changelog added
+- `.nomo` now ships as a beginner template
+- Small text with `:: ::`
+- Normal links and arrow links
+- Dropped badges, with legacy support as normal text or links
+- Home setup prompt agents can follow from `AGENTS.md`
+- `/analytics` counts visits, views, and profiles
 
-2. Start the dev server:
+### 0.1.9
 
-```bash
-bun run dev
-```
+- Light and dark theming through a toggle
+- Dropped frontmatter for theme, font, and layout, with legacy support
+- Updated Markdown styling and spacing
+- Square bullets
+- A very spinny new logo
 
-3. Build for production:
+### 0.1.2
 
-```bash
-bun run build
-```
+- nomo.fyi for sites that block `.md` links
+- Social cards
 
-4. Run lint:
+### 0.1.1
 
-```bash
-bun run lint
-```
+- Pages from a public GitHub `.nomo` repo
+- Extra pages as separate files under `content/`
+- Images from `assets/`
 
----
+### 0.1.0
 
-### Project Structure
-
-```txt
-src/
-├─ App.tsx
-├─ styles/
-│  └─ index.css
-└─ lib/
-   ├─ content/
-   │  ├─ pages.ts
-   │  ├─ paths.ts
-   │  └─ types.ts
-   ├─ markdown/
-   │  ├─ components.tsx
-   │  ├─ Gallery.tsx
-   │  ├─ media.ts
-   │  └─ plugins.ts
-   └─ theme/
-      └─ pagePresentation.ts
-```
-
-Native app pages live in:
-
-```txt
-pages/
-├─ home.md
-├─ docs.md
-├─ changelog.md
-└─ 404.md
-```
-
-Theme files live in:
-
-```txt
-public/themes/
-```
-
----
-
-### Content Rules
-
-A leading markdown image becomes the header photo. Tabs come from `===== Name =====` headings in the same file. Theme follows the system color scheme.
-
-Custom markdown supports:
-
-- muted text with `{{...}}`
-- small text with `::...::`
-- arrow links with `(( [nomo](https://nomo.md) ))`
-- inline image sizing like `![image:100]` and `![image:100x140]`
-- gallery blocks with:
-
-```txt
-[[gallery]]
-/assets/one.jpg
-/assets/two.mp4
-/assets/three.jpg
-[[/gallery]]
-```
-
----
-
-### Notes
-
-- `public/nomo.svg` is the shared app icon and favicon
-- Vite splits markdown, router, and React into separate chunks for production
+- First version
