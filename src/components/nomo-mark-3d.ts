@@ -68,7 +68,7 @@ function visibleBox(object: THREE.Object3D) {
   return box;
 }
 
-function frameLogo(logo: THREE.Object3D, renderer: THREE.WebGLRenderer, camera: THREE.OrthographicCamera) {
+function frameLogo(logo: THREE.Object3D, host: HTMLElement, renderer: THREE.WebGLRenderer, camera: THREE.OrthographicCamera) {
   logo.rotation.set(REST.x, REST.y, 0);
   const box = visibleBox(logo);
   const size = box.getSize(new THREE.Vector3());
@@ -76,13 +76,17 @@ function frameLogo(logo: THREE.Object3D, renderer: THREE.WebGLRenderer, camera: 
   logo.position.sub(center);
   const width = Math.max(size.x, 0.001);
   const height = Math.max(size.y, 0.001);
-  camera.left = -width / 2;
-  camera.right = width / 2;
-  camera.top = height / 2;
-  camera.bottom = -height / 2;
+  const rest = Math.max(width, height);
+  const span = Math.max(size.length(), rest);
+  camera.left = -span / 2;
+  camera.right = span / 2;
+  camera.top = span / 2;
+  camera.bottom = -span / 2;
   camera.updateProjectionMatrix();
-  const scale = SIZE / Math.max(width, height);
-  renderer.setSize(Math.round(width * scale), Math.round(height * scale));
+  const scale = SIZE / rest;
+  renderer.setSize(Math.round(span * scale), Math.round(span * scale));
+  host.style.width = `${Math.round(width * scale)}px`;
+  host.style.height = `${Math.round(height * scale)}px`;
 }
 
 function disposeObject(object: THREE.Object3D) {
@@ -175,7 +179,7 @@ export function mountNomoMark3D(host: HTMLElement, color: string, onError?: () =
     }
     prepareLogo(gltf.scene, color);
     root.add(gltf.scene);
-    frameLogo(gltf.scene, renderer, camera);
+    frameLogo(gltf.scene, host, renderer, camera);
     renderer.render(scene, camera);
   }, undefined, () => onError?.());
 
