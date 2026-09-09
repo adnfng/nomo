@@ -82,19 +82,32 @@ function createBalls(letters: string, radius: number) {
   };
 }
 
+function createRenderer(host: HTMLElement, width: number) {
+  const canvas = document.createElement('canvas');
+  canvas.style.touchAction = 'none';
+  host.appendChild(canvas);
+  const renderer = new THREE.WebGLRenderer({
+    canvas,
+    alpha: true,
+    antialias: true,
+    powerPreference: 'default',
+    failIfMajorPerformanceCaveat: false,
+  });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0xffffff, 0);
+  renderer.setSize(width, BALL);
+  return renderer;
+}
+
 export function mountPoolBalls3D(host: HTMLElement, letters: string, onError?: () => void) {
   const width = letters.length * BALL + Math.max(0, letters.length - 1) * GAP;
   let renderer: THREE.WebGLRenderer;
   try {
-    renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer = createRenderer(host, width);
   } catch {
     onError?.();
     return () => {};
   }
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setClearColor(0xffffff, 0);
-  renderer.setSize(width, BALL);
-  host.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
   const camera = new THREE.OrthographicCamera(-width / 2, width / 2, BALL / 2, -BALL / 2, 0.1, 1000);
@@ -105,9 +118,13 @@ export function mountPoolBalls3D(host: HTMLElement, letters: string, onError?: (
   const axis = new THREE.Vector3();
   const rotation = new THREE.Quaternion();
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
   let frame = 0;
   let previousTime = 0;
+
+  function point(event: PointerEvent) {
+    const rect = host.getBoundingClientRect();
+    return { x: event.clientX - rect.left, y: event.clientY - rect.top, time: performance.now() };
+  }
 
   function render(time: number) {
     const delta = previousTime ? Math.min((time - previousTime) / 1000, 0.05) : 0;
@@ -123,32 +140,42 @@ export function mountPoolBalls3D(host: HTMLElement, letters: string, onError?: (
     if (!frame) frame = requestAnimationFrame(render);
   }
 
+  function onDown(event: PointerEvent) {
+    host.setPointerCapture(event.pointerId);
+    const next = point(event);
+    const hovered = hitBall(balls, width, next.x, next.y);
+    for (const ball of balls) ball.last = ball === hovered ? next : null;
+  }
+
   function onMove(event: PointerEvent) {
-    if (reduced.matches || !fine.matches) return;
-    const rect = host.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-    const now = performance.now();
-    const hovered = hitBall(balls, width, x, y);
+    if (reduced.matches) return;
+    const next = point(event);
+    const hovered = hitBall(balls, width, next.x, next.y);
     for (const ball of balls) {
-      if (ball === hovered) addPointerSpin(ball.angularVelocity, ball.last, x, y, now);
-      ball.last = ball === hovered ? { x, y, time: now } : null;
+      if (ball === hovered) addPointerSpin(ball.angularVelocity, ball.last, next.x, next.y, next.time);
+      ball.last = ball === hovered ? next : null;
     }
     kick();
   }
 
-  function onLeave() {
+  function onUp() {
     for (const ball of balls) ball.last = null;
   }
 
   renderer.render(scene, camera);
+  host.addEventListener('pointerdown', onDown);
   host.addEventListener('pointermove', onMove);
-  host.addEventListener('pointerleave', onLeave);
+  host.addEventListener('pointerup', onUp);
+  host.addEventListener('pointercancel', onUp);
+  host.addEventListener('pointerleave', onUp);
 
   return () => {
     cancelAnimationFrame(frame);
+    host.removeEventListener('pointerdown', onDown);
     host.removeEventListener('pointermove', onMove);
-    host.removeEventListener('pointerleave', onLeave);
+    host.removeEventListener('pointerup', onUp);
+    host.removeEventListener('pointercancel', onUp);
+    host.removeEventListener('pointerleave', onUp);
     for (const ball of balls) {
       (ball.mesh.material as THREE.Material).dispose();
       ball.texture.dispose();

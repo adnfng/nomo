@@ -10,25 +10,45 @@ const STUDIO_LIGHT = 1.9;
 const STUDIO_SHINE = 0.17;
 
 function createRenderer(host: HTMLElement) {
-  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  const canvas = document.createElement('canvas');
+  canvas.style.touchAction = 'none';
+  host.appendChild(canvas);
+  const renderer = new THREE.WebGLRenderer({
+    canvas,
+    alpha: true,
+    antialias: true,
+    powerPreference: 'default',
+    failIfMajorPerformanceCaveat: false,
+  });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setClearColor(0xffffff, 0);
   renderer.setSize(SIZE, SIZE);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1;
-  host.appendChild(renderer.domElement);
   return renderer;
 }
 
+function addFillLights(scene: THREE.Scene) {
+  const hemi = new THREE.HemisphereLight(0xffffff, 0x777777, 1.15);
+  const key = new THREE.DirectionalLight(0xffffff, 0.85);
+  key.position.set(40, 80, 120);
+  scene.add(hemi, key);
+}
+
 function applyStudio(renderer: THREE.WebGLRenderer, scene: THREE.Scene) {
-  const pmrem = new THREE.PMREMGenerator(renderer);
-  const room = new RoomEnvironment();
-  const env = pmrem.fromScene(room, 0.04);
-  room.dispose();
-  pmrem.dispose();
-  scene.environment = env.texture;
-  scene.environmentIntensity = STUDIO_LIGHT;
-  return env;
+  addFillLights(scene);
+  try {
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const room = new RoomEnvironment();
+    const env = pmrem.fromScene(room, 0.04);
+    room.dispose();
+    pmrem.dispose();
+    scene.environment = env.texture;
+    scene.environmentIntensity = STUDIO_LIGHT;
+    return env;
+  } catch {
+    return { dispose() {} };
+  }
 }
 
 function meshMaterials(node: THREE.Mesh) {
@@ -84,9 +104,14 @@ function frameLogo(logo: THREE.Object3D, host: HTMLElement, renderer: THREE.WebG
   camera.bottom = -span / 2;
   camera.updateProjectionMatrix();
   const scale = SIZE / rest;
-  renderer.setSize(Math.round(span * scale), Math.round(span * scale));
-  host.style.width = `${Math.round(width * scale)}px`;
-  host.style.height = `${Math.round(height * scale)}px`;
+  const canvas = Math.round(span * scale);
+  const hostWidth = Math.round(width * scale);
+  const hostHeight = Math.round(height * scale);
+  renderer.setSize(canvas, canvas);
+  host.style.width = `${hostWidth}px`;
+  host.style.height = `${hostHeight}px`;
+  renderer.domElement.style.left = `${(hostWidth - canvas) / 2}px`;
+  renderer.domElement.style.top = `${(hostHeight - canvas) / 2}px`;
 }
 
 function disposeObject(object: THREE.Object3D) {
@@ -121,7 +146,13 @@ function applySpin(object: THREE.Object3D, angularVelocity: THREE.Vector3, axis:
 }
 
 export function mountNomoMark3D(host: HTMLElement, color: string, onError?: () => void) {
-  const renderer = createRenderer(host);
+  let renderer: THREE.WebGLRenderer;
+  try {
+    renderer = createRenderer(host);
+  } catch {
+    onError?.();
+    return () => {};
+  }
   const scene = new THREE.Scene();
   const studio = applyStudio(renderer, scene);
   const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 1000);
@@ -132,11 +163,15 @@ export function mountNomoMark3D(host: HTMLElement, color: string, onError?: () =
   const axis = new THREE.Vector3();
   const rotation = new THREE.Quaternion();
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
   let lastPointer: { x: number; y: number; time: number } | null = null;
   let frame = 0;
   let previousTime = 0;
   let disposed = false;
+
+  function pointerAt(event: PointerEvent) {
+    const rect = host.getBoundingClientRect();
+    return { x: event.clientX - rect.left, y: event.clientY - rect.top, time: performance.now() };
+  }
 
   function render(time: number) {
     const delta = previousTime ? Math.min((time - previousTime) / 1000, 0.05) : 0;
@@ -151,18 +186,21 @@ export function mountNomoMark3D(host: HTMLElement, color: string, onError?: () =
     if (!frame) frame = requestAnimationFrame(render);
   }
 
+  function onDown(event: PointerEvent) {
+    host.setPointerCapture(event.pointerId);
+    lastPointer = pointerAt(event);
+  }
+
   function onMove(event: PointerEvent) {
-    if (reduced.matches || !fine.matches) return;
-    const rect = host.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-    const now = performance.now();
-    addPointerSpin(angularVelocity, lastPointer, x, y, now);
-    lastPointer = { x, y, time: now };
+    if (reduced.matches) return;
+    if (!lastPointer && event.pointerType !== 'mouse') return;
+    const next = pointerAt(event);
+    addPointerSpin(angularVelocity, lastPointer, next.x, next.y, next.time);
+    lastPointer = next;
     kick();
   }
 
-  function onLeave() {
+  function onUp() {
     lastPointer = null;
   }
 
@@ -183,15 +221,21 @@ export function mountNomoMark3D(host: HTMLElement, color: string, onError?: () =
     renderer.render(scene, camera);
   }, undefined, () => onError?.());
 
+  host.addEventListener('pointerdown', onDown);
   host.addEventListener('pointermove', onMove);
-  host.addEventListener('pointerleave', onLeave);
+  host.addEventListener('pointerup', onUp);
+  host.addEventListener('pointercancel', onUp);
+  host.addEventListener('pointerleave', onUp);
   renderer.domElement.addEventListener('webglcontextlost', onLost);
 
   return () => {
     disposed = true;
     cancelAnimationFrame(frame);
+    host.removeEventListener('pointerdown', onDown);
     host.removeEventListener('pointermove', onMove);
-    host.removeEventListener('pointerleave', onLeave);
+    host.removeEventListener('pointerup', onUp);
+    host.removeEventListener('pointercancel', onUp);
+    host.removeEventListener('pointerleave', onUp);
     renderer.domElement.removeEventListener('webglcontextlost', onLost);
     disposeObject(root);
     studio.dispose();

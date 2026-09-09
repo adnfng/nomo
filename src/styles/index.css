@@ -618,9 +618,9 @@ a {
   overflow-wrap: anywhere;
 }
 .profile-avatar-wrap { margin-bottom: 24px; display: flex; align-items: center; }
-.profile-balls { display: flex; align-items: center; gap: 6px; }
+.profile-balls { display: flex; align-items: center; gap: 6px; touch-action: none; }
 .pool-balls-3d,
-.pool-balls-3d canvas { display: block; }
+.pool-balls-3d canvas { display: block; touch-action: none; }
 .pool-ball {
   display: grid;
   place-items: center;
@@ -650,17 +650,18 @@ a {
 .profile-avatar-link:active { transform: scale(0.97); }
 .profile-avatar-link--mark:active { transform: none; }
 .profile-avatar { display: block; object-fit: cover; border-radius: 10px; }
+.profile-avatar-link--mark { touch-action: none; }
 .nomo-mark-3d {
   display: block;
   position: relative;
   overflow: visible;
+  width: 57px;
+  height: 60px;
 }
 .nomo-mark-3d canvas {
   display: block;
   position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  touch-action: none;
 }
 svg.nomo-mark-3d { width: 57px; height: 60px; }
 .profile-navigation { display: flex; flex-wrap: wrap; align-items: baseline; gap: 14px; margin-bottom: 48px; font-size: var(--page-font-size); line-height: var(--page-line-height); letter-spacing: var(--page-letter-spacing); }
@@ -717,6 +718,19 @@ svg.nomo-mark-3d { width: 57px; height: 60px; }
   white-space: nowrap;
   z-index: 2;
 }
+.footer-veil {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 112px;
+  pointer-events: none;
+  z-index: 1;
+}
+.footer-veil span {
+  position: absolute;
+  inset: 0;
+}
 .theme-toggle {
   position: fixed;
   bottom: 16px;
@@ -746,7 +760,7 @@ dialog.markdown-lightbox { width: 100vw; height: 100dvh; max-width: none; max-he
 dialog.markdown-lightbox::backdrop { background: transparent; }
 .lightbox-close { position: absolute; top: 16px; right: 16px; width: 44px; height: 44px; border: 0; border-radius: 0; background: transparent; color: var(--text); font: 28px/1 sans-serif; cursor: pointer; }
 @media (max-width: 540px) {
-  .app-shell[data-layout="portfolio"] { padding-left: 28px; padding-right: 28px; }
+  .app-shell[data-layout="portfolio"] { padding: 72px 28px 128px; }
   [data-layout="portfolio"] .app-footer { left: 28px; }
   .theme-toggle { right: 28px; }
   .profile-avatar-wrap { margin-bottom: 12px; }
@@ -766,4 +780,5 @@ dialog.markdown-lightbox::backdrop { background: transparent; }
   .pool-ball { transition: none; }
   .theme-toggle:active { transform: none; }
   .page-fade__leave, .page-fade__live { animation: none; filter: none; }
+  .footer-veil { display: none; }
 }

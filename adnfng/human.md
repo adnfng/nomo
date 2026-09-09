@@ -35,7 +35,7 @@ Creative Director at {{Savvy Market}}
 
 {{[mono](https://github.com/adnfng/mono)}} -- a borderless macOS browser for screen recordings 
 
-{{[pools](https://imsend.ing)}} -- type something. it turns into pool balls
+{{[imsend.ing](https://imsend.ing)}} -- type something. it turns into pool balls
 
 {{[no-author](https://noa.nomo.md/)}} -- keep AI attribution out of your git commits
 

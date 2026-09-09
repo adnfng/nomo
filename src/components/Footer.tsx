@@ -1,6 +1,27 @@
+import { type CSSProperties } from "react";
 import { Link } from "react-router-dom";
 
 const NOMO_GITHUB = "https://github.com/adnfng/nomo";
+const VEIL_LAYERS = 8;
+
+function veilStyle(index: number): CSSProperties {
+  const segment = 1 / (VEIL_LAYERS + 1);
+  const stops = [0, 1, 2, 3].map((step, pos) => {
+    const alpha = pos === 1 || pos === 2 ? 1 : 0;
+    return `rgba(255,255,255,${alpha}) ${(index + step) * segment * 100}%`;
+  });
+  const mask = `linear-gradient(180deg, ${stops.join(", ")})`;
+  const blur = `blur(${index * 2.5}px)`;
+  return { maskImage: mask, WebkitMaskImage: mask, backdropFilter: blur, WebkitBackdropFilter: blur };
+}
+
+function FooterVeil() {
+  return (
+    <div aria-hidden className="footer-veil">
+      {Array.from({ length: VEIL_LAYERS }, (_, index) => <span key={index} style={veilStyle(index)} />)}
+    </div>
+  );
+}
 
 function LinkArrow() {
   return (
@@ -24,18 +45,15 @@ function LinkArrow() {
 }
 
 export function Footer({ native }: { native: boolean }) {
-  if (native) {
-    return (
-      <footer className="app-footer">
-        <span className="markdown-muted">see nomo on </span>
-        <a className="markdown-link markdown-link--arrow" href={NOMO_GITHUB} rel="noreferrer" target="_blank">
-          <span className="markdown-link__label">github</span>
-          <LinkArrow />
-        </a>
-      </footer>
-    );
-  }
-  return (
+  const body = native ? (
+    <footer className="app-footer">
+      <span className="markdown-muted">see nomo on </span>
+      <a className="markdown-link markdown-link--arrow" href={NOMO_GITHUB} rel="noreferrer" target="_blank">
+        <span className="markdown-link__label">github</span>
+        <LinkArrow />
+      </a>
+    </footer>
+  ) : (
     <footer className="app-footer">
       <span className="markdown-muted">create your page with </span>
       <Link className="markdown-link markdown-link--arrow" to="/">
@@ -44,4 +62,8 @@ export function Footer({ native }: { native: boolean }) {
       </Link>
     </footer>
   );
+  return <>
+    <FooterVeil />
+    {body}
+  </>;
 }
