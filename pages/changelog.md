@@ -1,3 +1,9 @@
+{{::Unreleased::}}
+
+- Nomo is now MIT licensed.
+- The setup command now creates your own `.nomo` repo from the template, instead of cloning ours.
+
+
 {{::0.2.0::}}
 
 - Tabs now live in `human.md` to keep it simple in a single page.

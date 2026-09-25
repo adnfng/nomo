@@ -6,19 +6,19 @@ If a site blocks `.md` links, the same page is `nomo.fyi/username`.
 
 ## If they do not have the repo yet
 
-Create a public GitHub repo named `.nomo` from https://github.com/adnfng/.nomo
+Create a public repo named `.nomo` in their account from the template:
 
 ```bash
-gh repo fork adnfng/.nomo --clone
+gh repo create .nomo --public --clone --template adnfng/.nomo
 ```
 
-or
-
-```bash
-git clone https://github.com/adnfng/.nomo.git
-```
+Without `gh`, send them to https://github.com/new?template_owner=adnfng&template_name=.nomo&name=.nomo&visibility=public and clone the repo it creates.
 
 The name must be `.nomo`. It must be public. The owner is the user. Then work in that folder.
+
+## If they already have the repo
+
+Clone it (`gh repo clone theirusername/.nomo`) and edit it. Do not create a new one.
 
 ## What to edit
 

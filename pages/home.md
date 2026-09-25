@@ -13,9 +13,9 @@ It stays *simple* because it is *simple*. Your content lives in your repo, writt
 
 **How simple?**
 
-Clone the template repo:
+Create your `.nomo` from the template:
 ```bash
-git clone https://github.com/adnfng/.nomo.git
+gh repo create .nomo --public --clone --template adnfng/.nomo
 ```
 
 Or ask your agent to set it up:
