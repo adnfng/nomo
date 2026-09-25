@@ -11,8 +11,7 @@ It's not the right fit for a blog with many posts, a custom domain, a fully cust
 - With the GitHub CLI: `gh repo create .nomo --public --clone --template adnfng/.nomo`, then edit `human.md` and push.
 - Without the CLI: [create the repo from the template](https://github.com/new?template_owner=adnfng&template_name=.nomo&name=.nomo&visibility=public), then edit `human.md` on GitHub.
 - For agents: [AGENTS.md](https://nomo.md/AGENTS.md) has step-by-step setup instructions and the full syntax.
-- From a terminal: `npx create-nomo` drafts `human.md` from the user's GitHub profile and asks before creating the repo.
-- From a browser: `https://nomo.md/<github-username>` shows a preview built from their GitHub profile, with a "Make it yours" button that creates the repo in one sign-in.
+- From a browser: `https://nomo.md/<github-username>` shows a preview built from their GitHub profile, with a "Make it yours" link to the setup steps.
 
 ## Docs
 

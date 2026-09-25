@@ -47,6 +47,10 @@ export const nativeDocument = {
   page(markdown: string) {
     return inheritPortfolio(parsePageRecord(markdown), nativePages().get('home'));
   },
+  focused(markdown: string) {
+    const page = this.page(markdown);
+    return { ...page, portfolio: { ...page.portfolio, pages: [] } };
+  },
 };
 
 function markdownFiles(directory: string, current = directory): string[] {

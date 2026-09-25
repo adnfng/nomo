@@ -169,6 +169,9 @@ a {
   top: 16px;
   left: 24px;
   z-index: 2;
+  display: flex;
+  align-items: center;
+  height: 28px;
   font-size: 13px;
   line-height: var(--page-line-height);
   letter-spacing: var(--page-letter-spacing);
@@ -190,8 +193,9 @@ a {
 .back-bar__button:hover { color: var(--text); }
 .back-bar__button svg { transition: transform 160ms var(--ease); }
 .back-bar__button:hover svg { transform: translateX(-2px); }
-body:has(.preview-bar) .veil--top { display: none; }
-body:has(.preview-bar) .back-bar { top: 52px; }
+/* React keeps the previous route mounted with an inline display: none. */
+body:has(.preview-bar:not([style*="display: none"])) .veil--top { display: none; }
+body:has(.preview-bar:not([style*="display: none"])) .back-bar { top: 52px; }
 @keyframes back-bar-in { from { opacity: 0; } }
 
 .page-header {
@@ -872,7 +876,7 @@ dialog.markdown-lightbox::backdrop { background: transparent; }
   .app-shell[data-layout="portfolio"] { padding: 72px 28px 120px; }
   .app-footer { left: 28px; right: 28px; }
   .back-bar { left: 28px; }
-  body:has(.preview-bar) .back-bar { top: 70px; }
+  body:has(.preview-bar:not([style*="display: none"])) .back-bar { top: 70px; }
   .profile-avatar-wrap { margin-bottom: 12px; }
 }
 @media (hover: none) {
@@ -905,6 +909,9 @@ dialog.markdown-lightbox::backdrop { background: transparent; }
 .profile-avatar--round { border-radius: 50%; }
 .profile-name { margin: 0 0 4px; font-size: var(--page-font-size); line-height: var(--page-line-height); font-weight: 500; letter-spacing: var(--page-letter-spacing); }
 .profile-header:has(.profile-name) .profile-avatar-wrap { margin-bottom: 16px; }
+.page-content:has(> .markdown--centered) .profile-avatar-wrap { justify-content: center; margin-bottom: 32px; }
+.markdown--centered { text-align: center; }
+.markdown--centered .code-block, .markdown--centered .username-field { text-align: left; }
 .markdown--sections { line-height: 1.5; }
 .markdown--sections p { margin: 0 0 10px; }
 .markdown--sections h2 { margin: 40px 0 12px; font-size: var(--page-font-size); line-height: var(--page-line-height); font-weight: 400; color: var(--muted); }

@@ -15,9 +15,9 @@ Nomo has been rewritten from the ground up. How pages are written, how they load
 **Getting started**
 
 - Visit `nomo.md/your-username` to see a preview of your page, built from your GitHub profile.
-- Press Make it yours on the preview and sign in with GitHub. Nomo creates your `.nomo` repo with the preview as your first draft.
-- Prefer the terminal? `npx create-nomo` does the same and shows you the draft first.
-- Or ask your coding agent. It drafts your first `human.md` from your GitHub profile and asks before pushing. There's a Nomo skill you can install with `gh`, too.
+- Press Make it yours on the preview to get a prompt for your coding agent, with your username already in it. Your agent creates the repo, drafts your first `human.md` from your GitHub profile, asks a few questions and checks with you before it pushes.
+- Rather do it yourself? One `gh` command creates your repo from the template, or you can start from the template on GitHub.
+- Install the Nomo skill with `gh` and your agent will know Nomo the next time you ask for a personal site.
 - The template is a developer page with Projects and Writing, ready to edit. The docs have starting points for designers, students and link-in-bio pages.
 
 

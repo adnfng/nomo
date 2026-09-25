@@ -15,6 +15,10 @@ Nomo didn't change anything in it. Your page is at (([nomo.md/%user%](/%user%)))
 My Nomo page lives in github.com/%user%/.nomo. Clone it and help me make human.md mine. Follow https://nomo.md/AGENTS.md
 ```
 
+
+
+
+
 **Or by hand**
 
 ```bash
@@ -22,6 +26,10 @@ gh repo clone %user%/.nomo
 ```
 
 Edit `human.md`, then push. {{::No terminal? (([Edit it on GitHub](https://github.com/%user%/.nomo/edit/main/human.md)))::}}
+
+
+
+
 
 **What's next**
 

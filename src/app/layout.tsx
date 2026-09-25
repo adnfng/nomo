@@ -28,7 +28,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
     </head>
     <body>
-      <BackBar />
+      <Suspense fallback={null}><BackBar /></Suspense>
       {children}
       <Suspense fallback={null}><Beacon /></Suspense>
     </body>

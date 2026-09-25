@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import { PageView } from '@/components/PageView';
 import { matchRoute } from '@/lib/content/routes';
-import { blocks, fill } from '@/lib/content/preview';
+import { blocks, fill, sections } from '@/lib/content/preview';
 import { nativeDocument } from '@/lib/server/site';
 
 export const metadata: Metadata = { title: 'Your page is live · Nomo', robots: { index: false } };
@@ -15,8 +15,8 @@ async function Done({ searchParams }: Props) {
   const route = matchRoute(`/${params.user ?? ''}`);
   if (route.type !== 'profile-root') redirect('/new');
   const copy = blocks(nativeDocument.source('claimed'));
-  const markdown = fill([params.existing ? copy.existing : copy.created, copy.next].join('\n\n\n\n'), { user: route.username.toLowerCase() });
-  return <PageView page={nativeDocument.page(markdown)} pathname="/new/done" native />;
+  const markdown = fill(sections([params.existing ? copy.existing : copy.created, copy.next]), { user: route.username.toLowerCase() });
+  return <PageView page={nativeDocument.focused(markdown)} pathname="/new/done" native />;
 }
 
 export default function DonePage(props: Props) {

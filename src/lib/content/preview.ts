@@ -93,6 +93,10 @@ export function blocks(source: string) {
   return found;
 }
 
+export function sections(parts: string[]) {
+  return parts.filter(Boolean).join('\n\n\n\n\n\n');
+}
+
 export function fill(markdown: string, values: Record<string, string>) {
   return markdown.replace(/%(\w+)%/g, (match, key: string) => values[key] ?? match);
 }
