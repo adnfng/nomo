@@ -246,7 +246,7 @@ describe('routes and remote loading', () => {
     const docs = withHomeTab(rebaseTabs(parsePageRecord('===== Customization =====\n\nStart\n\n===== Syntax =====\n\nCode'), '/docs'));
     const changelog = parsePageRecord('Log');
     const resolve = createPageResolver(new Map([['home', home], ['docs', docs], ['changelog', changelog]]), async () => ({ status: 'missing' }));
-    expect(await resolve('/')).toMatchObject({ isHome: true, page: { content: 'Home', portfolio: { pages: [{ href: '/' }, { href: '/docs' }, { href: '/changelog' }] } } });
+    expect(await resolve('/')).toMatchObject({ isHome: true, page: { content: 'Home', portfolio: { pages: [{ href: '/' }, { href: '/docs' }, { href: '/changelog' }, { href: '/compare' }, { href: '/agents' }, { href: '/faq' }] } } });
     expect(await resolve('/docs')).toMatchObject({ slug: 'docs', page: { content: 'Start', portfolio: { pages: [{ href: '/' }, { href: '/docs' }, { href: '/docs/syntax' }] } } });
     expect(await resolve('/docs/syntax')).toMatchObject({ slug: 'syntax', page: { content: 'Code' } });
     expect(await resolve('/changelog')).toMatchObject({ slug: 'changelog', page: { content: 'Log' } });

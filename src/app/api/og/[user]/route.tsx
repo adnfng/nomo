@@ -41,10 +41,13 @@ function Avatar({ page, image }: { page: PageRecord; image?: string }) {
   return <img src={image} width={AVATAR} height={AVATAR} style={{ borderRadius: 12, objectFit: 'cover' }} />;
 }
 
+const BADGE_SCALE = 2;
+
 function Badge({ label }: { label: string }) {
-  const colors = BADGE_THEMES.light;
-  return <div style={{ display: 'flex', alignItems: 'center', height: 20, width: badgeWidth(label), paddingLeft: 8, border: `1px solid ${colors.line}`, borderRadius: 4, background: colors.background, color: colors.text, fontSize: 11, fontWeight: 400, letterSpacing: '-0.1px' }}>
-    <svg width="12" height="13" viewBox="0 0 150 160" style={{ marginRight: 7 }}>{BADGE_MARK.map(([d, fill]) => <path key={d.slice(0, 16)} d={d} fill={fill} />)}</svg>
+  const colors = BADGE_THEMES.dark;
+  const x = BADGE_SCALE;
+  return <div style={{ display: 'flex', alignItems: 'center', height: 20 * x, width: badgeWidth(label) * x, paddingLeft: 8 * x, borderRadius: 4 * x, background: colors.background, color: colors.text, fontSize: 11 * x, fontWeight: 400, letterSpacing: `${-0.1 * x}px` }}>
+    <svg width={12 * x} height={13 * x} viewBox="0 0 150 160" style={{ marginRight: 7 * x }}>{BADGE_MARK.map(([d, fill]) => <path key={d.slice(0, 16)} d={d} fill={fill} />)}</svg>
     {label}
   </div>;
 }
@@ -60,14 +63,16 @@ export async function GET(request: Request, { params }: { params: Promise<{ user
   const text = summarize(page.content, 110) || plainText(page.content).slice(0, 110);
   return new ImageResponse(
     <div style={{ width: 1200, height: 630, display: 'flex', flexDirection: 'column', background: '#ffffff', padding: 32, fontFamily: 'Geist', color: TEXT }}>
-      <Avatar page={page} image={image} />
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 48 }}>
+        <Avatar page={page} image={image} />
+        <Badge label={`nomo.md/${user.toLowerCase()}`} />
+      </div>
       <div style={{ display: 'flex', flexGrow: 1 }} />
-      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 48 }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, maxWidth: 880 }}>
+      <div style={{ display: 'flex' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, maxWidth: 1000 }}>
           <div style={{ display: 'flex', fontSize: 32, fontWeight: 600, lineHeight: 1.25, letterSpacing: '-0.43px' }}>{name}</div>
           {text ? <div style={{ display: 'flex', fontSize: 24, fontWeight: 400, lineHeight: 1.4, letterSpacing: '-0.43px', color: MUTED }}>{text}</div> : null}
         </div>
-        <Badge label={`nomo.md/${user.toLowerCase()}`} />
       </div>
     </div>,
     {

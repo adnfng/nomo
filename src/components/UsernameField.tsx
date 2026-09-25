@@ -33,11 +33,10 @@ export function UsernameField() {
           value={value}
         />
       </label>
-      <button className="username-field__go markdown-link markdown-link--arrow" disabled={!valid} type="submit">
-        <span className="markdown-link__label">See yours</span>
-        <svg aria-hidden="true" className="markdown-link__icon" fill="none" height="12" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="12">
-          <path d="M7 7h10v10" />
-          <path d="M7 17 17 7" />
+      <button aria-label="See the page" className="username-field__go" data-visible={valid} disabled={!valid} type="submit">
+        <svg aria-hidden="true" fill="none" height="14" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" width="14">
+          <path d="M5 12h14" />
+          <path d="m13 6 6 6-6 6" />
         </svg>
       </button>
     </form>

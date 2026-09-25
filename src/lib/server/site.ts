@@ -9,7 +9,7 @@ import type { NativeSlug } from '../content/routes';
 import type { PageRecord } from '../content/types';
 
 const ROOT = process.cwd();
-const NATIVE: NativeSlug[] = ['home', 'docs', 'changelog', 'compare', '404'];
+const NATIVE: NativeSlug[] = ['home', 'docs', 'changelog', 'compare', 'agents', 'faq', '404'];
 const remote = createRemoteLoader();
 
 export const BUNDLED_USER = 'adnfng';
@@ -26,6 +26,7 @@ export function readNativeSource(slug: string) {
 
 function prepareNative(slug: NativeSlug, page: PageRecord) {
   if (slug === 'home') return withSiteTabs(page);
+  if (slug === 'compare') return { ...page, portfolio: { ...page.portfolio, pages: [] } };
   if (page.portfolio.pages.length && slug !== '404') return withHomeTab(rebaseTabs(page, `/${slug}`));
   return page;
 }

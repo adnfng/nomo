@@ -4,7 +4,7 @@ import { matchRoute } from '../content/routes';
 import { canonicalPath, SITE } from '../content/identity';
 import { profileName, summarize } from '../content/summary';
 
-const NATIVE_TITLES: Record<string, string> = { docs: 'Docs', changelog: 'Changelog' };
+const NATIVE_TITLES: Record<string, string> = { docs: 'Docs', changelog: 'Changelog', agents: 'Agents', faq: 'FAQ' };
 export const SITE_DESCRIPTION = 'A free, open-source personal page that lives in your GitHub. Add a human.md to a public .nomo repo and it becomes nomo.md/your-username.';
 
 function tabLabel(result: PageResult) {

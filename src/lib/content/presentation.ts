@@ -31,7 +31,13 @@ export function inheritPortfolio(page: PageRecord, root?: PageRecord): PageRecor
   return presentPage(page, root ?? page);
 }
 
-const SITE_TABS = [{ label: 'Docs', href: '/docs' }, { label: 'Changelog', href: '/changelog' }];
+const SITE_TABS = [
+  { label: 'Docs', href: '/docs' },
+  { label: 'Changelog', href: '/changelog' },
+  { label: 'Why Nomo', href: '/compare' },
+  { label: 'Agents', href: '/agents' },
+  { label: 'FAQ', href: '/faq' },
+];
 
 export function withSiteTabs(page: PageRecord): PageRecord {
   const pages = page.portfolio.pages;

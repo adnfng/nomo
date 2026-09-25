@@ -1,4 +1,4 @@
-===== Overview =====
+===== Why Nomo =====
 **Nomo compared to other personal sites.**
 
 Nomo is a free page at `nomo.md/you`, made from one markdown file in your GitHub. It suits a developer who wants a simple personal site or portfolio they fully own, written by hand or by an agent.
@@ -10,6 +10,12 @@ It's not the right pick if you need your own domain today, a visual editor, a sh
 - (([Carrd](/compare/carrd))) {{design control vs one file}}
 - (([A hand-built site](/compare/hand-built))) {{Astro, Hugo, Jekyll, GitHub Pages}}
 - (([Bento](/compare/bento))), (([Read.cv](/compare/read-cv))) and (([Polywork](/compare/polywork))) {{all shut down}}
+
+
+
+**It can't be taken away**
+
+Bento, Read.cv and Polywork all shut down, and the pages people made there went with them. A Nomo page is a file in your own repo. If Nomo disappeared tomorrow, you'd still have it.
 
 
 
