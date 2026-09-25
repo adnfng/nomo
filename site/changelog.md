@@ -1,31 +1,54 @@
-{{::Unreleased::}}
+{{::2.0.0::}}
 
-- Nomo is now MIT licensed.
-- The setup command now creates your own `.nomo` repo from the template, instead of cloning ours.
-- Pages arrive fully rendered, so they show up faster and search engines and AI assistants can read them.
-- Every page has its own title and description, taken from your `human.md`.
-- A page that doesn't exist now returns a real 404.
-- Nomo now uses Geist and Geist Mono.
-- Links to your page now show a quiet card with your photo, name, a short line about you, and your nomo.md badge.
-- Search engines see who the page belongs to, with links to your GitHub, X and other profiles.
-- Add `.md` to any page to get its source, for example `nomo.md/adnfng.md`.
-- Visiting `nomo.md/<username>` for someone without a page shows a preview built from their GitHub profile, with a bar across the top to make it theirs.
-- Nomo now has a sitemap, `robots.txt`, and an `llms.txt` for AI assistants.
-- A back link to home shows at the top once you've left the home page.
-- The footer no longer covers the end of a page when you scroll to the bottom, and it shows when you last updated.
-- Write your page in plain GitHub markdown: `# Your name` is your home tab and each `##` heading is another tab, so it reads right on GitHub too. Lists with ` · ` line up, with years in their own column. Pages using `=====` tabs work as before.
-- Put `<!-- github:pinned -->` under a heading to list your pinned GitHub repos, kept up to date.
-- A new home page. Type your GitHub username to see your page, or a preview of it.
-- The site now has tabs for Docs, Agents, Compare and Changelog, so the home page stays short.
-- The docs are now Quickstart, Syntax and Recipes, with ready-made pages for developers, designers, students and link-in-bio.
-- The template is now a developer page with Projects and Writing.
-- Agents can draft your first `human.md` from your GitHub profile, and they ask before pushing.
-- Make it yours: sign in with GitHub from your preview and Nomo creates your `.nomo` repo with the preview as your first draft. Then copy a prompt for your agent, or clone and edit.
-- `npx create-nomo` does the same from the terminal, and shows you the draft first.
-- A Nomo skill for coding agents, in `skills/nomo`.
-- Honest comparisons with a GitHub README, Linktree, Carrd and a hand-built site, plus a way off Bento, Read.cv and Polywork, at `/compare`.
-- A badge for your GitHub profile README: `nomo.md/badge.svg?user=you`.
-- Analytics start fresh. No cookies, no stored IPs, and Do Not Track is respected. The old counter stopped at 645 views and 237 visits across 4 profiles.
+**Nomo 2**
+
+Version 2 is a rebuild of Nomo. You write your page in plain GitHub markdown, so it reads the same on GitHub as it does on nomo.md. Getting started takes a minute: anyone can see a preview of their page before writing a line, then make it theirs. Your page is also easier to find and share, for people, search engines and AI assistants. Pages you've already made keep working, with nothing to change.
+
+
+**Writing your page**
+
+- Write in plain GitHub markdown. `# Your name` starts your page and each `##` heading becomes a tab.
+- Lists with ` · ` line up into tidy rows, with years in their own column.
+- Put `<!-- github:pinned -->` under any heading to list your pinned GitHub repos, always up to date.
+- A run of images becomes a gallery, and links to other sites get an arrow on their own.
+- Pages written with `=====` tabs look exactly as they did.
+
+
+**Getting started**
+
+- Visit `nomo.md/your-username` to see a preview of your page, built from your GitHub profile.
+- Press Make it yours on the preview and sign in with GitHub. Nomo creates your `.nomo` repo with the preview as your first draft.
+- Prefer the terminal? `npx create-nomo` does the same and shows you the draft first.
+- Or ask your coding agent. It drafts your first `human.md` from your GitHub profile and asks before pushing. There's a Nomo skill you can install with `gh`, too.
+- The template is a developer page with Projects and Writing, ready to edit. The docs have starting points for designers, students and link-in-bio pages.
+
+
+**Sharing and being found**
+
+- Pages load fully rendered, so they show up quickly and search engines and AI assistants can read them.
+- Every page gets its own title and description from your `human.md`.
+- Links to your page show a clean card with your photo, name, a short line about you and your Nomo badge.
+- Search engines can tell the page is yours and connect it to your GitHub, X and other profiles.
+- Add `.md` to any page to read its source, for example `nomo.md/adnfng.md`.
+- Show off your page with a badge in your GitHub profile README: `nomo.md/badge.svg?user=you`.
+
+
+**Around the site**
+
+- A new home page. Type your GitHub username to jump to your page, or a preview of it.
+- Docs, Agents, Compare and Changelog each have a tab. The docs cover a quickstart, the syntax and recipes.
+- Compare shows how Nomo stacks up against a GitHub README, Linktree, Carrd and a hand-built site, and how to move over from Bento, Read.cv and Polywork.
+- The footer stays at the bottom of the screen without covering your page, and shows when the page was last updated.
+- A back link to home appears once you've left it.
+- Addresses that don't match a page or a GitHub account get a proper not-found page.
+- A sitemap, `robots.txt` and `llms.txt` help search engines and AI assistants find their way around.
+- Set in Geist and Geist Mono.
+
+
+**Privacy and licence**
+
+- Analytics use no cookies and store no IP addresses, and Do Not Track is respected. Counts start fresh with this release.
+- Nomo is MIT licensed.
 
 
 {{::0.2.0::}}
