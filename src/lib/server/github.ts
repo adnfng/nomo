@@ -89,7 +89,8 @@ async function cachedLookup(username: string): Promise<Lookup> {
 export async function lookupGitHub(username: string): Promise<Lookup> {
   try {
     return await cachedLookup(username);
-  } catch {
+  } catch (error) {
+    console.error(`GitHub lookup failed for ${username}:`, error);
     return { status: 'unknown' };
   }
 }
