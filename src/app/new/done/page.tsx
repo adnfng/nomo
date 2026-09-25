@@ -20,7 +20,7 @@ async function Done({ searchParams }: Props) {
 }
 
 export default function DonePage(props: Props) {
-  return <Suspense fallback={<div className="page-wrap" />}>
+  return <Suspense fallback={<main className="app-shell" data-layout="portfolio" />}>
     <Done {...props} />
   </Suspense>;
 }

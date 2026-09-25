@@ -2,6 +2,7 @@ import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 import remarkFrontmatter from "remark-frontmatter";
 import { visit } from "unist-util-visit";
+import { remarkExternalArrows, remarkRows } from "./rows";
 
 function sourceGap(start: number, previous: number | null) {
   return previous === null ? 0 : Math.max(start - previous - 1, 0);
@@ -144,4 +145,14 @@ export const markdownRemarkPlugins = [
   remarkSquareDots,
   remarkLeadingImageBreak,
   remarkSourceSpacing,
+];
+
+export const sectionsRemarkPlugins = [
+  remarkFrontmatter,
+  remarkBreaks,
+  remarkGfm,
+  remarkRows,
+  remarkExternalArrows,
+  remarkSquareDots,
+  remarkLeadingImageBreak,
 ];

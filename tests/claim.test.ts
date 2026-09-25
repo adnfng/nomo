@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import { seal, unseal } from '../src/lib/crypto';
-import { blocks, claimMarkdown, fill, type GitHubProfile } from '../src/lib/content/preview';
+import { blocks, claimMarkdown, expandPinned, fill, type GitHubProfile, withoutPhoto } from '../src/lib/content/preview';
+import { parsePageRecord } from '../src/lib/content/parse';
 import { claimPage } from '../src/lib/server/claim';
 
 const PROFILE: GitHubProfile = {
@@ -44,7 +45,7 @@ describe('make it yours', () => {
     expect(writes[0].body).toMatchObject({ owner: 'alexdev', name: '.nomo', private: false });
     const human = Buffer.from(String(writes[2].body?.content), 'base64').toString();
     expect(human).toBe(claimMarkdown(PROFILE));
-    expect(human.startsWith('![image:88x88](/assets/me.jpg)')).toBe(true);
+    expect(human.startsWith('![Alex Dev](assets/me.jpg)\n\n# Alex Dev')).toBe(true);
     expect(human).not.toContain('doesn’t have a page yet');
     expect(writes[2].body?.sha).toBe('sha-human.md');
   });
@@ -72,6 +73,22 @@ describe('make it yours', () => {
     expect(await unseal('other', token)).toBeNull();
     const forged = `${Buffer.from(JSON.stringify({ user: 'torvalds', nonce: 'n', exp: 1 })).toString('base64url')}.${token.split('.')[1]}`;
     expect(await unseal('s', forged)).toBeNull();
+  });
+
+  test('the first human.md is plain markdown that renders as a sections page', () => {
+    const human = claimMarkdown(PROFILE);
+    const page = parsePageRecord(human, '/alexdev/', '/alexdev');
+    expect(page.layout).toBe('sections');
+    expect(page.name).toBe('Alex Dev');
+    expect(page.portfolio.avatar).toBe('/assets/me.jpg');
+    expect(human).toContain('<!-- github:pinned -->');
+    expect(withoutPhoto(human).startsWith('# Alex Dev')).toBe(true);
+  });
+
+  test('the pinned directive becomes rows of repos', () => {
+    const repos = [{ name: 'nomo', description: 'Pages from GitHub', url: 'https://github.com/a/nomo', stars: 12 }, { name: 'x', description: null, url: 'https://github.com/a/x' }];
+    expect(expandPinned('## Projects\n\n<!-- github:pinned -->\n', repos)).toBe('## Projects\n\n- [nomo](https://github.com/a/nomo) · Pages from GitHub · ★ 12\n- [x](https://github.com/a/x)\n');
+    expect(expandPinned('<!-- github:pinned -->', [])).toBe('');
   });
 
   test('page copy is split into named blocks and filled in', async () => {

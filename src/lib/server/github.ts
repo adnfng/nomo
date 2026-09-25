@@ -23,15 +23,15 @@ async function json<T>(path: string, fallback: T): Promise<T> {
   }
 }
 
-const PINNED = 'query($login:String!){user(login:$login){pinnedItems(first:4,types:REPOSITORY){nodes{... on Repository{name description url}}}}}';
+const PINNED = 'query($login:String!){user(login:$login){pinnedItems(first:4,types:REPOSITORY){nodes{... on Repository{name description url stargazerCount}}}}}';
 
 async function pinned(login: string): Promise<GitHubProfile['repos'] | null> {
   if (!process.env.GITHUB_TOKEN) return null;
   try {
     const response = await api('/graphql', { method: 'POST', body: JSON.stringify({ query: PINNED, variables: { login } }) });
     const body = await response.json() as { data?: { user?: { pinnedItems?: { nodes?: GitHubProfile['repos'] } } } };
-    const nodes = body.data?.user?.pinnedItems?.nodes;
-    return nodes?.length ? nodes : null;
+    const nodes = body.data?.user?.pinnedItems?.nodes as Array<GitHubProfile['repos'][number] & { stargazerCount?: number }> | undefined;
+    return nodes?.length ? nodes.map(({ stargazerCount, ...repo }) => ({ ...repo, stars: stargazerCount })) : null;
   } catch {
     return null;
   }
@@ -43,7 +43,7 @@ async function popular(login: string): Promise<GitHubProfile['repos']> {
     .filter(repo => !repo.fork && !repo.archived && repo.name !== '.nomo' && String(repo.name).toLowerCase() !== login.toLowerCase())
     .sort((a, b) => Number(b.stargazers_count) - Number(a.stargazers_count))
     .slice(0, 4)
-    .map(repo => ({ name: String(repo.name), description: (repo.description as string | null) ?? null, url: String(repo.html_url) }));
+    .map(repo => ({ name: String(repo.name), description: (repo.description as string | null) ?? null, url: String(repo.html_url), stars: Number(repo.stargazers_count) || 0 }));
 }
 
 async function hasNomoRepo(login: string) {
@@ -91,5 +91,24 @@ export async function lookupGitHub(username: string): Promise<Lookup> {
     return await cachedLookup(username);
   } catch {
     return { status: 'unknown' };
+  }
+}
+
+async function cachedUpdated(username: string): Promise<string | null> {
+  'use cache';
+  cacheTag(`p:${username.toLowerCase()}`);
+  cacheLife('hours');
+  const response = await api(`/repos/${encodeURIComponent(username)}/.nomo/commits?per_page=1`);
+  if (response.status === 404 || response.status === 409) return null;
+  if (!response.ok) throw new Error(`GitHub answered ${response.status}`);
+  const [commit] = await response.json() as Array<{ commit?: { committer?: { date?: string } } }>;
+  return commit?.commit?.committer?.date ?? null;
+}
+
+export async function lastUpdated(username: string) {
+  try {
+    return await cachedUpdated(username) ?? undefined;
+  } catch {
+    return undefined;
   }
 }

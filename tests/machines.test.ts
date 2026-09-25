@@ -67,17 +67,18 @@ describe('markdown for agents', () => {
 describe('empty page preview', () => {
   test('is a real human.md built from the GitHub profile', () => {
     const markdown = previewMarkdown(ALEX);
-    expect(markdown.startsWith('![image:88x88](https://avatars.githubusercontent.com/u/1?v=4)\n\n===== Alex Dev =====')).toBe(true);
-    expect(markdown).toContain('{{@alexdev doesn’t have a page yet. This is a preview.}} (([Make it yours](/new?user=alexdev)))');
+    expect(markdown.startsWith('![Alex Dev](https://avatars.githubusercontent.com/u/1?v=4)\n\n# Alex Dev')).toBe(true);
+    expect(markdown).not.toContain('{{');
     expect(markdown).toContain('acme · Berlin');
     expect(markdown).toContain('[alex.dev](https://alex.dev) · [GitHub](https://github.com/alexdev) · [X](https://x.com/alexdev) · [Bluesky](https://bsky.app/profile/alex.dev)');
-    expect(markdown).toContain('- [fastlib](https://github.com/alexdev/fastlib) {{A fast library}}');
+    expect(markdown).toContain('## Projects\n\n- [fastlib](https://github.com/alexdev/fastlib) · A fast library');
   });
 
   test('user text cannot inject Nomo or Markdown syntax', () => {
     expect(escapeMarkdown('I build *fast* things :: [x](y)')).toBe('I build \\*fast\\* things \\:\\: \\[x\\]\\(y\\)');
     const page = parsePageRecord(previewMarkdown(ALEX));
-    expect(page.sections?.map(section => section.label)).toEqual(['Alex Dev']);
+    expect(page.layout).toBe('sections');
+    expect(page.name).toBe('Alex Dev');
     expect(page.portfolio.avatar).toBe('https://avatars.githubusercontent.com/u/1?v=4');
   });
 

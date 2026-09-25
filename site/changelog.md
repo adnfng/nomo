@@ -6,11 +6,13 @@
 - Every page has its own title and description, taken from your `human.md`.
 - A page that doesn't exist now returns a real 404.
 - Nomo now uses Geist and Geist Mono.
-- Links to your page now show a quiet card with your photo, name, a short line about you, and your nomo.md link.
+- Links to your page now show a quiet card with your photo, name, a short line about you, and your nomo.md badge.
 - Search engines see who the page belongs to, with links to your GitHub, X and other profiles.
 - Add `.md` to any page to get its source, for example `nomo.md/adnfng.md`.
-- Visiting `nomo.md/<username>` for someone without a page shows a preview built from their GitHub profile, with a link to make it theirs.
+- Visiting `nomo.md/<username>` for someone without a page shows a preview built from their GitHub profile, with a bar across the top to make it theirs.
 - Nomo now has a sitemap, `robots.txt`, and an `llms.txt` for AI assistants.
+- The footer stays below your page instead of floating over it, and shows when you last updated.
+- Put `<!-- github:pinned -->` under a heading to list your pinned GitHub repos, kept up to date.
 - A new home page. Type your GitHub username to see your page, or a preview of it.
 - The docs are now Quickstart, Syntax and Recipes, with ready-made pages for developers, designers, students and link-in-bio.
 - The template is now a developer page with Projects and Writing.

@@ -3,7 +3,6 @@ import { GeistMono } from 'geist/font/mono';
 import { GeistSans } from 'geist/font/sans';
 import { Suspense, type ReactNode } from 'react';
 import { Beacon } from '@/components/Beacon';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import { SITE_DESCRIPTION as DESCRIPTION } from '@/lib/server/metadata';
 import { THEME_SCRIPT } from '@/lib/theme/script';
 import '@/styles/index.css';
@@ -28,10 +27,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
     </head>
     <body>
-      <main className="app-shell" data-layout="portfolio">
-        {children}
-        <ThemeToggle />
-      </main>
+      {children}
       <Suspense fallback={null}><Beacon /></Suspense>
     </body>
   </html>;

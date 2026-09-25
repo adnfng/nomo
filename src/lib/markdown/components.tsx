@@ -309,10 +309,22 @@ function MarkdownMedia({
   );
 }
 
+type HastChild = { type: string; tagName?: string; value?: string; properties?: Record<string, unknown> };
+
+function imageRun(node: { children?: HastChild[] } | undefined, assetBase?: string) {
+  const children = node?.children ?? [];
+  const images = children.filter(child => child.type === 'element' && child.tagName === 'img');
+  const onlyImages = children.every(child => (child.type === 'element' && (child.tagName === 'img' || child.tagName === 'br')) || (child.type === 'text' && !child.value?.trim()));
+  if (images.length < 2 || !onlyImages) return null;
+  const items = images.map(image => String(image.properties?.src ?? '')).filter(Boolean).map(src => resolveAssetUrl(src, assetBase) ?? src);
+  return items.length > 1 ? { items } : null;
+}
+
 export function createMarkdownComponents(
   galleries: GalleryMap,
   assetBase?: string,
   profileRoot?: string,
+  sections = false,
 ): Components {
   return {
     a: ({ href, ...props }) => (
@@ -334,7 +346,7 @@ export function createMarkdownComponents(
       if (!profileRoot && children === "[[username]]") {
         return <div className="markdown-block" style={buildBlockStyle(node?.properties, style)}><UsernameField /></div>;
       }
-      const gallery = extractGalleryItems(children, galleries);
+      const gallery = extractGalleryItems(children, galleries) ?? (sections ? imageRun(node as { children?: HastChild[] }, assetBase) : null);
       if (gallery) {
         return (
           <div

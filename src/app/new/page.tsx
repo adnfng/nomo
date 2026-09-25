@@ -27,7 +27,7 @@ async function Claim({ searchParams }: Props) {
 }
 
 export default function NewPage(props: Props) {
-  return <Suspense fallback={<div className="page-wrap" />}>
+  return <Suspense fallback={<main className="app-shell" data-layout="portfolio" />}>
     <Claim {...props} />
   </Suspense>;
 }

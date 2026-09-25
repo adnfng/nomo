@@ -2,14 +2,16 @@ import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { JsonLd } from '@/components/JsonLd';
 import { PageView } from '@/components/PageView';
+import { PreviewBar } from '@/components/PreviewBar';
 import { HOME_JSON_LD, profileJsonLd } from '@/lib/content/identity';
 import { parsePageRecord } from '@/lib/content/parse';
-import { brokenRepoMarkdown, previewMarkdown } from '@/lib/content/preview';
+import { brokenRepoMarkdown, expandPinned, PINNED_DIRECTIVE, previewMarkdown } from '@/lib/content/preview';
 import { presentPage, selectSection } from '@/lib/content/presentation';
 import type { PageResult } from '@/lib/content/resolver';
+import type { PageRecord } from '@/lib/content/types';
 import { matchRoute } from '@/lib/content/routes';
 import { profileName } from '@/lib/content/summary';
-import { lookupGitHub } from '@/lib/server/github';
+import { lastUpdated, lookupGitHub } from '@/lib/server/github';
 import { pageMetadata } from '@/lib/server/metadata';
 import { getPage, pathFromSegments } from '@/lib/server/page-data';
 import { BUNDLED_USER, nativePages } from '@/lib/server/site';
@@ -39,7 +41,20 @@ async function MissingProfile({ username, pathname, fallback }: { username: stri
   if (lookup.status !== 'found') return <PageView page={fallback.page} pathname={pathname} native />;
   const markdown = lookup.hasRepo ? brokenRepoMarkdown(lookup.profile.login) : previewMarkdown(lookup.profile);
   const record = parsePageRecord(markdown, undefined, `/${username}`);
-  return <PageView page={presentPage(selectSection(record) ?? record)} pathname={pathname} native={lookup.hasRepo} heading={lookup.profile.name || lookup.profile.login} />;
+  const banner = lookup.hasRepo ? undefined : <PreviewBar login={lookup.profile.login} />;
+  return <PageView page={presentPage(selectSection(record) ?? record)} pathname={pathname} native={lookup.hasRepo} heading={lookup.profile.name || lookup.profile.login} banner={banner} />;
+}
+
+async function withPinned(page: PageRecord | null, username: string) {
+  if (!page?.content.includes(PINNED_DIRECTIVE)) return page;
+  const lookup = await lookupGitHub(username);
+  return { ...page, content: expandPinned(page.content, lookup.status === 'found' ? lookup.profile.repos : []) };
+}
+
+async function profileExtras(route: Route, result: PageResult) {
+  if (!('username' in route) || result.status !== 'ready') return { page: result.page, updated: undefined };
+  const [page, updated] = await Promise.all([withPinned(result.page, route.username), lastUpdated(route.username)]);
+  return { page, updated };
 }
 
 function heading(route: Route, result: PageResult) {
@@ -60,14 +75,15 @@ async function Content({ params }: Props) {
   const route = matchRoute(pathname);
   if (result.status === 'missing' && route.type === 'profile-root') return <MissingProfile username={route.username} pathname={pathname} fallback={result} />;
   const data = structuredData(route, result);
+  const { page, updated } = await profileExtras(route, result);
   return <>
     {data && <JsonLd data={data} />}
-    <PageView page={result.page} pathname={pathname} native={!('username' in route) || result.status !== 'ready'} heading={heading(route, result)} />
+    <PageView page={page} pathname={pathname} native={!('username' in route) || result.status !== 'ready'} heading={heading(route, result)} updated={updated} />
   </>;
 }
 
 export default function Page({ params }: Props) {
-  return <Suspense fallback={<div className="page-wrap" />}>
+  return <Suspense fallback={<main className="app-shell" data-layout="portfolio" />}>
     <Content params={params} />
   </Suspense>;
 }

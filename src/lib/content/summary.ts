@@ -30,5 +30,5 @@ export function summarize(markdown: string, max = 160) {
 }
 
 export function profileName(page: PageRecord, fallback: string) {
-  return page.sections?.[0]?.label ?? fallback;
+  return page.name ?? page.sections?.[0]?.label ?? fallback;
 }

@@ -8,7 +8,7 @@ export type GitHubProfile = {
   location: string | null;
   twitter: string | null;
   socials: { provider: string; url: string }[];
-  repos: { name: string; description: string | null; url: string }[];
+  repos: { name: string; description: string | null; url: string; stars?: number }[];
 };
 
 const PROVIDERS: Record<string, string> = {
@@ -47,25 +47,41 @@ export function claimHref(login: string) {
   return `/new?user=${encodeURIComponent(login)}`;
 }
 
-export function previewMarkdown(profile: GitHubProfile) {
+export const PINNED_DIRECTIVE = '<!-- github:pinned -->';
+
+export function repoRows(repos: GitHubProfile['repos']) {
+  return repos.slice(0, 6).map(repo => {
+    const notes = [repo.description ? escapeMarkdown(repo.description) : '', repo.stars ? `★ ${repo.stars}` : ''].filter(Boolean).join(' · ');
+    return `- [${escapeMarkdown(repo.name)}](${encodeURI(repo.url)})${notes ? ` · ${notes}` : ''}`;
+  }).join('\n');
+}
+
+function header(profile: GitHubProfile, avatar: string) {
   const name = escapeMarkdown(profile.name || profile.login);
   const about = [profile.company, profile.location].filter(Boolean).map(value => escapeMarkdown(String(value).replace(/^@/, ''))).join(' · ');
-  const repos = profile.repos.slice(0, 4).map(repo => `- [${escapeMarkdown(repo.name)}](${encodeURI(repo.url)})${repo.description ? ` {{${escapeMarkdown(repo.description)}}}` : ''}`);
+  return [`![${name}](${avatar})`, `# ${name}`, profile.bio ? escapeMarkdown(profile.bio) : '', about, links(profile)];
+}
+
+export function previewMarkdown(profile: GitHubProfile) {
   return [
-    `![image:88x88](${profile.avatarUrl})`,
-    `===== ${name} =====`,
-    `{{@${profile.login} doesn’t have a page yet. This is a preview.}} (([Make it yours](${claimHref(profile.login)})))`,
-    profile.bio ? escapeMarkdown(profile.bio) : '',
-    about,
-    links(profile),
-    repos.length ? `#### Projects\n\n${repos.join('\n')}` : '',
+    ...header(profile, profile.avatarUrl),
+    profile.repos.length ? `## Projects\n\n${repoRows(profile.repos.slice(0, 4))}` : '',
   ].filter(Boolean).join('\n\n');
 }
 
 export function claimMarkdown(profile: GitHubProfile) {
-  return `${previewMarkdown(profile)
-    .replace(/^!\[image:88x88\]\([^)]*\)/, '![image:88x88](/assets/me.jpg)')
-    .replace(/\n\n\{\{@[^\n]*doesn’t have a page yet[^\n]*/, '')}\n`;
+  return `${[
+    ...header(profile, 'assets/me.jpg'),
+    `## Projects\n\n${PINNED_DIRECTIVE}`,
+  ].filter(Boolean).join('\n\n')}\n`;
+}
+
+export function withoutPhoto(markdown: string) {
+  return markdown.replace(/^!\[[^\]]*\]\([^)]*\)\n\n/, '');
+}
+
+export function expandPinned(markdown: string, repos: GitHubProfile['repos']) {
+  return markdown.replace(new RegExp(`^[ \\t]*${PINNED_DIRECTIVE}[ \\t]*$`, 'm'), repos.length ? repoRows(repos) : '');
 }
 
 export function blocks(source: string) {
@@ -83,8 +99,8 @@ export function fill(markdown: string, values: Record<string, string>) {
 
 export function brokenRepoMarkdown(login: string) {
   return [
-    `{{@${login} has a \`.nomo\` repo, but there’s no \`human.md\` in it yet.}}`,
-    `Add a \`human.md\` file at the top of [github.com/${login}/.nomo](https://github.com/${login}/.nomo) on the \`main\` branch. This page shows up within a minute.`,
-    '(([How to write it](/docs)))',
+    `# @${login}`,
+    `There’s a \`.nomo\` repo, but no \`human.md\` in it yet. Add a \`human.md\` at the top of [github.com/${login}/.nomo](https://github.com/${login}/.nomo) on the \`main\` branch, and this page shows up within a minute.`,
+    '[How to write it](/docs)',
   ].join('\n\n');
 }

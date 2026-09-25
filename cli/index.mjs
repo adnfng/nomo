@@ -104,7 +104,7 @@ async function main() {
 
   if (markdown) {
     const photo = await saveAvatar(login, folder);
-    writeFileSync(join(folder, 'human.md'), photo ? markdown : markdown.replace(/^!\[image:88x88\]\([^)]*\)\n\n/, ''));
+    writeFileSync(join(folder, 'human.md'), photo ? markdown : markdown.replace(/^!\[[^\]]*\]\([^)]*\)\n\n/, ''));
     run('git', ['add', '-A'], { cwd: folder });
     run('git', ['commit', '--quiet', '-m', 'Start my page from my GitHub profile'], { cwd: folder });
     run('git', ['push', '--quiet'], { cwd: folder });

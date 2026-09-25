@@ -23,7 +23,7 @@ function Message({ children }: { children: string }) {
 }
 
 function Login({ error }: { error?: string }) {
-  return <div className="page-wrap">
+  return <main className="app-shell" data-layout="portfolio"><div className="page-wrap">
     <div className="page-content">
       <article className="markdown">
         <p><strong>Nomo analytics</strong></p>
@@ -34,7 +34,7 @@ function Login({ error }: { error?: string }) {
         {error && ERRORS[error] ? <p className="markdown-muted" role="alert">{ERRORS[error]}</p> : null}
       </article>
     </div>
-  </div>;
+  </div></main>;
 }
 
 async function isSignedIn() {
@@ -55,7 +55,7 @@ async function Dashboard({ searchParams }: Props) {
 }
 
 export default function AnalyticsPage(props: Props) {
-  return <Suspense fallback={<div className="page-wrap" />}>
+  return <Suspense fallback={<main className="app-shell" data-layout="portfolio" />}>
     <Dashboard {...props} />
   </Suspense>;
 }

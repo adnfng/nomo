@@ -9,6 +9,7 @@ import type { PageRecord, PageSection } from './types';
 export function parsePageRecord(raw: string, assetBase?: string, profileRoot?: string): PageRecord {
   const { body, metadata } = splitFrontmatter(raw);
   const { intro: source, sections } = extractSections(body);
+  if (!sections.length && isSectionsPage(source)) return parseSectionsPage(source, assetBase, profileRoot);
   const balls = extractLeadingBalls(source);
   const leading = extractLeadingImage(balls.content);
   const { intro, tabs } = attachHomeTab(leading.content, sections);
@@ -24,6 +25,40 @@ export function parsePageRecord(raw: string, assetBase?: string, profileRoot?: s
       avatarHeight: balls.balls ? undefined : leading.avatarHeight,
       balls: balls.balls,
       pages: sectionPages(tabs),
+    },
+  };
+}
+
+const LEADING_NAME = /^(?:\s*\n)*#[ \t]+(.+?)[ \t]*#*[ \t]*(?:\n|$)/;
+
+function rootAssets(markdown: string) {
+  return markdown.replace(/(\]\(\s*)(?:\.\/)?assets\//g, '$1/assets/');
+}
+
+export function isSectionsPage(source: string) {
+  const balls = extractLeadingBalls(source);
+  const leading = extractLeadingImage(rootAssets(balls.content));
+  return LEADING_NAME.test(leading.content);
+}
+
+function parseSectionsPage(source: string, assetBase?: string, profileRoot?: string): PageRecord {
+  const balls = extractLeadingBalls(source);
+  const leading = extractLeadingImage(rootAssets(balls.content));
+  const match = leading.content.match(LEADING_NAME);
+  const content = match ? leading.content.slice(match[0].length).replace(/^\s+/, '') : leading.content;
+  return {
+    content,
+    galleries: {},
+    layout: 'sections',
+    name: match?.[1].trim(),
+    assetBase,
+    profileRoot,
+    portfolio: {
+      avatar: balls.balls ? undefined : leading.avatar,
+      avatarWidth: balls.balls ? undefined : leading.avatarWidth,
+      avatarHeight: balls.balls ? undefined : leading.avatarHeight,
+      balls: balls.balls,
+      pages: [],
     },
   };
 }

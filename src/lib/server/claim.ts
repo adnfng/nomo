@@ -1,4 +1,4 @@
-import { claimMarkdown, type GitHubProfile } from '../content/preview';
+import { claimMarkdown, withoutPhoto, type GitHubProfile } from '../content/preview';
 
 export const TEMPLATE = { owner: 'adnfng', repo: '.nomo' };
 export const CLAIM_COOKIE = 'nomo_claim';
@@ -46,7 +46,7 @@ async function writeDraft(api: ReturnType<typeof client>, login: string, profile
   const photo = await avatar(fetcher, profile.avatarUrl);
   if (photo) await putFile(api, login, 'assets/me.jpg', photo, 'Use my GitHub photo', await fileSha(api, login, 'assets/me.jpg'));
   const markdown = claimMarkdown(profile);
-  await putFile(api, login, 'human.md', Buffer.from(photo ? markdown : markdown.replace(/^!\[image:88x88\]\([^)]*\)\n\n/, '')), 'Start my page from my GitHub profile', sha);
+  await putFile(api, login, 'human.md', Buffer.from(photo ? markdown : withoutPhoto(markdown)), 'Start my page from my GitHub profile', sha);
 }
 
 async function signedInAs(api: ReturnType<typeof client>) {

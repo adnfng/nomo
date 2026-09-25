@@ -36,8 +36,12 @@ export type PortfolioConfig = {
   pages: Array<{ label: string; href: string }>;
 };
 
+export type PageLayout = 'classic' | 'sections';
+
 export type PageRecord = {
   portfolio: PortfolioConfig;
+  layout?: PageLayout;
+  name?: string;
   intro?: string;
   sections?: PageSection[];
   assetBase?: string;

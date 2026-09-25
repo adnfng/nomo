@@ -29,3 +29,13 @@ Nomo renders a public `.nomo/human.md` from GitHub at `nomo.md/<username>`. This
 
 - Add a user-facing line under `Unreleased` in `site/changelog.md`. Write what the user gets, in plain words.
 - Keep `human.md` compatible. Pages that render today must render the same way. The tests in `tests/fixtures` are the contract.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
