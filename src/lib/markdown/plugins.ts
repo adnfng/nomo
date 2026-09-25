@@ -2,7 +2,7 @@ import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 import remarkFrontmatter from "remark-frontmatter";
 import { visit } from "unist-util-visit";
-import { remarkExternalArrows, remarkRows } from "./rows";
+import { remarkExternalArrows, remarkRows, remarkStars } from "./rows";
 
 function sourceGap(start: number, previous: number | null) {
   return previous === null ? 0 : Math.max(start - previous - 1, 0);
@@ -35,6 +35,17 @@ function remarkSourceSpacing() {
 
       previousEndLine = child.position?.end?.line ?? child.position.start.line;
     }
+  };
+}
+
+function remarkParagraphSpacing() {
+  return (tree: { children?: Array<{ type: string; position?: { start?: { line?: number }; end?: { line?: number } }; data?: { hProperties?: Record<string, string> } }> }) => {
+    const children = tree.children ?? [];
+    children.forEach((child, index) => {
+      const previous = children[index - 1];
+      if (child.type !== 'paragraph' || previous?.type !== 'paragraph') return;
+      setLineGap(child, sourceGap(child.position?.start?.line ?? 0, previous.position?.end?.line ?? 0));
+    });
   };
 }
 
@@ -152,7 +163,9 @@ export const sectionsRemarkPlugins = [
   remarkBreaks,
   remarkGfm,
   remarkRows,
+  remarkStars,
   remarkExternalArrows,
   remarkSquareDots,
   remarkLeadingImageBreak,
+  remarkParagraphSpacing,
 ];

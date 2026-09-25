@@ -1,8 +1,8 @@
 {{::Unreleased::}}
 
-- Pinned repos show stars as short text, like `1.2k stars`, instead of a star symbol and the full number.
+- Pinned repos show a small star icon and a short count, like `1.2k`, instead of a large star symbol and the full number.
 - Tabs on a preview page now have the person's name as the page title, not "Not found".
-- Pages in plain markdown keep the space between paragraphs, as the docs describe.
+- Pages in plain markdown space paragraphs like classic pages, and an extra blank line adds more space.
 
 {{::2.0.0::}}
 

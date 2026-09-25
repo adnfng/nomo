@@ -12,6 +12,7 @@ Stranger Club, Champion, Lululemon, Under Armour.
 
 you can find me on [x](https://x.com/adnfng) or as a last resort [email](mailto:aidan@nomo.md).
 
+
 [IG](https://instagram.com/adnfng) · [Github](https://github.com/adnfng)
 
 ## Projects

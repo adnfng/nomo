@@ -52,7 +52,7 @@ export const PINNED_DIRECTIVE = '<!-- github:pinned -->';
 const COMPACT = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 });
 
 export function starCount(stars: number) {
-  return `${COMPACT.format(stars).toLowerCase()}\u00a0${stars === 1 ? 'star' : 'stars'}`;
+  return `★\u00a0${COMPACT.format(stars).toLowerCase()}`;
 }
 
 export function repoRows(repos: GitHubProfile['repos']) {

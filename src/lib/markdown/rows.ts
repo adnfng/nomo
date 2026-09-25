@@ -76,6 +76,30 @@ export function remarkRows() {
   };
 }
 
+const STAR_PATH = 'M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.8l-5.2 2.8 1-5.8-4.3-4.1 5.9-.8z';
+
+function starIcon(): Node {
+  return {
+    type: 'star',
+    data: {
+      hName: 'svg',
+      hProperties: { className: ['markdown-star'], role: 'img', ariaLabel: 'stars', viewBox: '0 0 24 24', width: 12, height: 12, fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinejoin: 'round' },
+      hChildren: [{ type: 'element', tagName: 'path', properties: { d: STAR_PATH }, children: [] }],
+    } as Node['data'] & { hChildren: unknown[] },
+  };
+}
+
+export function remarkStars() {
+  return (tree: unknown) => {
+    visit(tree as Node, 'text', (node: Node, index, parent: Node | undefined) => {
+      if (!parent?.children || index === undefined || !node.value?.includes('★')) return;
+      const parts = node.value.split('★').flatMap((text, i) => [...(i ? [starIcon()] : []), ...(text ? [{ type: 'text', value: text }] : [])]);
+      parent.children.splice(index, 1, ...parts);
+      return index + parts.length;
+    });
+  };
+}
+
 export function remarkExternalArrows() {
   return (tree: unknown) => {
     visit(tree as Node, 'link', (link: Node) => {
