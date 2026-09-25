@@ -1,4 +1,29 @@
-import type { ThemeName } from '../lib/theme/pagePresentation';
+"use client";
+
+import { useSyncExternalStore } from 'react';
+import { THEME_KEY as KEY } from '@/lib/theme/script';
+
+type ThemeName = 'light' | 'dark';
+
+const EVENT = 'nomo-theme';
+
+function current(): ThemeName {
+  return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+}
+
+function subscribe(onChange: () => void) {
+  window.addEventListener(EVENT, onChange);
+  return () => window.removeEventListener(EVENT, onChange);
+}
+
+function apply(name: ThemeName) {
+  const root = document.documentElement;
+  if (name === 'dark') root.dataset.theme = 'dark';
+  else delete root.dataset.theme;
+  root.style.colorScheme = name;
+  try { localStorage.setItem(KEY, name); } catch { /* private mode */ }
+  window.dispatchEvent(new Event(EVENT));
+}
 
 function MoonIcon() {
   return (
@@ -17,13 +42,14 @@ function SunIcon() {
   );
 }
 
-export function ThemeToggle({ theme, onToggle }: { theme: ThemeName; onToggle: () => void }) {
+export function ThemeToggle() {
+  const theme = useSyncExternalStore(subscribe, current, () => 'light' as ThemeName);
   const dark = theme === 'dark';
   return (
     <button
       type="button"
       className="theme-toggle"
-      onClick={onToggle}
+      onClick={() => apply(dark ? 'light' : 'dark')}
       aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
     >
       {dark ? <SunIcon /> : <MoonIcon />}

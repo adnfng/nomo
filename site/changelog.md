@@ -2,6 +2,10 @@
 
 - Nomo is now MIT licensed.
 - The setup command now creates your own `.nomo` repo from the template, instead of cloning ours.
+- Pages arrive fully rendered, so they show up faster and search engines and AI assistants can read them.
+- Every page has its own title and description, taken from your `human.md`.
+- A page that doesn't exist now returns a real 404.
+- Nomo now uses Geist and Geist Mono.
 
 
 {{::0.2.0::}}

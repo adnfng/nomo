@@ -1,5 +1,5 @@
 import { type CSSProperties } from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 
 const NOMO_GITHUB = "https://github.com/adnfng/nomo";
 const VEIL_LAYERS = 8;
@@ -56,7 +56,7 @@ export function Footer({ native }: { native: boolean }) {
   ) : (
     <footer className="app-footer">
       <span className="markdown-muted">create your page with </span>
-      <Link className="markdown-link markdown-link--arrow" to="/">
+      <Link className="markdown-link markdown-link--arrow" href="/">
         <span className="markdown-link__label">nomo</span>
         <LinkArrow />
       </Link>

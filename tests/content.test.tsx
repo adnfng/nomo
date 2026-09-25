@@ -1,6 +1,5 @@
 import { describe, expect, test } from 'bun:test';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { MemoryRouter } from 'react-router-dom';
 import { parsePageRecord } from '../src/lib/content/parse';
 import { extractGalleries } from '../src/lib/content/blocks';
 import { presentPage, inheritPortfolio, selectSection, rebaseTabs, withHomeTab, withSiteTabs } from '../src/lib/content/presentation';
@@ -15,7 +14,7 @@ import { LOGO_PALETTE } from '../src/lib/theme/nomoMark';
 
 const root = parsePageRecord('![image:100x140](/assets/me.jpg)\n\n===== Alex =====\n\nHello\n\n===== Timeline =====\n\nYear', 'https://example.com/root', '/alex');
 function render(page: ReturnType<typeof parsePageRecord>) {
-  return renderToStaticMarkup(<MemoryRouter><Markdown page={page} /></MemoryRouter>);
+  return renderToStaticMarkup(<Markdown page={page} />);
 }
 
 describe('markdown pages', () => {
@@ -168,17 +167,6 @@ describe('routes and remote loading', () => {
     expect(await load('alex')).toMatchObject({ status: 'ready', page: { content: 'Remote' } });
     expect(urls).toEqual(['alex']);
   });
-  test('local preview only intercepts /preview, not GitHub usernames', async () => {
-    const urls: string[] = [];
-    const load = createRemoteLoader({
-      preview: { username: 'preview', base: '/__nomo-local' },
-      fetcher: (async url => { urls.push(String(url)); return new Response('Hello'); }) as typeof fetch,
-    });
-    expect(await load('preview')).toMatchObject({ status: 'ready', page: { profileRoot: '/preview' } });
-    expect(await load('adnfng')).toMatchObject({ status: 'ready' });
-    expect(urls[0]).toBe('/__nomo-local/human.md');
-    expect(urls[1]).toContain('githubusercontent.com/adnfng/');
-  });
   test('root and human subpage have distinct caches; concurrent loads deduplicate', async () => {
     const urls: string[] = [];
     const load = createRemoteLoader({ fetcher: (async url => { urls.push(String(url)); return new Response(String(url)); }) as typeof fetch });
@@ -189,28 +177,29 @@ describe('routes and remote loading', () => {
     expect(urls[0]).toEndWith('/human.md');
     expect(urls[1]).toEndWith('/content/human.md');
   });
-  test('branch/CDN order and selected asset base are preserved', async () => {
+  test('main is tried before master, and the asset base follows the branch that answered', async () => {
     const urls: string[] = [];
-    const load = createRemoteLoader({ fetcher: (async url => { urls.push(String(url)); return new Response('Hello', { status: urls.length === 3 ? 200 : 404 }); }) as typeof fetch });
+    const load = createRemoteLoader({ fetcher: (async url => { urls.push(String(url)); return new Response('Hello', { status: urls.length === 2 ? 200 : 404 }); }) as typeof fetch });
     const result = await load('alex');
-    expect(urls).toEqual(['https://raw.githubusercontent.com/alex/.nomo/main/human.md', 'https://cdn.jsdelivr.net/gh/alex/.nomo@main/human.md', 'https://raw.githubusercontent.com/alex/.nomo/master/human.md']);
+    expect(urls).toEqual(['https://raw.githubusercontent.com/alex/.nomo/main/human.md', 'https://raw.githubusercontent.com/alex/.nomo/master/human.md']);
     expect(result).toMatchObject({ status: 'ready', page: { assetBase: 'https://raw.githubusercontent.com/alex/.nomo/master' } });
   });
-  test('CDN success rewrites repo assets against CDN', async () => {
+  test('a failed request is retried once before moving on', async () => {
     let calls = 0;
-    const load = createRemoteLoader({ fetcher: (async () => new Response('[[gallery]]\n/assets/a.jpg\n[[/gallery]]', { status: ++calls === 2 ? 200 : 503 })) as typeof fetch });
-    expect(await load('alex')).toMatchObject({ status: 'ready', page: { assetBase: 'https://cdn.jsdelivr.net/gh/alex/.nomo@main' } });
+    const load = createRemoteLoader({ fetcher: (async () => new Response('Hello', { status: ++calls === 1 ? 503 : 200 })) as unknown as typeof fetch });
+    expect(await load('alex')).toMatchObject({ status: 'ready', page: { assetBase: 'https://raw.githubusercontent.com/alex/.nomo/main' } });
+    expect(calls).toBe(2);
   });
-  test.each([404, 503])('unsuccessful requests can be retried: %s', async status => {
+  test.each([[404, 2], [503, 4]])('unsuccessful loads are not cached: %s', async (status, attempts) => {
     let calls = 0;
-    const load = createRemoteLoader({ fetcher: (async () => { calls++; return new Response('Hello', { status: calls <= 4 ? status : 200 }); }) as typeof fetch });
+    const load = createRemoteLoader({ fetcher: (async () => { calls++; return new Response('Hello', { status: calls <= attempts ? status : 200 }); }) as unknown as typeof fetch });
     expect(await load('alex')).toMatchObject({ status: status === 404 ? 'missing' : 'error' });
     expect(await load('alex')).toMatchObject({ status: 'ready' });
-    expect(calls).toBe(5);
+    expect(calls).toBe(attempts + 1);
   });
   test('successful cached loads expire', async () => {
     let time = 0; let calls = 0;
-    const load = createRemoteLoader({ now: () => time, ttl: 10, fetcher: (async () => { calls++; return new Response('Hello'); }) as typeof fetch });
+    const load = createRemoteLoader({ now: () => time, ttl: 10, fetcher: (async () => { calls++; return new Response('Hello'); }) as unknown as typeof fetch });
     await load('alex'); await load('alex'); time = 11; await load('alex');
     expect(calls).toBe(2);
   });

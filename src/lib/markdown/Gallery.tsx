@@ -1,3 +1,5 @@
+"use client";
+
 import { type PointerEvent, type ReactNode, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 

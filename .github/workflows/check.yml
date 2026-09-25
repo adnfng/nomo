@@ -19,7 +19,7 @@ jobs:
         if: github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'no-changelog')
         run: |
           changed=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
-          if echo "$changed" | grep -qE '^(src|pages)/' && ! echo "$changed" | grep -qx 'pages/changelog.md'; then
-            echo "Add a line to pages/changelog.md, or label the PR no-changelog."
+          if echo "$changed" | grep -qE '^(src|site)/' && ! echo "$changed" | grep -qx 'site/changelog.md'; then
+            echo "Add a line to site/changelog.md, or label the PR no-changelog."
             exit 1
           fi

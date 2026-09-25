@@ -6,5 +6,5 @@ export default defineConfig([
   globalIgnores(['.next', 'next-env.d.ts', 'node_modules', 'cli/node_modules']),
   ...nextVitals,
   ...tseslint.configs.recommended,
-  { files: ['src/**/*.{ts,tsx}'], rules: { complexity: ['error', 10] } },
+  { files: ['src/**/*.{ts,tsx}'], rules: { complexity: ['error', 10], '@next/next/no-img-element': 'off' } },
 ]);

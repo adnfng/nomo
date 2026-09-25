@@ -1,5 +1,7 @@
+"use client";
+
 import { type CSSProperties, useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { BALL_PALETTE } from '../lib/theme/nomoMark';
 
 function pick(seed: number, index: number, min: number, max: number, salt: number) {
@@ -50,7 +52,7 @@ export function PoolBalls({ letters, home }: { letters: string; home: string }) 
   }, [failed, letters]);
 
   return <div className="profile-avatar-wrap">
-    <Link aria-label="Home" className="profile-balls" to={home}>
+    <Link aria-label="Home" className="profile-balls" href={home}>
       {failed ? <CssBalls letters={letters} /> : <div ref={host} className="pool-balls-3d" />}
     </Link>
   </div>;

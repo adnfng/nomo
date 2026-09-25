@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 import {
   type AnchorHTMLAttributes,
   Children,
@@ -9,7 +8,7 @@ import {
   isValidElement,
   type ReactNode,
 } from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import type { Components } from "react-markdown";
 
 import { isExternalHref, resolveAssetUrl, resolveContentHref } from "../content/paths";
@@ -52,17 +51,18 @@ function buildBlockStyle(
 }
 
 function withBlockGap<T extends HTMLElement>(tagName: BlockTag) {
-  return ({
+  return function BlockWithGap({
     node,
     style,
     ...props
   }: HTMLAttributes<T> & {
     node?: { properties?: Record<string, unknown> };
-  }) =>
-    createElement(tagName, {
+  }) {
+    return createElement(tagName, {
       ...props,
       style: buildBlockStyle(node?.properties, style),
     });
+  };
 }
 
 function extractGalleryItems(
@@ -188,7 +188,7 @@ function MarkdownLink({
       <Link
         {...cleanNodeProp(props)}
         className={mergeClassName(className, "markdown-link")}
-        to={resolvedHref}
+        href={resolvedHref}
       >
         {content}
       </Link>
@@ -325,7 +325,9 @@ export function createMarkdownComponents(
     h5: withBlockGap("h5"),
     h6: withBlockGap("h6"),
     hr: withBlockGap("hr"),
-    img: (props) => <MarkdownMedia {...props} assetBase={assetBase} />,
+    img: ({ src, ...props }) => (
+      <MarkdownMedia {...props} assetBase={assetBase} src={typeof src === "string" ? src : undefined} />
+    ),
     ol: withBlockGap("ol"),
     p: ({ children, node, style, ...props }) => {
       const gallery = extractGalleryItems(children, galleries);
@@ -344,11 +346,11 @@ export function createMarkdownComponents(
         );
       }
 
-      return createElement("p", {
-        ...props,
-        style: buildBlockStyle(node?.properties, style),
+      return createElement(
+        "p",
+        { ...props, style: buildBlockStyle(node?.properties, style) },
         children,
-      });
+      );
     },
     pre: MarkdownPre,
     table: withBlockGap("table"),

@@ -13,7 +13,7 @@ Nomo renders a public `.nomo/human.md` from GitHub at `nomo.md/<username>`. This
 - `src/app/` holds routes. `[[...path]]` renders home, docs, changelog and every profile.
 - `src/lib/content/` parses `human.md`: tabs, header, galleries. It has no DOM or Next imports, so it's tested directly.
 - `src/lib/markdown/` renders markdown and the custom syntax.
-- `pages/*.md` are the site's own pages. They are markdown, rendered by the same engine users get.
+- `site/*.md` are the site's own pages. They are markdown, rendered by the same engine users get.
 - `src/proxy.ts` sets 404 status and logs crawler visits.
 
 ## Design rules
@@ -22,10 +22,10 @@ Nomo renders a public `.nomo/human.md` from GitHub at `nomo.md/<username>`. This
 - Colors come from the CSS variables in `src/styles/index.css`. No new colors, gradients or shadows.
 - Hierarchy comes from muted and small text, not boxes or big headings.
 - Motion is 140–220ms with `cubic-bezier(0.23, 1, 0.32, 1)`, and is off under reduced motion.
-- New native pages are markdown in `pages/`. New UI should look like part of the text.
+- New native pages are markdown in `site/`. New UI should look like part of the text.
 - Check light and dark themes, and widths of 540px and under.
 
 ## Changes
 
-- Add a user-facing line under `Unreleased` in `pages/changelog.md`. Write what the user gets, in plain words.
+- Add a user-facing line under `Unreleased` in `site/changelog.md`. Write what the user gets, in plain words.
 - Keep `human.md` compatible. Pages that render today must render the same way. The tests in `tests/fixtures` are the contract.

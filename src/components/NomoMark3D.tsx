@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef, useState } from 'react';
 import { NOMO_MARK_PATH, sessionLogoColor } from '../lib/theme/nomoMark';
 
