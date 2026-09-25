@@ -1,0 +1,25 @@
+name: check
+
+on:
+  pull_request:
+  push:
+    branches: [main, v2]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun run check
+      - name: changelog
+        if: github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'no-changelog')
+        run: |
+          changed=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+          if echo "$changed" | grep -qE '^(src|pages)/' && ! echo "$changed" | grep -qx 'pages/changelog.md'; then
+            echo "Add a line to pages/changelog.md, or label the PR no-changelog."
+            exit 1
+          fi
