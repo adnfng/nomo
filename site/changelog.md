@@ -6,7 +6,7 @@
 - Every page has its own title and description, taken from your `human.md`.
 - A page that doesn't exist now returns a real 404.
 - Nomo now uses Geist and Geist Mono.
-- Links to your page now show a card with your photo, name and first line.
+- Links to your page now show a quiet card with your photo, name, a short line about you, and your nomo.md link.
 - Search engines see who the page belongs to, with links to your GitHub, X and other profiles.
 - Add `.md` to any page to get its source, for example `nomo.md/adnfng.md`.
 - Visiting `nomo.md/<username>` for someone without a page shows a preview built from their GitHub profile, with a link to make it theirs.

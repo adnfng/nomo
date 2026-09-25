@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { ImageResponse } from 'next/og';
 import { absolute, profileImage } from '@/lib/content/identity';
-import { summarize, plainText } from '@/lib/content/summary';
+import { plainText, profileName, summarize } from '@/lib/content/summary';
 import type { PageRecord } from '@/lib/content/types';
 import { getPage } from '@/lib/server/page-data';
 import { BALL_PALETTE, NOMO_MARK_PATH } from '@/lib/theme/nomoMark';
@@ -27,24 +27,18 @@ async function inlineImage(url: string | undefined) {
 
 function Avatar({ page, image }: { page: PageRecord; image?: string }) {
   if (page.portfolio.balls) {
-    return <div style={{ display: 'flex', gap: 14 }}>
-      {Array.from(page.portfolio.balls).slice(0, 5).map((letter, index) => <div key={index} style={{ width: 104, height: 104, borderRadius: 52, background: BALL_PALETTE[index % BALL_PALETTE.length], display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ width: 50, height: 50, borderRadius: 25, background: '#F5F5F5', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, fontWeight: 500, color: '#0D0D0D' }}>{letter.toLowerCase()}</div>
+    return <div style={{ display: 'flex', gap: 8 }}>
+      {Array.from(page.portfolio.balls).slice(0, 5).map((letter, index) => <div key={index} style={{ width: 72, height: 72, borderRadius: 36, background: BALL_PALETTE[index % BALL_PALETTE.length], display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ width: 34, height: 34, borderRadius: 17, background: '#F5F5F5', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, fontWeight: 500, color: '#0D0D0D' }}>{letter.toLowerCase()}</div>
       </div>)}
     </div>;
   }
-  if (image) {
-    const width = page.portfolio.avatarWidth ?? 100;
-    const height = page.portfolio.avatarHeight ?? 140;
-    const scale = 136 / Math.max(width, height);
-    // eslint-disable-next-line jsx-a11y/alt-text -- next/og renders to an image; there is no accessibility tree
-    return <img src={image} width={Math.round(width * scale)} height={Math.round(height * scale)} style={{ borderRadius: 14, objectFit: 'cover' }} />;
-  }
-  return <svg width="96" height="100" viewBox="0 0 275 288"><path d={NOMO_MARK_PATH} fill={TEXT} /></svg>;
-}
-
-function tabs(page: PageRecord) {
-  return (page.sections ?? []).slice(0, 4).map(section => section.label);
+  if (!image) return null;
+  const width = page.portfolio.avatarWidth ?? 100;
+  const height = page.portfolio.avatarHeight ?? 140;
+  const scale = 112 / Math.max(width, height);
+  // eslint-disable-next-line jsx-a11y/alt-text -- next/og renders to an image; there is no accessibility tree
+  return <img src={image} width={Math.round(width * scale)} height={Math.round(height * scale)} style={{ borderRadius: 12, objectFit: 'cover' }} />;
 }
 
 export async function GET(request: Request, { params }: { params: Promise<{ user: string }> }) {
@@ -54,17 +48,20 @@ export async function GET(request: Request, { params }: { params: Promise<{ user
   const page = result.page;
   const [regular, medium] = await fonts;
   const image = await inlineImage(absolute(profileImage(page) ?? '', new URL(request.url).origin));
-  const labels = tabs(page);
-  const text = summarize(page.content, 190) || plainText(page.content).slice(0, 190);
+  const name = profileName(page, user);
+  const text = summarize(page.content, 110) || plainText(page.content).slice(0, 110);
   return new ImageResponse(
-    <div style={{ width: 1200, height: 630, display: 'flex', flexDirection: 'column', background: '#ffffff', padding: '72px 96px', fontFamily: 'Geist', color: TEXT, letterSpacing: '-0.4px' }}>
-      <Avatar page={page} image={image} />
-      <div style={{ display: 'flex', gap: 30, marginTop: 32, fontSize: 36, fontWeight: 500 }}>
-        {(labels.length ? labels : [user]).map((label, index) => <span key={label} style={{ color: index ? MUTED : TEXT }}>{label}</span>)}
-      </div>
-      <div style={{ display: 'flex', marginTop: 32, fontSize: 34, lineHeight: 1.4, maxWidth: 940, fontWeight: 400 }}>{text}</div>
+    <div style={{ width: 1200, height: 630, display: 'flex', flexDirection: 'column', background: '#ffffff', padding: 72, fontFamily: 'Geist', color: TEXT, letterSpacing: '-0.3px' }}>
+      <svg width="34" height="36" viewBox="0 0 275 288"><path d={NOMO_MARK_PATH} fill={TEXT} /></svg>
       <div style={{ display: 'flex', flexGrow: 1 }} />
-      <div style={{ display: 'flex', fontSize: 28, color: MUTED }}>nomo.md/{user.toLowerCase()}</div>
+      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 48 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', maxWidth: 760 }}>
+          <Avatar page={page} image={image} />
+          <div style={{ display: 'flex', marginTop: 28, fontSize: 44, fontWeight: 500, lineHeight: 1.15 }}>{name}</div>
+          {text ? <div style={{ display: 'flex', marginTop: 12, fontSize: 28, lineHeight: 1.4, color: MUTED }}>{text}</div> : null}
+        </div>
+        <div style={{ display: 'flex', fontSize: 26, color: MUTED, whiteSpace: 'nowrap' }}>nomo.md/{user.toLowerCase()}</div>
+      </div>
     </div>,
     {
       width: 1200,

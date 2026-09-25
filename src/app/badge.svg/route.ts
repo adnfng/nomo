@@ -7,14 +7,14 @@ const MARK = [
   ['M48.0047 3.96875C53.9843 13.8287 58.2258 33.9488 39.0071 33.9688C30.2377 18.6587 35.0078 14.4688 48.0047 3.96875Z', '#F99BDF'],
 ];
 
-const THEMES = { dark: { background: '#161616', text: '#ededed' }, light: { background: '#f4f4f4', text: '#171717' } };
+const THEMES = { dark: { background: '#161616', text: '#ededed', line: '#161616' }, light: { background: '#ffffff', text: '#171717', line: '#e5e5e5' } };
 
 function badge(label: string, theme: keyof typeof THEMES = 'dark') {
   const colors = THEMES[theme];
   const textWidth = Math.round(label.length * 6.3);
   const width = 27 + textWidth + 8;
   const mark = MARK.map(([d, fill]) => `<path d="${d}" fill="${fill}"/>`).join('');
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="20" viewBox="0 0 ${width} 20" role="img" aria-label="${label}"><title>${label}</title><rect width="${width}" height="20" rx="4" fill="${colors.background}"/><g transform="translate(8 3.7) scale(0.08)">${mark}</g><text x="27" y="14" fill="${colors.text}" font-family="Geist, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" letter-spacing="-0.1" textLength="${textWidth}" lengthAdjust="spacingAndGlyphs">${label}</text></svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="20" viewBox="0 0 ${width} 20" role="img" aria-label="${label}"><title>${label}</title><rect x="0.5" y="0.5" width="${width - 1}" height="19" rx="3.5" fill="${colors.background}" stroke="${colors.line}"/><g transform="translate(8 3.7) scale(0.08)">${mark}</g><text x="27" y="14" fill="${colors.text}" font-family="Geist, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" letter-spacing="-0.1" textLength="${textWidth}" lengthAdjust="spacingAndGlyphs">${label}</text></svg>`;
 }
 
 export function GET(request: Request) {
