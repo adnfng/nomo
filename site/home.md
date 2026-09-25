@@ -71,7 +71,7 @@ Does it look right on GitHub too?
 
 
 Can I use my own domain?
-{{Not yet. Your page lives at `nomo.md/you`, and `nomo.fyi/you` works for sites that block `.md` links.}}
+{{Not directly yet. You can forward your domain to `nomo.md/you` from your registrar, and `nomo.fyi/you` works for sites that block `.md` links.}}
 
 
 Can the repo be private?
