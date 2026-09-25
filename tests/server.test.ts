@@ -23,12 +23,22 @@ describe('profile status', () => {
     expect(calls).toEqual(['https://raw.githubusercontent.com/Alex/.nomo/main/human.md', 'https://raw.githubusercontent.com/Alex/.nomo/master/human.md']);
   });
 
-  test('404 on both branches is missing, and is cached', async () => {
-    const { calls, fetcher } = statuses([404, 404]);
+  test('no .nomo and no GitHub account is missing, and is cached', async () => {
+    const { calls, fetcher } = statuses([404, 404, 404]);
     const status = createProfileStatus({ fetcher });
     expect(await status('alex')).toBe('missing');
     expect(await status('ALEX')).toBe('missing');
-    expect(calls).toHaveLength(2);
+    expect(calls).toEqual(['https://raw.githubusercontent.com/alex/.nomo/main/human.md', 'https://raw.githubusercontent.com/alex/.nomo/master/human.md', 'https://api.github.com/users/alex']);
+  });
+
+  test('no .nomo but a GitHub account is a preview, not a 404', async () => {
+    const { fetcher } = statuses([404, 404, 200]);
+    expect(await createProfileStatus({ fetcher })('alex')).toBe('preview');
+  });
+
+  test('an unreachable GitHub account check is unknown, not missing', async () => {
+    const { fetcher } = statuses([404, 404, 403]);
+    expect(await createProfileStatus({ fetcher })('alex')).toBe('unknown');
   });
 
   test('GitHub errors are unknown and are not cached', async () => {
