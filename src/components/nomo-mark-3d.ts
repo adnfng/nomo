@@ -145,12 +145,11 @@ function applySpin(object: THREE.Object3D, angularVelocity: THREE.Vector3, axis:
   return true;
 }
 
-export function mountNomoMark3D(host: HTMLElement, color: string, model: ArrayBuffer, onReady?: () => void, onError?: () => void) {
+export function mountNomoMark3D(host: HTMLElement, color: string, model: ArrayBuffer, onReady?: () => void) {
   let renderer: THREE.WebGLRenderer;
   try {
     renderer = createRenderer(host);
   } catch {
-    onError?.();
     return () => {};
   }
   const scene = new THREE.Scene();
@@ -220,7 +219,7 @@ export function mountNomoMark3D(host: HTMLElement, color: string, model: ArrayBu
     frameLogo(gltf.scene, host, renderer, camera);
     renderer.render(scene, camera);
     onReady?.();
-  }, () => onError?.());
+  }, () => {});
 
   host.addEventListener('pointerdown', onDown);
   host.addEventListener('pointermove', onMove);
