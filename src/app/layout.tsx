@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { GeistMono } from 'geist/font/mono';
 import { GeistSans } from 'geist/font/sans';
 import { Suspense, type ReactNode } from 'react';
+import { BackBar } from '@/components/BackBar';
 import { Beacon } from '@/components/Beacon';
 import { SITE_DESCRIPTION as DESCRIPTION } from '@/lib/server/metadata';
 import { THEME_SCRIPT } from '@/lib/theme/script';
@@ -27,6 +28,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
     </head>
     <body>
+      <BackBar />
       {children}
       <Suspense fallback={null}><Beacon /></Suspense>
     </body>

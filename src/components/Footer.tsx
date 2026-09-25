@@ -1,27 +1,6 @@
-import { type CSSProperties } from "react";
 import Link from "next/link";
 import { ThemeToggle } from "./ThemeToggle";
-
-const VEIL_LAYERS = 8;
-
-function veilStyle(index: number): CSSProperties {
-  const segment = 1 / (VEIL_LAYERS + 1);
-  const stops = [0, 1, 2, 3].map((step, pos) => {
-    const alpha = pos === 1 || pos === 2 ? 1 : 0;
-    return `rgba(255,255,255,${alpha}) ${(index + step) * segment * 100}%`;
-  });
-  const mask = `linear-gradient(180deg, ${stops.join(", ")})`;
-  const blur = `blur(${index * 2.5}px)`;
-  return { maskImage: mask, WebkitMaskImage: mask, backdropFilter: blur, WebkitBackdropFilter: blur };
-}
-
-function FooterVeil() {
-  return (
-    <div aria-hidden className="footer-veil">
-      {Array.from({ length: VEIL_LAYERS }, (_, index) => <span key={index} style={veilStyle(index)} />)}
-    </div>
-  );
-}
+import { Veil } from "./Veil";
 
 function LinkArrow() {
   return (
@@ -54,7 +33,7 @@ function Credit({ native }: { native: boolean }) {
 
 export function Footer({ native = false, updated }: { native?: boolean; updated?: string }) {
   return <>
-    <FooterVeil />
+    <Veil edge="bottom" />
     <footer className="app-footer">
       <Credit native={native} />
       <span className="app-footer__end">

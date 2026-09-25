@@ -33,10 +33,10 @@ export function inheritPortfolio(page: PageRecord, root?: PageRecord): PageRecor
 
 const SITE_TABS = [
   { label: 'Docs', href: '/docs' },
-  { label: 'Changelog', href: '/changelog' },
-  { label: 'Why Nomo', href: '/compare' },
   { label: 'Agents', href: '/agents' },
+  { label: 'Compare', href: '/compare' },
   { label: 'FAQ', href: '/faq' },
+  { label: 'Changelog', href: '/changelog' },
 ];
 
 export function withSiteTabs(page: PageRecord): PageRecord {

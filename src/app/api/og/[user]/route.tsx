@@ -63,15 +63,15 @@ export async function GET(request: Request, { params }: { params: Promise<{ user
   const text = summarize(page.content, 110) || plainText(page.content).slice(0, 110);
   return new ImageResponse(
     <div style={{ width: 1200, height: 630, display: 'flex', flexDirection: 'column', background: '#ffffff', padding: 32, fontFamily: 'Geist', color: TEXT }}>
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 48 }}>
-        <Avatar page={page} image={image} />
+      <div style={{ display: 'flex' }}>
         <Badge label={`nomo.md/${user.toLowerCase()}`} />
       </div>
       <div style={{ display: 'flex', flexGrow: 1 }} />
-      <div style={{ display: 'flex' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, maxWidth: 1000 }}>
-          <div style={{ display: 'flex', fontSize: 32, fontWeight: 600, lineHeight: 1.25, letterSpacing: '-0.43px' }}>{name}</div>
-          {text ? <div style={{ display: 'flex', fontSize: 24, fontWeight: 400, lineHeight: 1.4, letterSpacing: '-0.43px', color: MUTED }}>{text}</div> : null}
+      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 28 }}>
+        <Avatar page={page} image={image} />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1, maxWidth: 900 }}>
+          <div style={{ display: 'flex', fontSize: 32, fontWeight: 600, lineHeight: 1.25, letterSpacing: '-0.43px', textWrap: 'balance' }}>{name}</div>
+          {text ? <div style={{ fontSize: 24, fontWeight: 400, lineHeight: 1.4, letterSpacing: '-0.43px', color: MUTED, textWrap: 'balance' }}>{text}</div> : null}
         </div>
       </div>
     </div>,

@@ -1,4 +1,4 @@
-===== Why Nomo =====
+===== Compare =====
 **Nomo compared to other personal sites.**
 
 Nomo is a free page at `nomo.md/you`, made from one markdown file in your GitHub. It suits a developer who wants a simple personal site or portfolio they fully own, written by hand or by an agent.

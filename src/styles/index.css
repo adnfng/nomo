@@ -153,16 +153,46 @@ a {
   pointer-events: none;
 }
 .app-footer > * { pointer-events: auto; }
-.footer-veil {
+.veil {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 0;
-  height: 112px;
+  height: 56px;
   pointer-events: none;
   z-index: 1;
 }
-.footer-veil span { position: absolute; inset: 0; }
+.veil--bottom { bottom: 0; }
+.veil--top { top: 0; }
+.veil span { position: absolute; inset: 0; }
+.back-bar {
+  position: fixed;
+  top: 16px;
+  left: 24px;
+  z-index: 2;
+  font-size: 13px;
+  line-height: var(--page-line-height);
+  letter-spacing: var(--page-letter-spacing);
+  animation: back-bar-in 180ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.back-bar__button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  letter-spacing: inherit;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 160ms var(--ease);
+}
+.back-bar__button:hover { color: var(--text); }
+.back-bar__button svg { transition: transform 160ms var(--ease); }
+.back-bar__button:hover svg { transform: translateX(-2px); }
+body:has(.preview-bar) .veil--top { display: none; }
+body:has(.preview-bar) .back-bar { top: 52px; }
+@keyframes back-bar-in { from { opacity: 0; } }
 
 .page-header {
   margin-bottom: 1.25rem;
@@ -644,7 +674,7 @@ a {
 .app-shell[data-layout="portfolio"] {
   position: relative;
   min-height: 100svh;
-  padding: 72px 24px 160px;
+  padding: 72px 24px 120px;
   align-items: center;
   justify-content: safe center;
 }
@@ -839,8 +869,10 @@ dialog.markdown-lightbox { width: 100vw; height: 100dvh; max-width: none; max-he
 dialog.markdown-lightbox::backdrop { background: transparent; }
 .lightbox-close { position: absolute; top: 16px; right: 16px; width: 44px; height: 44px; border: 0; border-radius: 0; background: transparent; color: var(--text); font: 28px/1 sans-serif; cursor: pointer; }
 @media (max-width: 540px) {
-  .app-shell[data-layout="portfolio"] { padding: 72px 28px 160px; }
+  .app-shell[data-layout="portfolio"] { padding: 72px 28px 120px; }
   .app-footer { left: 28px; right: 28px; }
+  .back-bar { left: 28px; }
+  body:has(.preview-bar) .back-bar { top: 70px; }
   .profile-avatar-wrap { margin-bottom: 12px; }
 }
 @media (hover: none) {
@@ -857,6 +889,8 @@ dialog.markdown-lightbox::backdrop { background: transparent; }
   .profile-avatar-link { transition: none; }
   .pool-ball { transition: none; }
   .theme-toggle:active { transform: none; }
+  .back-bar { animation: none; }
+  .back-bar__button svg { transition: none; }
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }
 
@@ -865,7 +899,8 @@ dialog.markdown-lightbox::backdrop { background: transparent; }
 .app-footer__end { display: inline-flex; align-items: center; gap: 12px; }
 .app-footer .theme-toggle { margin-right: -6px; }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .footer-veil { background: linear-gradient(to bottom, transparent, var(--background) 70%); }
+  .veil--bottom { background: linear-gradient(to bottom, transparent, var(--background) 70%); }
+  .veil--top { background: linear-gradient(to top, transparent, var(--background) 70%); }
 }
 .profile-avatar--round { border-radius: 50%; }
 .profile-name { margin: 0 0 4px; font-size: var(--page-font-size); line-height: var(--page-line-height); font-weight: 500; letter-spacing: var(--page-letter-spacing); }

@@ -24,11 +24,13 @@ My Nomo page lives in github.com/yourusername/.nomo. Clone it and help me update
 
 **Install the skill**
 
+For Claude Code:
+
 ```bash
-npx skills add adnfng/nomo
+mkdir -p ~/.claude/skills/nomo && gh api repos/adnfng/nomo/contents/skills/nomo/SKILL.md -H "Accept: application/vnd.github.raw" > ~/.claude/skills/nomo/SKILL.md
 ```
 
-{{::Your agent then knows Nomo whenever you ask for a personal site, portfolio or link in bio.::}}
+{{::For Cursor use `~/.cursor/skills`, for Codex `~/.codex/skills`. Your agent then knows Nomo whenever you ask for a personal site, portfolio or link in bio.::}}
 
 
 
