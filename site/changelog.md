@@ -6,6 +6,11 @@
 - Every page has its own title and description, taken from your `human.md`.
 - A page that doesn't exist now returns a real 404.
 - Nomo now uses Geist and Geist Mono.
+- Links to your page now show a card with your photo, name and first line.
+- Search engines see who the page belongs to, with links to your GitHub, X and other profiles.
+- Add `.md` to any page to get its source, for example `nomo.md/adnfng.md`.
+- Visiting `nomo.md/<username>` for someone without a page shows a preview built from their GitHub profile, with a link to make it theirs.
+- Nomo now has a sitemap, `robots.txt`, and an `llms.txt` for AI assistants.
 - Analytics start fresh. No cookies, no stored IPs, and Do Not Track is respected. The old counter stopped at 645 views and 237 visits across 4 profiles.
 
 

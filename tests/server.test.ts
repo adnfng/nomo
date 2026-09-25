@@ -48,7 +48,7 @@ describe('profile status', () => {
 
 describe('page summaries and titles', () => {
   test('the first real paragraph becomes plain text, skipping short headings', () => {
-    expect(summarize('# Hi\n\n**Designer** at [Acme](https://acme.co) · London\n\n((More)) text here')).toBe('Designer at Acme · London More text here');
+    expect(summarize('# Hi\n\n**Designer** at [Acme](https://acme.co) · London\n\n((More)) text here')).toBe('Designer at Acme · London. More text here');
   });
 
   test('long summaries end on a word', () => {

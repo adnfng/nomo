@@ -4,10 +4,9 @@ import { GeistSans } from 'geist/font/sans';
 import { Suspense, type ReactNode } from 'react';
 import { Beacon } from '@/components/Beacon';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { SITE_DESCRIPTION as DESCRIPTION } from '@/lib/server/metadata';
 import { THEME_SCRIPT } from '@/lib/theme/script';
 import '@/styles/index.css';
-
-const DESCRIPTION = 'The open-source profile page that starts with a human.md.';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://nomo.md'),

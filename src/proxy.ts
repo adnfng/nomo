@@ -3,12 +3,12 @@ import { classifyBot } from './lib/bots';
 import { matchRoute } from './lib/content/routes';
 import { database } from './lib/analytics/db';
 import { describeHit, recordHit } from './lib/analytics/record';
+import { FILE, markdownTarget } from './lib/server/negotiate';
 import { createProfileStatus } from './lib/server/profile-status';
 
 const always = ['adnfng', ...(process.env.NODE_ENV !== 'production' && process.env.NOMO_PREVIEW_DIR ? ['preview'] : [])];
 const profileStatus = createProfileStatus({ always });
 
-const FILE = /\.(?:svg|png|jpe?g|webp|gif|ico|glb|mp4|webm|woff2?|md|txt|xml|json)$/i;
 const READABLE = /\.(?:md|txt|xml)$/i;
 
 function isDocument(request: NextRequest) {
@@ -33,13 +33,15 @@ async function logCrawler(request: NextRequest, status: number) {
 export async function proxy(request: NextRequest, event: NextFetchEvent) {
   const { pathname } = request.nextUrl;
   if (!isDocument(request)) return NextResponse.next();
-  const missing = await isMissing(pathname);
+  const markdown = markdownTarget(pathname, request.headers.get('accept'));
+  const missing = !markdown && await isMissing(pathname);
   if (classifyBot(request.headers.get('user-agent')) && (!FILE.test(pathname) || READABLE.test(pathname))) {
     event.waitUntil(logCrawler(request, missing ? 404 : 200).catch(error => console.error('Crawler log failed:', error)));
   }
+  if (markdown) return NextResponse.rewrite(new URL(markdown, request.url));
   return missing ? NextResponse.rewrite(request.nextUrl, { status: 404 }) : NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/((?!api/|_next/|analytics).*)'],
+  matcher: ['/((?!api/|_next/|analytics(?:$|/)).*)'],
 };

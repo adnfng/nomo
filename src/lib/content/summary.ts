@@ -24,8 +24,9 @@ function clip(text: string, max: number) {
 export function summarize(markdown: string, max = 160) {
   const paragraphs = markdown.split(/\n\s*\n/).map(plainText).filter(text => text.length > 1);
   const first = paragraphs.find(text => text.length >= 24) ?? paragraphs[0] ?? '';
-  const withNext = first.length < 70 && paragraphs[paragraphs.indexOf(first) + 1] ? `${first} ${paragraphs[paragraphs.indexOf(first) + 1]}` : first;
-  return clip(withNext, max);
+  const next = paragraphs[paragraphs.indexOf(first) + 1];
+  const joined = first.length < 70 && next ? `${/[.!?…:]$/.test(first) ? first : `${first}.`} ${next}` : first;
+  return clip(joined, max);
 }
 
 export function profileName(page: PageRecord, fallback: string) {
