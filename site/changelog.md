@@ -6,6 +6,7 @@
 - Every page has its own title and description, taken from your `human.md`.
 - A page that doesn't exist now returns a real 404.
 - Nomo now uses Geist and Geist Mono.
+- Analytics start fresh. No cookies, no stored IPs, and Do Not Track is respected. The old counter stopped at 645 views and 237 visits across 4 profiles.
 
 
 {{::0.2.0::}}

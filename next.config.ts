@@ -8,6 +8,7 @@ const config: NextConfig = {
   htmlLimitedBots: HTML_LIMITED_BOTS,
   outputFileTracingIncludes: { '/**': ['./site/**/*.md', './adnfng/**/*.md'] },
   poweredByHeader: false,
+  serverExternalPackages: ['@electric-sql/pglite'],
 };
 
 export default config;

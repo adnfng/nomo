@@ -548,10 +548,31 @@ a {
   width: 100%;
 }
 
-.markdown.analytics ul + ul,
-.markdown.analytics ul > li:nth-child(4) {
-  margin-top: calc(2 * var(--page-line-height));
+.markdown.analytics ul > li > .markdown-muted {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
+
+.analytics-login {
+  display: flex;
+  gap: 8px;
+  margin-top: var(--page-paragraph);
+}
+
+.analytics-login__input {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  color: var(--text);
+  background: var(--code);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  outline: none;
+}
+
+.analytics-login__input:focus-visible { border-color: var(--muted); }
+.analytics-login__input::placeholder { color: var(--muted); }
 
 .markdown.analytics ul > li,
 .markdown.analytics ul > li > p {

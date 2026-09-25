@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from 'next';
 import { GeistMono } from 'geist/font/mono';
 import { GeistSans } from 'geist/font/sans';
-import type { ReactNode } from 'react';
+import { Suspense, type ReactNode } from 'react';
+import { Beacon } from '@/components/Beacon';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { THEME_SCRIPT } from '@/lib/theme/script';
 import '@/styles/index.css';
@@ -32,6 +33,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {children}
         <ThemeToggle />
       </main>
+      <Suspense fallback={null}><Beacon /></Suspense>
     </body>
   </html>;
 }
