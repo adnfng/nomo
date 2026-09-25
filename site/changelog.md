@@ -1,3 +1,9 @@
+{{::Unreleased::}}
+
+- Pinned repos show stars as short text, like `1.2k stars`, instead of a star symbol and the full number.
+- Tabs on a preview page now have the person's name as the page title, not "Not found".
+- Pages in plain markdown keep the space between paragraphs, as the docs describe.
+
 {{::2.0.0::}}
 
 Nomo has been rewritten from the ground up. How pages are written, how they load and how you get started are all new. Your page is now plain GitHub markdown, so the same file reads well on GitHub and on nomo.md. Anyone can see a preview of their page before writing a line, and pages load faster and are easier to find and share. Every page that worked before still works, with nothing to change.

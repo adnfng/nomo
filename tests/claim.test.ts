@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { seal, unseal } from '../src/lib/crypto';
-import { blocks, claimMarkdown, expandPinned, fill, type GitHubProfile, withoutPhoto } from '../src/lib/content/preview';
+import { blocks, claimMarkdown, expandPinned, fill, type GitHubProfile, starCount, withoutPhoto } from '../src/lib/content/preview';
 import { parsePageRecord } from '../src/lib/content/parse';
 import { claimPage } from '../src/lib/server/claim';
 
@@ -87,8 +87,12 @@ describe('make it yours', () => {
 
   test('the pinned directive becomes rows of repos', () => {
     const repos = [{ name: 'nomo', description: 'Pages from GitHub', url: 'https://github.com/a/nomo', stars: 12 }, { name: 'x', description: null, url: 'https://github.com/a/x' }];
-    expect(expandPinned('## Projects\n\n<!-- github:pinned -->\n', repos)).toBe('## Projects\n\n- [nomo](https://github.com/a/nomo) · Pages from GitHub · ★ 12\n- [x](https://github.com/a/x)\n');
+    expect(expandPinned('## Projects\n\n<!-- github:pinned -->\n', repos)).toBe('## Projects\n\n- [nomo](https://github.com/a/nomo) · Pages from GitHub · 12\u00a0stars\n- [x](https://github.com/a/x)\n');
     expect(expandPinned('<!-- github:pinned -->', [])).toBe('');
+  });
+
+  test('star counts are short words', () => {
+    expect([1, 12, 999, 1_234, 250_141, 1_500_000].map(starCount)).toEqual(['1 star', '12 stars', '999 stars', '1.2k stars', '250.1k stars', '1.5m stars'].map(text => text.replace(' ', '\u00a0')));
   });
 
   test('page copy is split into named blocks and filled in', async () => {

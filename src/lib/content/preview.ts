@@ -49,9 +49,15 @@ export function claimHref(login: string) {
 
 export const PINNED_DIRECTIVE = '<!-- github:pinned -->';
 
+const COMPACT = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 });
+
+export function starCount(stars: number) {
+  return `${COMPACT.format(stars).toLowerCase()}\u00a0${stars === 1 ? 'star' : 'stars'}`;
+}
+
 export function repoRows(repos: GitHubProfile['repos']) {
   return repos.slice(0, 6).map(repo => {
-    const notes = [repo.description ? escapeMarkdown(repo.description) : '', repo.stars ? `★ ${repo.stars}` : ''].filter(Boolean).join(' · ');
+    const notes = [repo.description ? escapeMarkdown(repo.description) : '', repo.stars ? starCount(repo.stars) : ''].filter(Boolean).join(' · ');
     return `- [${escapeMarkdown(repo.name)}](${encodeURI(repo.url)})${notes ? ` · ${notes}` : ''}`;
   }).join('\n');
 }

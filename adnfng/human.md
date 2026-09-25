@@ -1,7 +1,8 @@
 [[●ADN●]]
 
-===== Aidan Fang =====
-Design at (([Trinita Studio](https://trinitastudio.com)))
+# Aidan Fang
+
+Design at [Trinita Studio](https://trinitastudio.com)
 
 I'm based in Shanghai and enjoy merging
 works across fashion, tech and cultures outside design.
@@ -11,46 +12,28 @@ Stranger Club, Champion, Lululemon, Under Armour.
 
 you can find me on [x](https://x.com/adnfng) or as a last resort [email](mailto:aidan@nomo.md).
 
+[IG](https://instagram.com/adnfng) · [Github](https://github.com/adnfng)
 
-{{[IG](https://instagram.com/adnfng)}} · {{[Github](https://github.com/adnfng)}}
+## Projects
 
-===== Timeline =====
-{{::Currently::}}
+<!-- github:pinned -->
 
-Design at [Trinita Studio](https://trinitastudio.com).
+## Timeline
 
+### Currently
 
+- Design · [Trinita Studio](https://trinitastudio.com)
 
-{{::Previously::}}
+### Previously
 
-Founding Designer at {{[ChatCut](https://chatcut.io)}}
+- Founding Designer · [ChatCut](https://chatcut.io)
+- Creative Director · Pureness Means Wealth
+- Creative Director · Savvy Market
 
-Creative Director at {{Pureness Means Wealth}}
+## Gallery
 
-Creative Director at {{Savvy Market}}
+![](assets/glob.webm)
+![](assets/imsending.webm)
+![](assets/imsendingfinal.webm)
 
-
-
-{{::Side Quests::}}
-
-{{[mono](https://github.com/adnfng/mono)}} -- a borderless macOS browser for screen recordings 
-
-{{[imsend.ing](https://imsend.ing)}} -- type something. it turns into pool balls
-
-{{[no-author](https://noa.nomo.md/)}} -- keep AI attribution out of your git commits
-
-{{[nomo](https://nomo.md)}} -- open-source pure markdown personal pages
-
-{{[ts-arena](https://github.com/adnfng/ts-arena)}} -- a typescript sdk for the are.na api {{(archived)}}
-
-{{[Gallery](https://gallery.cv/)}} -- creatives deserve a better portfolio
-
-===== Gallery =====
-
-[[gallery]]
-/assets/glob.webm
-/assets/imsending.webm
-/assets/imsendingfinal.webm
-[[/gallery]]
-
-{{::will add more soon::}}
+will add more soon

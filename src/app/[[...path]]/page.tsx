@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const pathname = pathFromSegments((await params).path);
   const result = await getPage(pathname);
   const route = matchRoute(pathname);
-  if (result.status === 'missing' && route.type === 'profile-root') {
+  if (result.status === 'missing' && 'username' in route) {
     const lookup = await lookupGitHub(route.username);
     if (lookup.status === 'found') return { title: `${lookup.profile.name || lookup.profile.login} · Preview on Nomo`, robots: { index: false } };
   }
