@@ -1,8 +1,6 @@
 {{::2.0.0::}}
 
-**Nomo 2**
-
-Version 2 is a rebuild of Nomo. You write your page in plain GitHub markdown, so it reads the same on GitHub as it does on nomo.md. Getting started takes a minute: anyone can see a preview of their page before writing a line, then make it theirs. Your page is also easier to find and share, for people, search engines and AI assistants. Pages you've already made keep working, with nothing to change.
+Nomo has been rewritten from the ground up. How pages are written, how they load and how you get started are all new. Your page is now plain GitHub markdown, so the same file reads well on GitHub and on nomo.md. Anyone can see a preview of their page before writing a line, and pages load faster and are easier to find and share. Every page that worked before still works, with nothing to change.
 
 
 **Writing your page**
