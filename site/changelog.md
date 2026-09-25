@@ -15,6 +15,9 @@
 - The docs are now Quickstart, Syntax and Recipes, with ready-made pages for developers, designers, students and link-in-bio.
 - The template is now a developer page with Projects and Writing.
 - Agents can draft your first `human.md` from your GitHub profile, and they ask before pushing.
+- Make it yours: sign in with GitHub from your preview and Nomo creates your `.nomo` repo with the preview as your first draft. Then copy a prompt for your agent, or clone and edit.
+- `npx create-nomo` does the same from the terminal, and shows you the draft first.
+- A Nomo skill for coding agents, in `skills/nomo`.
 - Analytics start fresh. No cookies, no stored IPs, and Do Not Track is respected. The old counter stopped at 645 views and 237 visits across 4 profiles.
 
 

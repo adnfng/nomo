@@ -1,20 +1,7 @@
+import { sameText, sign } from '../crypto';
+
 export const SESSION_COOKIE = 'nomo_analytics';
 export const SESSION_DAYS = 30;
-
-const encoder = new TextEncoder();
-
-async function sign(secret: string, message: string) {
-  const key = await crypto.subtle.importKey('raw', encoder.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
-  return Buffer.from(await crypto.subtle.sign('HMAC', key, encoder.encode(message))).toString('base64url');
-}
-
-function sameText(a: string, b: string) {
-  const left = encoder.encode(a);
-  const right = encoder.encode(b);
-  let difference = left.length ^ right.length;
-  for (let index = 0; index < Math.max(left.length, right.length); index++) difference |= (left[index] ?? 0) ^ (right[index] ?? 0);
-  return difference === 0;
-}
 
 export async function createSession(secret: string, now = Date.now()) {
   const expires = now + SESSION_DAYS * 86_400_000;

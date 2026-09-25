@@ -62,6 +62,25 @@ export function previewMarkdown(profile: GitHubProfile) {
   ].filter(Boolean).join('\n\n');
 }
 
+export function claimMarkdown(profile: GitHubProfile) {
+  return `${previewMarkdown(profile)
+    .replace(/^!\[image:88x88\]\([^)]*\)/, '![image:88x88](/assets/me.jpg)')
+    .replace(/\n\n\{\{@[^\n]*doesn’t have a page yet[^\n]*/, '')}\n`;
+}
+
+export function blocks(source: string) {
+  const found: Record<string, string> = {};
+  for (const part of source.split(/^%% /m).slice(1)) {
+    const [name, ...lines] = part.split('\n');
+    found[name.trim()] = lines.join('\n').trim();
+  }
+  return found;
+}
+
+export function fill(markdown: string, values: Record<string, string>) {
+  return markdown.replace(/%(\w+)%/g, (match, key: string) => values[key] ?? match);
+}
+
 export function brokenRepoMarkdown(login: string) {
   return [
     `{{@${login} has a \`.nomo\` repo, but there’s no \`human.md\` in it yet.}}`,

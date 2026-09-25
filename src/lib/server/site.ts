@@ -2,7 +2,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { createBundledLoader } from '../content/bundled';
 import { parsePageRecord } from '../content/parse';
-import { rebaseTabs, withHomeTab, withSiteTabs } from '../content/presentation';
+import { inheritPortfolio, rebaseTabs, withHomeTab, withSiteTabs } from '../content/presentation';
 import { createRemoteLoader, type Loader } from '../content/remote';
 import { createPageResolver } from '../content/resolver';
 import type { NativeSlug } from '../content/routes';
@@ -38,6 +38,15 @@ export function nativePages() {
   }
   return pages;
 }
+
+export const nativeDocument = {
+  source(slug: string) {
+    return readNativeSource(slug) ?? '';
+  },
+  page(markdown: string) {
+    return inheritPortfolio(parsePageRecord(markdown), nativePages().get('home'));
+  },
+};
 
 function markdownFiles(directory: string, current = directory): string[] {
   if (!existsSync(current)) return [];

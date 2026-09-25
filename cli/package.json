@@ -1,0 +1,13 @@
+{
+  "name": "create-nomo",
+  "version": "1.0.0",
+  "description": "Make your Nomo page: a personal site from one markdown file in your GitHub, live at nomo.md/you.",
+  "keywords": ["nomo", "personal website", "portfolio", "link in bio", "markdown", "github"],
+  "homepage": "https://nomo.md",
+  "repository": { "type": "git", "url": "git+https://github.com/adnfng/nomo.git", "directory": "cli" },
+  "license": "MIT",
+  "type": "module",
+  "bin": { "create-nomo": "./index.mjs" },
+  "files": ["index.mjs", "README.md"],
+  "engines": { "node": ">=20" }
+}
