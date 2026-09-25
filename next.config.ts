@@ -11,6 +11,9 @@ const config: NextConfig = {
     '/api/og/[user]': ['./node_modules/geist/dist/fonts/geist-sans/Geist-Regular.ttf', './node_modules/geist/dist/fonts/geist-sans/Geist-Medium.ttf'],
   },
   poweredByHeader: false,
+  async headers() {
+    return [{ source: '/nomo.glb', headers: [{ key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' }] }];
+  },
   serverExternalPackages: ['@electric-sql/pglite'],
 };
 

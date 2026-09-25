@@ -9,7 +9,7 @@ function AvatarLink({ avatar, width, height, home, round }: { avatar: string; wi
   const mark = isNomoAvatar(avatar);
   const size = round && !width ? { width: 64, height: 64 } : { width: width ?? 100, height: height ?? 140 };
   return <div className="profile-avatar-wrap">
-    <Link aria-label="Home" className={mark ? 'profile-avatar-link profile-avatar-link--mark' : 'profile-avatar-link'} href={home}>
+    <Link aria-label="Home" prefetch className={mark ? 'profile-avatar-link profile-avatar-link--mark' : 'profile-avatar-link'} href={home}>
       {mark ? <NomoMark3D /> : <img className={round && !width ? 'profile-avatar profile-avatar--round' : 'profile-avatar'} src={avatar} alt="" width={size.width} height={size.height} />}
     </Link>
   </div>;
@@ -33,7 +33,7 @@ export function ProfileHeader({ page, pathname }: { page: PageRecord; pathname: 
     {config.pages.length ? <nav className="profile-navigation" aria-label="Pages">
       {config.pages.map(item => {
         const href = navigationHref(item.href, page.profileRoot);
-        return <Link key={item.href} href={href} aria-current={samePath(href, pathname) ? 'page' : undefined}>{item.label}</Link>;
+        return <Link key={item.href} href={href} prefetch aria-current={samePath(href, pathname) ? 'page' : undefined}>{item.label}</Link>;
       })}
     </nav> : null}
   </header>;

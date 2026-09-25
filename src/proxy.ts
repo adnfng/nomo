@@ -43,5 +43,8 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
 }
 
 export const config = {
-  matcher: ['/((?!api/|_next/|analytics(?:$|/)).*)'],
+  matcher: [{
+    source: '/((?!api/|_next/|analytics(?:$|/)|.*\\.(?!md$|txt$|xml$)[A-Za-z0-9]+$).*)',
+    missing: [{ type: 'header', key: 'rsc' }, { type: 'header', key: 'next-router-prefetch' }],
+  }],
 };

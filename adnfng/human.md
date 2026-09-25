@@ -15,11 +15,7 @@ you can find me on [x](https://x.com/adnfng) or as a last resort [email](mailto:
 
 [IG](https://instagram.com/adnfng) · [Github](https://github.com/adnfng)
 
-## Projects
-
-<!-- github:pinned -->
-
-## Timeline
+## Work
 
 ### Currently
 
@@ -30,6 +26,10 @@ you can find me on [x](https://x.com/adnfng) or as a last resort [email](mailto:
 - Founding Designer · [ChatCut](https://chatcut.io)
 - Creative Director · Pureness Means Wealth
 - Creative Director · Savvy Market
+
+### Projects
+
+<!-- github:pinned -->
 
 ## Gallery
 

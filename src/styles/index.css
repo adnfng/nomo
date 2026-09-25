@@ -741,7 +741,18 @@ body:has(.preview-bar:not([style*="display: none"])) .back-bar { top: 52px; }
   display: block;
   position: absolute;
   touch-action: none;
+  opacity: 0;
+  transition: opacity 220ms cubic-bezier(0.23, 1, 0.32, 1);
 }
+.nomo-mark-3d__flat {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 220ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.nomo-mark-3d[data-ready] canvas { opacity: 1; }
+.nomo-mark-3d[data-ready] .nomo-mark-3d__flat { opacity: 0; }
 svg.nomo-mark-3d { width: 57px; height: 60px; }
 .profile-navigation { display: flex; flex-wrap: wrap; align-items: baseline; gap: 14px; margin-bottom: 48px; font-size: var(--page-font-size); line-height: var(--page-line-height); letter-spacing: var(--page-letter-spacing); }
 .profile-navigation a { color: var(--muted); white-space: nowrap; }
@@ -918,6 +929,7 @@ dialog.markdown-lightbox::backdrop { background: transparent; }
 .markdown-stars svg { display: inline-block; vertical-align: -1px; }
 .markdown--sections h2 { margin: 40px 0 12px; font-size: var(--page-font-size); line-height: var(--page-line-height); font-weight: 400; color: var(--muted); }
 .markdown--sections h3 { margin: 24px 0 8px; font-size: var(--page-font-size); font-weight: 500; }
+[data-layout="portfolio"] .markdown--sections > * + h3 { margin-top: 48px; }
 .markdown--sections ul.rows { margin: 0; padding: 0; }
 .markdown--sections ul.rows > li::before { content: none; }
 .markdown--sections ul.rows > li { padding-left: 0; }

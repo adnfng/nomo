@@ -1,5 +1,8 @@
 {{::Unreleased::}}
 
+- Switching tabs is instant, because every tab loads in the background before you click.
+- The Nomo mark shows right away and turns 3D as soon as it's ready, instead of leaving a blank space.
+- Headings inside a tab have more space above them, so groups like Currently and Previously read apart.
 - In a list, the part after ` · ` stays on the same line, muted. A second line in the item goes underneath, as pinned repos do with their descriptions.
 - Pinned repos show a small star icon and a short count, like `1.2k`, instead of a large star symbol and the full number.
 - Tabs on a preview page now have the person's name as the page title, not "Not found".

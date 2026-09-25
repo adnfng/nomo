@@ -52,7 +52,7 @@ export function PoolBalls({ letters, home }: { letters: string; home: string }) 
   }, [failed, letters]);
 
   return <div className="profile-avatar-wrap">
-    <Link aria-label="Home" className="profile-balls" href={home}>
+    <Link aria-label="Home" prefetch className="profile-balls" href={home}>
       {failed ? <CssBalls letters={letters} /> : <div ref={host} className="pool-balls-3d" />}
     </Link>
   </div>;
