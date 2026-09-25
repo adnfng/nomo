@@ -36,13 +36,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return pageMetadata(pathname, result);
 }
 
-async function MissingProfile({ username, pathname, fallback }: { username: string; pathname: string; fallback: PageResult }) {
+async function MissingProfile({ username, tab, pathname, fallback }: { username: string; tab?: string; pathname: string; fallback: PageResult }) {
   const lookup = await lookupGitHub(username);
-  if (lookup.status !== 'found') return <PageView page={fallback.page} pathname={pathname} native />;
-  const markdown = lookup.hasRepo ? brokenRepoMarkdown(lookup.profile.login) : previewMarkdown(lookup.profile);
+  const markdown = lookup.status !== 'found' ? '' : lookup.hasRepo ? brokenRepoMarkdown(lookup.profile.login) : previewMarkdown(lookup.profile);
   const record = parsePageRecord(markdown, undefined, `/${username}`);
+  const selected = selectSection(record, tab);
+  if (lookup.status !== 'found' || !selected) return <PageView page={fallback.page} pathname={pathname} native />;
   const banner = lookup.hasRepo ? undefined : <PreviewBar login={lookup.profile.login} />;
-  return <PageView page={presentPage(selectSection(record) ?? record)} pathname={pathname} native={lookup.hasRepo} heading={lookup.profile.name || lookup.profile.login} banner={banner} />;
+  return <PageView page={presentPage(selected, record)} pathname={pathname} native={lookup.hasRepo} heading={lookup.profile.name || lookup.profile.login} banner={banner} />;
 }
 
 async function withPinned(page: PageRecord | null, username: string) {
@@ -73,7 +74,7 @@ async function Content({ params }: Props) {
   const pathname = pathFromSegments((await params).path);
   const result = await getPage(pathname);
   const route = matchRoute(pathname);
-  if (result.status === 'missing' && route.type === 'profile-root') return <MissingProfile username={route.username} pathname={pathname} fallback={result} />;
+  if (result.status === 'missing' && 'username' in route) return <MissingProfile username={route.username} tab={route.type === 'profile-content' ? route.contentPath.toLowerCase() : undefined} pathname={pathname} fallback={result} />;
   const data = structuredData(route, result);
   const { page, updated } = await profileExtras(route, result);
   return <>

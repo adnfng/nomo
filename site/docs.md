@@ -23,7 +23,7 @@ cd .nomo
    └─ me.jpg
 ```
 
-`human.md` is the whole page. Photos and video go in `assets/`. In the file, point at them with `/assets/me.jpg`.
+`human.md` is the whole page. Photos and video go in `assets/`. In the file, point at them with `assets/me.jpg`, so they show on GitHub too.
 
 
 
@@ -47,103 +47,102 @@ It works in Claude Code, Cursor, Codex and anything else that can run `gh`. The 
 
 
 ===== Syntax =====
-**Header photo**
+**It's GitHub markdown**
 
-![image:100x140](https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&auto=format&fit=crop)
-
-An image at the very top of `human.md` becomes the header photo. Set its size after `image:`.
+`human.md` is plain markdown. It reads the same on GitHub, and Nomo lays it out as a page.
 
 ```md
-![image:100x140](/assets/me.jpg)
+![Nina Park](assets/me.jpg)
+
+# Nina Park
+
+Designer in Copenhagen.
+
+## Work
+
+- 2026 – now · [Harbor](https://harbor.dk) · Design lead
+- 2023 · [Kite](https://kite.studio) · Identity and website
 ```
 
-Use `/nomo.png` or `/nomo.svg` there to get the Nomo mark instead.
+
+
+**Header photo**
+
+An image at the very top of `human.md` becomes the header photo. Use `assets/me.jpg`, or your GitHub photo at `https://github.com/yourusername.png`.
+
+```md
+![image:100x140](assets/me.jpg)
+```
+
+Put `image:` and a size in place of the alt text to choose the size. Use `/nomo.png` there to get the Nomo mark instead.
 
 
 
 **Tabs**
 
+`# Your name` is your home tab. Each `##` heading after it starts another tab, with its own URL like `/yourusername/work`.
+
 ```md
-===== Nina Park =====
+# Nina Park
 
 Designer in Copenhagen.
 
-===== Work =====
+## Work
 
-{{::2026::}}
-Started something new.
+## Writing
 ```
 
-`===== Name =====` starts a tab. The first one is your home page, and its name is your name. The others get their own URL, like `/yourusername/work`.
-
-Keep everything in one `human.md`. Extra files in `content/` still work if you already have them.
+Use `###` for a heading inside a tab. A page with no `##` headings is one page with no tabs.
 
 
 
-**Muted and small text**
+**Lists that line up**
+
+Separate parts of a list item with ` · `. The part after the first dot is muted. Start an item with a year and the years line up in their own column.
 
 ```md
-{{muted text}}
-::small text::
-{{::muted and small::}}
+- [tinyqueue](https://github.com/sam/tinyqueue) · A job queue in 300 lines of Go
+- 2024 – now · Staff engineer at Acme
+- 2021 · Joined Acme
 ```
-
-{{muted text}}
-::small text::
-{{::muted and small::}}
 
 
 
 **Links**
 
-```md
-[nomo](https://nomo.md)
-(([nomo](https://nomo.md)))
-```
-
-[nomo](https://nomo.md)
-(([nomo](https://nomo.md)))
-
-A normal link stays a normal link. Wrap it in `(( ))` to add the arrow.
+Links to other sites get an arrow. Links inside your page don't.
 
 
 
-**Images**
+**Galleries**
+
+Put two or more images in one paragraph and they become a gallery. Click one to open it. Video plays on a silent loop.
 
 ```md
-![image:180](/assets/me.jpg)
-![image:100x140](/assets/me.jpg)
+![](assets/harbor.jpg)
+![](assets/kite.webm)
+![](assets/weekend.jpg)
 ```
 
-![image:180](https://images.unsplash.com/photo-1545285446-ff15b9e9b9b9?q=80&w=1470&auto=format&fit=crop) ![image:100x140](https://images.unsplash.com/photo-1545285446-ff15b9e9b9b9?q=80&w=1470&auto=format&fit=crop)
-
-`image:180` sets the width. `image:100x140` sets width and height.
 
 
+**Your GitHub repos**
 
-**Gallery**
+Put this line under a heading and Nomo fills it with your pinned GitHub repos, kept up to date.
 
 ```md
-[[gallery]]
-/assets/one.jpg
-/assets/two.webm
-[[/gallery]]
+## Projects
+
+<!-- github:pinned -->
 ```
 
-[[gallery]]
-https://images.unsplash.com/photo-1626470601402-5c6e8b2dc8d7?w=800&auto=format&fit=crop&q=60
-https://images.unsplash.com/photo-1625039162908-19d625adbaac?w=800&auto=format&fit=crop&q=60
-https://images.unsplash.com/photo-1545285446-ff15b9e9b9b9?w=800&auto=format&fit=crop&q=60
-https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=60
-[[/gallery]]
-
-Photos and video, one per line. Click one to open it. Video plays on a silent loop.
+On GitHub the line is hidden.
 
 
 
-**Spacing**
+**Classic syntax**
 
-A blank line starts a new paragraph. A single line break keeps the lines close. More blank lines add more space.
+Pages that use `===== Name =====` tabs, `{{muted}}`, `::small::`, `(([arrow links]))` and `[[gallery]]` keep working as they always have. New pages don't need them.
 
 
 
@@ -151,24 +150,23 @@ A blank line starts a new paragraph. A single line break keeps the lines close. 
 **Developer**
 
 ```md
-![image:100x140](/assets/me.jpg)
+![Sam Rivera](assets/me.jpg)
 
-===== Sam Rivera =====
+# Sam Rivera
 
 Software engineer in Toronto.
 I build developer tools. Mostly TypeScript and Go.
 
 [GitHub](https://github.com/sam) · [Email](mailto:sam@example.com)
 
-===== Projects =====
+## Projects
 
-[tinyqueue](https://github.com/sam/tinyqueue) {{A job queue in 300 lines of Go.}}
-[dotfiles](https://github.com/sam/dotfiles) {{How my machine is set up.}}
+<!-- github:pinned -->
 
-===== Writing =====
+## Writing
 
-{{::2026::}}
-[Why our sync engine is a log](https://example.com)
+- 2026 · [Why our sync engine is a log](https://example.com)
+- 2025 · [Notes from rewriting a CLI in Go](https://example.com)
 ```
 
 
@@ -176,15 +174,15 @@ I build developer tools. Mostly TypeScript and Go.
 **Link in bio**
 
 ```md
-![image:88x88](/assets/me.jpg)
+![Alex Kim](assets/me.jpg)
 
-===== Alex Kim =====
+# Alex Kim
 
 I make videos about keyboards.
 
-(([YouTube](https://youtube.com/@alex)))
-(([Instagram](https://instagram.com/alex)))
-(([Newsletter](https://alex.substack.com)))
+- [YouTube](https://youtube.com/@alex)
+- [Instagram](https://instagram.com/alex)
+- [Newsletter](https://alex.substack.com)
 ```
 
 
@@ -192,22 +190,20 @@ I make videos about keyboards.
 **Designer**
 
 ```md
-![image:100x140](/assets/me.jpg)
+![Nina Park](assets/me.jpg)
 
-===== Nina Park =====
+# Nina Park
 
 Designer in Copenhagen. I make websites and printed things.
 
-===== Work =====
+## Work
 
-[[gallery]]
-/assets/harbor.jpg
-/assets/kite.webm
-/assets/weekend.jpg
-[[/gallery]]
+![](assets/harbor.jpg)
+![](assets/kite.webm)
+![](assets/weekend.jpg)
 
-Harbor {{website, 2026}}
-Kite {{identity, 2025}}
+- 2026 · Harbor · Website
+- 2025 · Kite · Identity
 ```
 
 
@@ -215,14 +211,14 @@ Kite {{identity, 2025}}
 **Student**
 
 ```md
-===== Priya Shah =====
+# Priya Shah
 
 Computer science at Waterloo, class of 2027.
 Looking for a summer 2026 internship in systems or infra.
 
-[Resume](/assets/resume.pdf) · [GitHub](https://github.com/priya)
+[Resume](assets/resume.pdf) · [GitHub](https://github.com/priya)
 
-===== Projects =====
+## Projects
 
-[raft-lite](https://github.com/priya/raft-lite) {{Raft in Rust, for a distributed systems class.}}
+- [raft-lite](https://github.com/priya/raft-lite) · Raft in Rust, for a distributed systems class
 ```

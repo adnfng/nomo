@@ -2,7 +2,7 @@ import remarkFrontmatter from 'remark-frontmatter';
 import remarkParse from 'remark-parse';
 import { unified } from 'unified';
 import { parse as parseYaml } from 'yaml';
-import { extractGalleries, extractLeadingBalls, extractLeadingImage, extractSections } from './blocks';
+import { extractGalleries, extractLeadingBalls, extractLeadingImage, extractSections, HEADING_TAB } from './blocks';
 import { isRecord, legacyAvatar } from './config';
 import type { PageRecord, PageSection } from './types';
 
@@ -44,13 +44,15 @@ export function isSectionsPage(source: string) {
 function parseSectionsPage(source: string, assetBase?: string, profileRoot?: string): PageRecord {
   const balls = extractLeadingBalls(source);
   const leading = extractLeadingImage(rootAssets(balls.content));
-  const match = leading.content.match(LEADING_NAME);
-  const content = match ? leading.content.slice(match[0].length).replace(/^\s+/, '') : leading.content;
+  const name = leading.content.match(LEADING_NAME)?.[1].trim();
+  const { sections } = extractSections(leading.content, HEADING_TAB);
+  const tabs = sections.length > 1 ? sections : [];
   return {
-    content,
+    content: sections[0]?.content ?? '',
+    sections: tabs,
     galleries: {},
     layout: 'sections',
-    name: match?.[1].trim(),
+    name,
     assetBase,
     profileRoot,
     portfolio: {
@@ -58,7 +60,7 @@ function parseSectionsPage(source: string, assetBase?: string, profileRoot?: str
       avatarWidth: balls.balls ? undefined : leading.avatarWidth,
       avatarHeight: balls.balls ? undefined : leading.avatarHeight,
       balls: balls.balls,
-      pages: [],
+      pages: sectionPages(tabs),
     },
   };
 }

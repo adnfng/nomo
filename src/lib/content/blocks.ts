@@ -101,14 +101,17 @@ function uniqueSlug(slug: string, used: Set<string>) {
   return next;
 }
 
-export function extractSections(content: string) {
+const LEGACY_TAB = /^={3,}\s+(.+?)\s+={3,}$/;
+export const HEADING_TAB = /^##?[ \t]+(.+?)(?:[ \t]+#+)?[ \t]*$/;
+
+export function extractSections(content: string, marker = LEGACY_TAB) {
   const protectedLines = codeLines(content);
   const lines = content.split(/\r?\n/);
   const markers: Array<{ index: number; label: string; slug: string }> = [];
   const used = new Set<string>();
   for (let index = 0; index < lines.length; index++) {
     if (protectedLines.has(index)) continue;
-    const match = lines[index].trim().match(/^={3,}\s+(.+?)\s+={3,}$/);
+    const match = lines[index].trim().match(marker);
     if (!match) continue;
     const label = match[1].trim();
     const slug = slugify(label);

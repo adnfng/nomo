@@ -137,6 +137,36 @@ describe('header, tabs, and extras', () => {
   });
 });
 
+describe('plain GitHub markdown pages', () => {
+  const source = '![Sam](assets/me.jpg)\n\n# Sam Lee\n\nI build tools.\n\n## Work\n\n- 2024 – now · [Acme](https://acme.dev) · Design engineer\n- 2021 · Studio\n\n```md\n## not a tab\n```\n\n## Writing\n\nPosts';
+
+  test('# name is the home tab and each ## is another tab', () => {
+    const page = parsePageRecord(source, 'https://example.com/repo', '/sam');
+    expect(page.layout).toBe('sections');
+    expect(page.name).toBe('Sam Lee');
+    expect(page.portfolio.avatar).toBe('/assets/me.jpg');
+    expect(page.sections?.map(section => section.label)).toEqual(['Sam Lee', 'Work', 'Writing']);
+    expect(page.portfolio.pages).toEqual([{ label: 'Sam Lee', href: '/' }, { label: 'Work', href: '/content/work' }, { label: 'Writing', href: '/content/writing' }]);
+    expect(page.content).toBe('I build tools.');
+    expect(selectSection(page, 'work')?.content).toContain('## not a tab');
+  });
+
+  test('a page without ## headings has no tabs and shows the name', () => {
+    const page = parsePageRecord('# Sam Lee\n\nHello {{there}} std::io');
+    expect(page.sections).toEqual([]);
+    expect(page.portfolio.pages).toEqual([]);
+    expect(render(page)).toContain('{{there}} std::io');
+  });
+
+  test('dated lists become rows, with notes and outbound arrows', () => {
+    const html = render(selectSection(parsePageRecord(source), 'work')!);
+    expect(html).toContain('<ul class="rows">');
+    expect(html).toContain('<span class="row-date">2024 – now</span>');
+    expect(html).toContain('row-note');
+    expect(html).toContain('markdown-link--arrow');
+  });
+});
+
 describe('routes and remote loading', () => {
   test('native, profile, nested, and invalid routes', () => {
     expect(matchRoute('/')).toMatchObject({ type: 'native', slug: 'home' });

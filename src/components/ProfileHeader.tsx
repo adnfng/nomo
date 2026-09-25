@@ -20,12 +20,16 @@ function samePath(a: string, b: string) {
   return clean(a) === clean(b);
 }
 
+export function showsName(page: PageRecord) {
+  return page.layout === 'sections' && Boolean(page.name) && !page.portfolio.pages.length;
+}
+
 export function ProfileHeader({ page, pathname }: { page: PageRecord; pathname: string }) {
   const config = page.portfolio;
   const home = navigationHref('/', page.profileRoot);
   return <header className="profile-header">
     {config.balls ? <PoolBalls letters={config.balls} home={home} /> : config.avatar ? <AvatarLink avatar={config.avatar} width={config.avatarWidth} height={config.avatarHeight} home={home} round={page.layout === 'sections'} /> : null}
-    {page.layout === 'sections' && page.name ? <h1 className="profile-name">{page.name}</h1> : null}
+    {showsName(page) ? <h1 className="profile-name">{page.name}</h1> : null}
     {config.pages.length ? <nav className="profile-navigation" aria-label="Pages">
       {config.pages.map(item => {
         const href = navigationHref(item.href, page.profileRoot);

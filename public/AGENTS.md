@@ -36,38 +36,40 @@ Write the draft from that. Then ask two or three short questions to fill the gap
 
 ## 3. What to edit
 
-- `human.md` is the whole page.
+- `human.md` is the whole page. It's plain GitHub markdown.
 - `assets/` holds photos and video. Replace `assets/me.jpg` with their photo, or use their GitHub avatar (`https://github.com/theirusername.png`).
-- An image at the top is the header photo: `![image:100x140](/assets/me.jpg)`
-- `/nomo.png` or `/nomo.svg` in that spot shows the Nomo mark instead.
 
 ## Syntax
 
-Tabs. The first one is home, and its name is their name.
-
 ```md
-===== Their Name =====
+![Their Name](assets/me.jpg)
 
-===== Projects =====
+# Their Name
+
+One line about what they do.
+
+[GitHub](https://github.com/them) · [Email](mailto:them@example.com)
+
+## Projects
+
+<!-- github:pinned -->
+
+## Work
+
+- 2024 – now · [Company](https://example.com) · Role
+- 2021 · Earlier role
 ```
 
-- Mute: `{{this}}`
-- Small: `::this::`
-- Both: `{{::2026::}}`
-- Link: `[nomo](https://nomo.md)`
-- Arrow link: `(([nomo](https://nomo.md)))`
-- Image size: `![image:180](/assets/me.jpg)` or `![image:100x140](/assets/me.jpg)`
+- An image at the very top is the header photo. `![image:100x140](assets/me.jpg)` sets its size. `/nomo.png` there shows the Nomo mark.
+- `# Their Name` is the home tab. Each `##` heading starts another tab. Use `###` for headings inside a tab.
+- In a list item, ` · ` separates parts and mutes what follows. Items that start with a year line up in a date column.
+- Links to other sites get an arrow on their own.
+- Two or more images in one paragraph become a gallery.
+- `<!-- github:pinned -->` lists their pinned GitHub repos and stays current.
+- A blank line is a paragraph. A single line break keeps lines close.
+- No YAML frontmatter.
 
-```md
-[[gallery]]
-/assets/one.jpg
-/assets/two.webm
-[[/gallery]]
-```
-
-A blank line is a paragraph. A single line break keeps lines close.
-
-No YAML frontmatter. No `[[timeline]]`. `((plain text))` is just text.
+Pages that already use `===== Name =====` tabs and `{{muted}}` keep working. Keep their style when editing them; don't mix the two in one file.
 
 ## Voice
 

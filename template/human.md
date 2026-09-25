@@ -1,6 +1,6 @@
-![image:100x140](/assets/me.jpg)
+![Sam Rivera](assets/me.jpg)
 
-===== Sam Rivera =====
+# Sam Rivera
 
 Software engineer in Toronto.
 
@@ -10,18 +10,13 @@ Right now I work on the sync engine at a small startup.
 
 [GitHub](https://github.com/) · [Email](mailto:sam@example.com)
 
-###### Projects
+## Projects
 
-[tinyqueue](https://github.com/) {{A job queue in 300 lines of Go.}}
-[palette](https://github.com/) {{Color tokens for the terminal.}}
-[dotfiles](https://github.com/) {{How my machine is set up.}}
+- [tinyqueue](https://github.com/) · A job queue in 300 lines of Go
+- [palette](https://github.com/) · Color tokens for the terminal
+- [dotfiles](https://github.com/) · How my machine is set up
 
-===== Writing =====
+## Writing
 
-{{::2026::}}
-
-[Why our sync engine is a log](https://example.com)
-
-{{::2025::}}
-
-[Notes from rewriting a CLI in Go](https://example.com)
+- 2026 · [Why our sync engine is a log](https://example.com)
+- 2025 · [Notes from rewriting a CLI in Go](https://example.com)
