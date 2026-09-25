@@ -27,7 +27,7 @@ Nomo renders a public `.nomo/human.md` from GitHub at `nomo.md/<username>`. This
 
 ## Changes
 
-- Add a user-facing line under `Unreleased` in `site/changelog.md`. Write what the user gets, in plain words.
+- Add a user-facing line under `Unreleased` in `site/changelog.md`. Write what the user gets, in plain words, in one short line. Leave out how it worked before and why it changed.
 - Keep `human.md` compatible. Pages that render today must render the same way. The tests in `tests/fixtures` are the contract.
 
 <!-- BEGIN:nextjs-agent-rules -->

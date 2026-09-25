@@ -1,13 +1,12 @@
-{{::Unreleased::}}
+{{::2.0.1::}}
 
-- Switching tabs is instant, because every tab loads in the background before you click.
-- The 3D Nomo mark loads faster and fades in when it's ready.
-- Lists without descriptions keep their lines close, like a paragraph.
-- Headings inside a tab have more space above them, so groups like Currently and Previously read apart.
-- In a list, the part after ` · ` stays on the same line, muted. A second line in the item goes underneath, as pinned repos do with their descriptions.
-- Pinned repos show a small star icon and a short count, like `1.2k`, instead of a large star symbol and the full number.
-- Tabs on a preview page now have the person's name as the page title, not "Not found".
-- Pages in plain markdown space paragraphs like classic pages, and an extra blank line adds more space.
+- Tabs open instantly.
+- The 3D Nomo mark loads faster.
+- In a list, the part after ` · ` stays on the same line. A second line goes underneath.
+- Pinned repos show a small star icon and a count, like `1.2k`.
+- Headings inside a tab have more space above them.
+- An extra blank line between paragraphs adds more space.
+- Preview pages show the person's name as the page title.
 
 {{::2.0.0::}}
 
@@ -29,7 +28,7 @@ Nomo has been rewritten from the ground up. How pages are written, how they load
 - Press Make it yours on the preview to get a prompt for your coding agent, with your username already in it. Your agent creates the repo, drafts your first `human.md` from your GitHub profile, asks a few questions and checks with you before it pushes.
 - Rather do it yourself? One `gh` command creates your repo from the template, or you can start from the template on GitHub.
 - Install the Nomo skill with `gh` and your agent will know Nomo the next time you ask for a personal site.
-- The template is a developer page with Projects and Writing, ready to edit. The docs have starting points for designers, students and link-in-bio pages.
+- The template is a page with Work and Projects tabs, ready to edit. The docs have starting points for designers, students and link-in-bio pages.
 
 
 **Sharing and being found**
