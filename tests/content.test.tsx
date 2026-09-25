@@ -168,7 +168,8 @@ describe('plain GitHub markdown pages', () => {
 
   test('stars become an icon and extra blank lines add space between paragraphs', () => {
     const html = render(parsePageRecord('# Sam\n\n- [nomo](https://github.com/a/nomo) · ★\u00a012\n\nOne\n\nTwo\n\n\nThree'));
-    expect(html).toContain('<svg class="markdown-star" role="img" aria-label="stars"');
+    expect(html).toContain('<span class="markdown-stars" aria-label="12 stars"><svg aria-hidden="true"');
+    expect(html).toContain('</svg>\u00a012</span>');
     expect(html).not.toContain('★');
     expect(html).toContain('style="margin-top:calc(2 * var(--page-paragraph))">Three</p>');
   });

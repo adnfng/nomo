@@ -914,7 +914,8 @@ dialog.markdown-lightbox::backdrop { background: transparent; }
 .markdown--centered .code-block, .markdown--centered .username-field { text-align: left; }
 .markdown--sections { line-height: 1.5; }
 [data-layout="portfolio"] .markdown--sections > :not(h2, h3, h4) + :is(p, ul, ol) { margin-top: var(--page-paragraph); }
-.markdown-star { display: inline-block; vertical-align: -1px; }
+.markdown-stars { color: var(--link); white-space: nowrap; }
+.markdown-stars svg { display: inline-block; vertical-align: -1px; }
 .markdown--sections h2 { margin: 40px 0 12px; font-size: var(--page-font-size); line-height: var(--page-line-height); font-weight: 400; color: var(--muted); }
 .markdown--sections h3 { margin: 24px 0 8px; font-size: var(--page-font-size); font-weight: 500; }
 .markdown--sections ul.rows { margin: 0; padding: 0; }
