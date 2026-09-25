@@ -71,7 +71,7 @@ describe('empty page preview', () => {
     expect(markdown).not.toContain('{{');
     expect(markdown).toContain('acme · Berlin');
     expect(markdown).toContain('[alex.dev](https://alex.dev) · [GitHub](https://github.com/alexdev) · [X](https://x.com/alexdev) · [Bluesky](https://bsky.app/profile/alex.dev)');
-    expect(markdown).toContain('## Projects\n\n- [fastlib](https://github.com/alexdev/fastlib) · A fast library');
+    expect(markdown).toContain('## Projects\n\n- [fastlib](https://github.com/alexdev/fastlib)\n  A fast library');
   });
 
   test('user text cannot inject Nomo or Markdown syntax', () => {

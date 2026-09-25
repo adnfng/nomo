@@ -43,7 +43,7 @@ function rowChildren(inline: Node[]) {
   const lines = splitAt(rest, node => node.type === 'break');
   const title = lines ? lines.head : rest;
   const note = splitAt(title, node => (node.type === 'text' ? node.value?.match(NOTE) ?? null : null));
-  const body = note ? [...note.head, span('row-note', note.tail)] : title;
+  const body = note ? [...note.head, { type: 'text', value: ' · ' }, span('row-note', note.tail)] : title;
   const description = lines?.tail.length ? [span('row-description', lines.tail)] : [];
   return { dated: Boolean(date), noted: Boolean(note), children: [...(date ? [span('row-date', [{ type: 'text', value: date }])] : []), span('row-body', [...body, ...description])] };
 }
@@ -56,7 +56,7 @@ function isRowList(list: Node) {
   return list.children?.some(item => {
     const paragraph = item.children?.[0];
     if (paragraph?.type !== 'paragraph' || !paragraph.children) return false;
-    return isText(paragraph.children[0], DATE) || paragraph.children.some(node => isText(node, NOTE));
+    return isText(paragraph.children[0], DATE) || paragraph.children.some(node => node.type === 'break' || isText(node, NOTE));
   });
 }
 

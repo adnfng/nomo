@@ -1,5 +1,6 @@
 {{::Unreleased::}}
 
+- In a list, the part after ` · ` stays on the same line, muted. A second line in the item goes underneath, as pinned repos do with their descriptions.
 - Pinned repos show a small star icon and a short count, like `1.2k`, instead of a large star symbol and the full number.
 - Tabs on a preview page now have the person's name as the page title, not "Not found".
 - Pages in plain markdown space paragraphs like classic pages, and an extra blank line adds more space.

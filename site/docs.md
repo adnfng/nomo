@@ -98,11 +98,12 @@ Use `###` for a heading inside a tab. A page with no `##` headings is one page w
 
 **Lists that line up**
 
-Separate parts of a list item with ` · `. The part after the first dot is muted. Start an item with a year and the years line up in their own column.
+Separate parts of a list item with ` · `. The part after the first dot is muted. Put a second line in the item and it sits underneath, muted. Start an item with a year and the years line up in their own column.
 
 ```md
-- [tinyqueue](https://github.com/sam/tinyqueue) · A job queue in 300 lines of Go
-- 2024 – now · Staff engineer at Acme
+- [tinyqueue](https://github.com/sam/tinyqueue)
+  A job queue in 300 lines of Go
+- 2024 – now · Staff engineer · Acme
 - 2021 · Joined Acme
 ```
 
@@ -220,5 +221,6 @@ Looking for a summer 2026 internship in systems or infra.
 
 ## Projects
 
-- [raft-lite](https://github.com/priya/raft-lite) · Raft in Rust, for a distributed systems class
+- [raft-lite](https://github.com/priya/raft-lite)
+  Raft in Rust, for a distributed systems class
 ```

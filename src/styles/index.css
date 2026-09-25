@@ -925,7 +925,8 @@ dialog.markdown-lightbox::backdrop { background: transparent; }
 .markdown--sections li.row--dated { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); gap: 16px; }
 .markdown--sections .row-date { color: var(--muted); font-variant-numeric: tabular-nums; }
 .markdown--sections .row-body { display: block; min-width: 0; }
-.markdown--sections .row-note, .markdown--sections .row-description { display: block; color: var(--muted); }
+.markdown--sections .row-note, .markdown--sections .row-description { color: var(--muted); }
+.markdown--sections .row-description { display: block; }
 .markdown--sections .markdown-gallery-block { margin: 16px 0; }
 @media (max-width: 540px) {
   .markdown--sections li.row--dated { grid-template-columns: minmax(0, 1fr); gap: 0; }

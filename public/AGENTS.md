@@ -62,7 +62,7 @@ One line about what they do.
 
 - An image at the very top is the header photo. `![image:100x140](assets/me.jpg)` sets its size. `/nomo.png` there shows the Nomo mark.
 - `# Their Name` is the home tab. Each `##` heading starts another tab. Use `###` for headings inside a tab.
-- In a list item, ` · ` separates parts and mutes what follows. Items that start with a year line up in a date column.
+- In a list item, ` · ` separates parts and mutes what follows, on the same line. A second line in the item sits underneath, muted. Items that start with a year line up in a date column.
 - Links to other sites get an arrow on their own.
 - Two or more images in one paragraph become a gallery.
 - `<!-- github:pinned -->` lists their pinned GitHub repos and stays current.

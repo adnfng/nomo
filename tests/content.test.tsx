@@ -166,6 +166,12 @@ describe('plain GitHub markdown pages', () => {
     expect(html).toContain('markdown-link--arrow');
   });
 
+  test('a dot keeps a row on one line, and a second line goes underneath', () => {
+    const html = render(parsePageRecord('# Sam\n\n- Designer · Acme\n- [tool](https://x.dev)\n  Does a thing'));
+    expect(html).toContain('<span class="row-body">Designer<span class="markdown-dot"></span><span class="row-note">Acme</span></span>');
+    expect(html).toContain('<span class="row-description">Does a thing</span>');
+  });
+
   test('stars become an icon and extra blank lines add space between paragraphs', () => {
     const html = render(parsePageRecord('# Sam\n\n- [nomo](https://github.com/a/nomo) · ★\u00a012\n\nOne\n\nTwo\n\n\nThree'));
     expect(html).toContain('<span class="markdown-stars" aria-label="12 stars"><svg aria-hidden="true"');

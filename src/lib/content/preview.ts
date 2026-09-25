@@ -57,8 +57,9 @@ export function starCount(stars: number) {
 
 export function repoRows(repos: GitHubProfile['repos']) {
   return repos.slice(0, 6).map(repo => {
-    const notes = [repo.description ? escapeMarkdown(repo.description) : '', repo.stars ? starCount(repo.stars) : ''].filter(Boolean).join(' · ');
-    return `- [${escapeMarkdown(repo.name)}](${encodeURI(repo.url)})${notes ? ` · ${notes}` : ''}`;
+    const stars = repo.stars ? ` · ${starCount(repo.stars)}` : '';
+    const description = repo.description ? `\n  ${escapeMarkdown(repo.description)}` : '';
+    return `- [${escapeMarkdown(repo.name)}](${encodeURI(repo.url)})${stars}${description}`;
   }).join('\n');
 }
 

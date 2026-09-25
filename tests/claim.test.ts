@@ -87,7 +87,7 @@ describe('make it yours', () => {
 
   test('the pinned directive becomes rows of repos', () => {
     const repos = [{ name: 'nomo', description: 'Pages from GitHub', url: 'https://github.com/a/nomo', stars: 12 }, { name: 'x', description: null, url: 'https://github.com/a/x' }];
-    expect(expandPinned('## Projects\n\n<!-- github:pinned -->\n', repos)).toBe('## Projects\n\n- [nomo](https://github.com/a/nomo) · Pages from GitHub · ★\u00a012\n- [x](https://github.com/a/x)\n');
+    expect(expandPinned('## Projects\n\n<!-- github:pinned -->\n', repos)).toBe('## Projects\n\n- [nomo](https://github.com/a/nomo) · ★\u00a012\n  Pages from GitHub\n- [x](https://github.com/a/x)\n');
     expect(expandPinned('<!-- github:pinned -->', [])).toBe('');
   });
 
