@@ -1,7 +1,7 @@
 <div align="center">
   <img src="./public/nomo.svg" alt="Nomo" width="64" height="64" />
   <h3>Nomo</h3>
-  <p>An open-source profile page that starts with a Markdown file.</p>
+  <p>Your personal site is one markdown file.</p>
   <a href="https://nomo.md">Website</a>
   ·
   <a href="https://nomo.md/docs">Docs</a>
@@ -9,45 +9,56 @@
   <a href="https://nomo.md/changelog">Changelog</a>
 </div>
 
-A public GitHub repo named `.nomo` with a `human.md` is the page at `nomo.md/username`. No account. No CMS.
+<br />
 
-If a site blocks `.md` links, use [nomo.fyi](https://nomo.fyi).
+<p align="center"><a href="https://nomo.md/adnfng"><img src="https://nomo.md/api/og/adnfng" alt="A Nomo page" width="600" /></a></p>
 
----
+Nomo is a free personal site for developers, made from one markdown file in your GitHub. Make a public repo called `.nomo`, put a `human.md` in it, and it's your page at `https://nomo.md/your-username`. No account, no build step, nothing to host.
 
-## Changelog
+**AGENTS.md is for your agents. human.md is for humans.**
 
-### 0.2.0
+## Start
 
-- Tabs now live in `human.md` to keep it simple in a single page
-- Updated the docs for template support and syntax
-- Changelog added
-- `.nomo` now ships as a beginner template
-- Small text with `:: ::`
-- Normal links and arrow links
-- Dropped badges, with legacy support as normal text or links
-- Home setup prompt agents can follow from `AGENTS.md`
-- `/analytics` counts visits, views, and profiles
+```bash
+gh repo create .nomo --public --clone --template adnfng/.nomo
+```
 
-### 0.1.9
+Edit `human.md`, push, and open `https://nomo.md/your-username`. No terminal? [Use the template on GitHub](https://github.com/new?template_owner=adnfng&template_name=.nomo&name=.nomo&visibility=public).
 
-- Light and dark theming through a toggle
-- Dropped frontmatter for theme, font, and layout, with legacy support
-- Updated Markdown styling and spacing
-- Square bullets
-- A very spinny new logo
+Or tell your agent:
 
-### 0.1.2
+```
+Set up my Nomo page. Follow https://nomo.md/AGENTS.md
+```
 
-- nomo.fyi for sites that block `.md` links
-- Social cards
+Or type your GitHub username on [nomo.md](https://nomo.md) to see a preview of your page first.
 
-### 0.1.1
+## Why
 
-- Pages from a public GitHub `.nomo` repo
-- Extra pages as separate files under `content/`
-- Images from `assets/`
+- **You own it.** Bento, Read.cv and Polywork shut down and took people's pages with them. A Nomo page is a file in your repo. If Nomo went away you'd still have it.
+- **It's markdown.** Tabs, photos, galleries, and small and muted text are a few bits of syntax on top. [See the syntax](https://nomo.md/docs/syntax).
+- **Agents can write it.** One file with a short [guide](https://nomo.md/AGENTS.md) is easy for Claude Code, Cursor or Codex to set up and keep current.
+- **Machines can read it.** Pages are rendered on the server with proper metadata, and `nomo.md/you.md` returns the source.
 
-### 0.1.0
+## Badge
 
-- First version
+Add this to your GitHub profile README:
+
+```md
+[![nomo.md/you](https://nomo.md/badge.svg)](https://nomo.md/you)
+```
+
+## Develop
+
+```bash
+bun install
+bun dev
+```
+
+`bun run check` runs types, lint, tests and a build. See [AGENTS.md](./AGENTS.md) for how the code is laid out, and [.env.example](./.env.example) for settings. To preview a local `.nomo` folder, set `NOMO_PREVIEW_DIR` and open `/preview`.
+
+Pull requests are welcome. Anything a user can see gets a line in [the changelog](./site/changelog.md).
+
+## License
+
+[MIT](./LICENSE)

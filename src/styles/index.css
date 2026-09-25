@@ -766,6 +766,50 @@ svg.nomo-mark-3d { width: 57px; height: 60px; }
 [data-layout="portfolio"] .app-footer .markdown-link { color: var(--link); font-weight: 400; }
 [data-layout="portfolio"] .markdown .markdown-muted .markdown-link { color: var(--link); }
 [data-layout="portfolio"] .markdown-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.username-field {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 14px;
+}
+
+.username-field__label {
+  display: flex;
+  flex: 1;
+  align-items: baseline;
+  min-width: 220px;
+  border-bottom: 1px solid var(--border);
+  transition: border-color 160ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.username-field__label:focus-within { border-color: var(--muted); }
+.username-field__prefix { color: var(--muted); }
+
+.username-field__input {
+  flex: 1;
+  min-width: 0;
+  padding: 4px 0;
+  font: inherit;
+  letter-spacing: inherit;
+  color: var(--text);
+  background: transparent;
+  border: 0;
+  outline: none;
+}
+
+.username-field__input::placeholder { color: var(--muted); opacity: 0.6; }
+
+.username-field__go {
+  padding: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.username-field__go:disabled { color: var(--muted); cursor: default; }
+
 .visually-hidden {
   position: absolute;
   width: 1px;

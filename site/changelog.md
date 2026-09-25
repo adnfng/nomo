@@ -11,6 +11,10 @@
 - Add `.md` to any page to get its source, for example `nomo.md/adnfng.md`.
 - Visiting `nomo.md/<username>` for someone without a page shows a preview built from their GitHub profile, with a link to make it theirs.
 - Nomo now has a sitemap, `robots.txt`, and an `llms.txt` for AI assistants.
+- A new home page. Type your GitHub username to see your page, or a preview of it.
+- The docs are now Quickstart, Syntax and Recipes, with ready-made pages for developers, designers, students and link-in-bio.
+- The template is now a developer page with Projects and Writing.
+- Agents can draft your first `human.md` from your GitHub profile, and they ask before pushing.
 - Analytics start fresh. No cookies, no stored IPs, and Do Not Track is respected. The old counter stopped at 645 views and 237 visits across 4 profiles.
 
 

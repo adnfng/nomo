@@ -1,5 +1,20 @@
-===== Customization =====
-**Your page is the profile.**
+===== Quickstart =====
+**A page in a minute.**
+
+1. Make a public repo called `.nomo` from the template.
+2. Edit `human.md`. It's markdown.
+3. Push. Your page is at `nomo.md/your-username`.
+
+```bash
+gh repo create .nomo --public --clone --template adnfng/.nomo
+cd .nomo
+```
+
+{{::No terminal? (([Use the template on GitHub](https://github.com/new?template_owner=adnfng&template_name=.nomo&name=.nomo&visibility=public))), then edit `human.md` in the browser.::}}
+
+
+
+**What's in the repo**
 
 ```txt
 .nomo/
@@ -8,30 +23,45 @@
    └─ me.jpg
 ```
 
-The template is a .nomo repo with `human.md` and an `assets/` folder.
-Drop photos and video in assets/. In the file, point at them with `/assets/me.jpg`.
+`human.md` is the whole page. Photos and video go in `assets/`. In the file, point at them with `/assets/me.jpg`.
 
 
 
+**Let your agent do it**
 
-**Adding images:**
+```
+Set up my Nomo page. Follow https://nomo.md/AGENTS.md
+```
+
+It works in Claude Code, Cursor, Codex and anything else that can run `gh`. The agent creates the repo, drafts `human.md` from your GitHub profile, and asks before pushing.
+
+
+
+**Good to know**
+
+- The repo has to be public, named `.nomo`, with `human.md` at the top, on `main` or `master`.
+- Changes show up about a minute after you push.
+- Add `.md` to your page URL to see the file Nomo reads, like `nomo.md/adnfng.md`.
+- If a site blocks `.md` links, share `nomo.fyi/you`. It's the same page.
+
+
+
+===== Syntax =====
+**Header photo**
 
 ![image:100x140](https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&auto=format&fit=crop)
 
-A normal image at the top of `human.md` becomes the avatar.
-Swap `assets/me.jpg` for yours and resize if needed.
-
+An image at the very top of `human.md` becomes the header photo. Set its size after `image:`.
 
 ```md
 ![image:100x140](/assets/me.jpg)
 ```
 
-adding `/nomo.png` or `/nomo.svg` in that spot adds the Nomo mark.
+Use `/nomo.png` or `/nomo.svg` there to get the Nomo mark instead.
 
 
 
-
-**Want to add tabs?**
+**Tabs**
 
 ```md
 ===== Nina Park =====
@@ -41,41 +71,16 @@ Designer in Copenhagen.
 ===== Work =====
 
 {{::2026::}}
-
 Started something new.
 ```
 
-`===== Name =====` is a tab. The first one is home.
-The rest get URLs like `/yourusername/work`.
+`===== Name =====` starts a tab. The first one is your home page, and its name is your name. The others get their own URL, like `/yourusername/work`.
 
-Keep it in one `human.md`. Extra files in `content/` still work if you already have them.
-
+Keep everything in one `human.md`. Extra files in `content/` still work if you already have them.
 
 
 
-**How to add a gallery:**
-
-[[gallery]]
-https://images.unsplash.com/photo-1626470601402-5c6e8b2dc8d7?w=800&auto=format&fit=crop&q=60
-https://images.unsplash.com/photo-1625039162908-19d625adbaac?w=800&auto=format&fit=crop&q=60
-https://images.unsplash.com/photo-1545285446-ff15b9e9b9b9?w=800&auto=format&fit=crop&q=60
-https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=60
-[[/gallery]]
-
-A list of images or video. Click one to open it in lightbox view.
-
-```md
-[[gallery]]
-/assets/one.jpg
-/assets/two.webm
-/assets/three.jpg
-[[/gallery]]
-```
-
-
-
-===== Syntax =====
-**The marks.**
+**Muted and small text**
 
 ```md
 {{muted text}}
@@ -86,7 +91,6 @@ A list of images or video. Click one to open it in lightbox view.
 {{muted text}}
 ::small text::
 {{::muted and small::}}
-
 
 
 
@@ -100,9 +104,7 @@ A list of images or video. Click one to open it in lightbox view.
 [nomo](https://nomo.md)
 (([nomo](https://nomo.md)))
 
-A normal link stays a normal link.
-Wrap it in `(( ))` for the up-right arrow.
-
+A normal link stays a normal link. Wrap it in `(( ))` to add the arrow.
 
 
 
@@ -115,6 +117,7 @@ Wrap it in `(( ))` for the up-right arrow.
 
 ![image:180](https://images.unsplash.com/photo-1545285446-ff15b9e9b9b9?q=80&w=1470&auto=format&fit=crop) ![image:100x140](https://images.unsplash.com/photo-1545285446-ff15b9e9b9b9?q=80&w=1470&auto=format&fit=crop)
 
+`image:180` sets the width. `image:100x140` sets width and height.
 
 
 
@@ -134,13 +137,92 @@ https://images.unsplash.com/photo-1545285446-ff15b9e9b9b9?w=800&auto=format&fit=
 https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=60
 [[/gallery]]
 
+Photos and video, one per line. Click one to open it. Video plays on a silent loop.
 
-**Tabs**
+
+
+**Spacing**
+
+A blank line starts a new paragraph. A single line break keeps the lines close. More blank lines add more space.
+
+
+
+===== Recipes =====
+**Developer**
 
 ```md
-===== Home =====
+![image:100x140](/assets/me.jpg)
 
-===== Work =====
+===== Sam Rivera =====
+
+Software engineer in Toronto.
+I build developer tools. Mostly TypeScript and Go.
+
+[GitHub](https://github.com/sam) · [Email](mailto:sam@example.com)
+
+===== Projects =====
+
+[tinyqueue](https://github.com/sam/tinyqueue) {{A job queue in 300 lines of Go.}}
+[dotfiles](https://github.com/sam/dotfiles) {{How my machine is set up.}}
+
+===== Writing =====
+
+{{::2026::}}
+[Why our sync engine is a log](https://example.com)
 ```
 
 
+
+**Link in bio**
+
+```md
+![image:88x88](/assets/me.jpg)
+
+===== Alex Kim =====
+
+I make videos about keyboards.
+
+(([YouTube](https://youtube.com/@alex)))
+(([Instagram](https://instagram.com/alex)))
+(([Newsletter](https://alex.substack.com)))
+```
+
+
+
+**Designer**
+
+```md
+![image:100x140](/assets/me.jpg)
+
+===== Nina Park =====
+
+Designer in Copenhagen. I make websites and printed things.
+
+===== Work =====
+
+[[gallery]]
+/assets/harbor.jpg
+/assets/kite.webm
+/assets/weekend.jpg
+[[/gallery]]
+
+Harbor {{website, 2026}}
+Kite {{identity, 2025}}
+```
+
+
+
+**Student**
+
+```md
+===== Priya Shah =====
+
+Computer science at Waterloo, class of 2027.
+Looking for a summer 2026 internship in systems or infra.
+
+[Resume](/assets/resume.pdf) · [GitHub](https://github.com/priya)
+
+===== Projects =====
+
+[raft-lite](https://github.com/priya/raft-lite) {{Raft in Rust, for a distributed systems class.}}
+```

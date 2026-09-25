@@ -1,31 +1,27 @@
 ![image:100x140](/assets/me.jpg)
 
-===== Nina Park =====
+===== Sam Rivera =====
 
-Designer in Copenhagen.
+Software engineer in Toronto.
 
-I make websites and printed things. I care about type, spacing, and the last 10%.
+I build developer tools and small, fast web apps. Mostly TypeScript and Go.
 
-Lately I work with small software companies on their sites.
+Right now I work on the sync engine at a small startup.
 
-[Email](mailto:nina@example.com) · [Are.na](https://www.are.na)
+[GitHub](https://github.com/) · [Email](mailto:sam@example.com)
 
-###### Selected work
+###### Projects
 
-Harbor — website, 2026
-Kite — identity, 2025
-Weekend — own type project, since 2024
+[tinyqueue](https://github.com/) {{A job queue in 300 lines of Go.}}
+[palette](https://github.com/) {{Color tokens for the terminal.}}
+[dotfiles](https://github.com/) {{How my machine is set up.}}
 
-===== Timeline =====
+===== Writing =====
 
 {{::2026::}}
 
-Started working independently.
+[Why our sync engine is a log](https://example.com)
 
-{{::2024::}}
+{{::2025::}}
 
-Left the studio.
-
-{{::2021::}}
-
-First job at a design office.
+[Notes from rewriting a CLI in Go](https://example.com)

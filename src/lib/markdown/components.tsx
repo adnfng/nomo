@@ -13,6 +13,7 @@ import type { Components } from "react-markdown";
 
 import { isExternalHref, resolveAssetUrl, resolveContentHref } from "../content/paths";
 import type { GalleryDefinition, GalleryMap } from "../content/types";
+import { UsernameField } from "../../components/UsernameField";
 import { NOMO_MARK_PATH } from "../theme/nomoMark";
 import { MarkdownPre } from "./CodeBlock";
 import { Gallery } from "./Gallery";
@@ -330,6 +331,9 @@ export function createMarkdownComponents(
     ),
     ol: withBlockGap("ol"),
     p: ({ children, node, style, ...props }) => {
+      if (!profileRoot && children === "[[username]]") {
+        return <div className="markdown-block" style={buildBlockStyle(node?.properties, style)}><UsernameField /></div>;
+      }
       const gallery = extractGalleryItems(children, galleries);
       if (gallery) {
         return (
