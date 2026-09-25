@@ -11,12 +11,12 @@
 - Add `.md` to any page to get its source, for example `nomo.md/adnfng.md`.
 - Visiting `nomo.md/<username>` for someone without a page shows a preview built from their GitHub profile, with a bar across the top to make it theirs.
 - Nomo now has a sitemap, `robots.txt`, and an `llms.txt` for AI assistants.
-- A back link shows at the top once you've moved between pages.
+- A back link to home shows at the top once you've left the home page.
 - The footer no longer covers the end of a page when you scroll to the bottom, and it shows when you last updated.
 - Write your page in plain GitHub markdown: `# Your name` is your home tab and each `##` heading is another tab, so it reads right on GitHub too. Lists with ` · ` line up, with years in their own column. Pages using `=====` tabs work as before.
 - Put `<!-- github:pinned -->` under a heading to list your pinned GitHub repos, kept up to date.
 - A new home page. Type your GitHub username to see your page, or a preview of it.
-- The site now has tabs for Docs, Agents, Compare, FAQ and Changelog, so the home page stays short.
+- The site now has tabs for Docs, Agents, Compare and Changelog, so the home page stays short.
 - The docs are now Quickstart, Syntax and Recipes, with ready-made pages for developers, designers, students and link-in-bio.
 - The template is now a developer page with Projects and Writing.
 - Agents can draft your first `human.md` from your GitHub profile, and they ask before pushing.

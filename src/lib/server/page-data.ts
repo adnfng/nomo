@@ -11,8 +11,9 @@ export function profileTag(username: string) {
   return `p:${username.toLowerCase()}`;
 }
 
-function isPreview(pathname: string) {
+function isLocalEdit(pathname: string) {
   const route = matchRoute(pathname);
+  if (process.env.NODE_ENV !== 'production' && route.type === 'native') return true;
   return Boolean(previewDirectory()) && 'username' in route && route.username.toLowerCase() === PREVIEW_USER;
 }
 
@@ -27,5 +28,5 @@ async function cachedPage(pathname: string): Promise<PageResult> {
 }
 
 export function getPage(pathname: string): Promise<PageResult> {
-  return isPreview(pathname) ? resolveSitePath(pathname) : cachedPage(pathname);
+  return isLocalEdit(pathname) ? resolveSitePath(pathname) : cachedPage(pathname);
 }

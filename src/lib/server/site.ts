@@ -9,7 +9,7 @@ import type { NativeSlug } from '../content/routes';
 import type { PageRecord } from '../content/types';
 
 const ROOT = process.cwd();
-const NATIVE: NativeSlug[] = ['home', 'docs', 'changelog', 'compare', 'agents', 'faq', '404'];
+const NATIVE: NativeSlug[] = ['home', 'docs', 'changelog', 'compare', 'agents', '404'];
 const remote = createRemoteLoader();
 
 export const BUNDLED_USER = 'adnfng';

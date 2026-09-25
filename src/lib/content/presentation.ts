@@ -35,7 +35,6 @@ const SITE_TABS = [
   { label: 'Docs', href: '/docs' },
   { label: 'Agents', href: '/agents' },
   { label: 'Compare', href: '/compare' },
-  { label: 'FAQ', href: '/faq' },
   { label: 'Changelog', href: '/changelog' },
 ];
 

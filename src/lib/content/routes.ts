@@ -1,11 +1,11 @@
-export type NativeSlug = "404" | "agents" | "analytics" | "changelog" | "compare" | "docs" | "faq" | "home" | "new";
+export type NativeSlug = "404" | "agents" | "analytics" | "changelog" | "compare" | "docs" | "home" | "new";
 export type RouteMatch =
   | { slug: NativeSlug; type: "native"; section?: string }
   | { slug: string; type: "profile-content"; username: string; contentPath: string }
   | { slug: string; type: "profile-root"; username: string }
   | { slug: "404"; type: "not-found" };
-const NATIVE_SLUGS = new Set<NativeSlug>(["home", "docs", "changelog", "compare", "agents", "faq", "analytics", "new", "404"]);
-const SINGLE_PAGES = new Set<NativeSlug>(["404", "analytics", "agents", "faq"]);
+const NATIVE_SLUGS = new Set<NativeSlug>(["home", "docs", "changelog", "compare", "agents", "analytics", "new", "404"]);
+const SINGLE_PAGES = new Set<NativeSlug>(["404", "analytics", "agents"]);
 const GITHUB_USERNAME_PATTERN = /^(?!-)(?!.*--)[a-z\d-]{1,39}(?<!-)$/i;
 
 function matchNative(slug: NativeSlug, contentSegments: string[]): RouteMatch {

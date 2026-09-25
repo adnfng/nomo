@@ -4,7 +4,7 @@ import { matchRoute } from '@/lib/content/routes';
 import { profileTag } from '@/lib/server/page-data';
 import { loadProfileSource, readNativeSource } from '@/lib/server/site';
 
-const NATIVE: Record<string, string> = { '': 'home', index: 'home', home: 'home', docs: 'docs', changelog: 'changelog', compare: 'compare', agents: 'agents', faq: 'faq' };
+const NATIVE: Record<string, string> = { '': 'home', index: 'home', home: 'home', docs: 'docs', changelog: 'changelog', compare: 'compare', agents: 'agents' };
 
 async function profileSource(username: string) {
   'use cache';
