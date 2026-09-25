@@ -45,8 +45,10 @@ Or type your GitHub username on [nomo.md](https://nomo.md) to see a preview of y
 Add this to your GitHub profile README:
 
 ```md
-[![nomo.md/you](https://nomo.md/badge.svg)](https://nomo.md/you)
+[![nomo.md/you](https://nomo.md/badge.svg?user=you)](https://nomo.md/you)
 ```
+
+Add `&theme=light` for a light badge.
 
 ## Develop
 

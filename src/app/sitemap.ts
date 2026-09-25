@@ -16,8 +16,8 @@ async function knownProfiles() {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const pages = nativePages();
-  const sections = (slug: 'docs' | 'changelog') => pages.get(slug)?.sections?.slice(1).map(section => `/${slug}/${section.slug}`) ?? [];
-  const native = ['/', '/docs', ...sections('docs'), '/changelog'];
+  const sections = (slug: 'docs' | 'compare') => pages.get(slug)?.sections?.slice(1).map(section => `/${slug}/${section.slug}`) ?? [];
+  const native = ['/', '/docs', ...sections('docs'), '/compare', ...sections('compare'), '/changelog'];
   const profiles = [...new Set([BUNDLED_USER, ...await knownProfiles()])].sort();
   return [
     ...native.map(path => ({ url: `${SITE}${path === '/' ? '' : path}`, changeFrequency: 'weekly' as const, priority: path === '/' ? 1 : 0.7 })),

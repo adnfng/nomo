@@ -11,8 +11,16 @@ function tabLabel(result: PageResult) {
   return result.page?.sections?.find(section => section.slug === result.slug)?.label;
 }
 
+function leadLine(content = '') {
+  return content.match(/^\*\*(.+?)\.?\*\*\s*$/m)?.[1];
+}
+
 function nativeTitle(slug: string, result: PageResult) {
   if (slug === 'home') return 'Nomo';
+  if (slug === 'compare') {
+    const lead = leadLine(result.page?.content) ?? 'Nomo compared to other personal sites';
+    return lead.includes('Nomo') ? lead : `${lead}: Nomo`;
+  }
   return `${tabLabel(result) ?? NATIVE_TITLES[slug] ?? 'Nomo'} · Nomo`;
 }
 

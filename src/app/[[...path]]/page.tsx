@@ -19,8 +19,8 @@ type Route = ReturnType<typeof matchRoute>;
 
 export async function generateStaticParams() {
   const pages = nativePages();
-  const tabs = (slug: 'docs' | 'changelog') => pages.get(slug)?.sections?.slice(1).map(section => ({ path: [slug, section.slug] })) ?? [];
-  return [{ path: [] }, { path: ['docs'] }, ...tabs('docs'), { path: ['changelog'] }, { path: [BUNDLED_USER] }];
+  const tabs = (slug: 'docs' | 'compare') => pages.get(slug)?.sections?.slice(1).map(section => ({ path: [slug, section.slug] })) ?? [];
+  return [{ path: [] }, { path: ['docs'] }, ...tabs('docs'), { path: ['compare'] }, ...tabs('compare'), { path: ['changelog'] }, { path: [BUNDLED_USER] }];
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

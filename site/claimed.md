@@ -28,5 +28,10 @@ Edit `human.md`, then push. {{::No terminal? (([Edit it on GitHub](https://githu
 - Swap the photo in `assets/me.jpg`.
 - Add a tab with `===== Projects =====`.
 - Share `nomo.md/%user%`. Links to it show a card with your photo and first line.
+- Link it from your GitHub profile README with a badge:
+
+```md
+[![nomo.md/%user%](https://nomo.md/badge.svg?user=%user%)](https://nomo.md/%user%)
+```
 
 {{::(([Read the docs](/docs)))::}}

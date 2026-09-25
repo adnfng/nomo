@@ -18,6 +18,8 @@
 - Make it yours: sign in with GitHub from your preview and Nomo creates your `.nomo` repo with the preview as your first draft. Then copy a prompt for your agent, or clone and edit.
 - `npx create-nomo` does the same from the terminal, and shows you the draft first.
 - A Nomo skill for coding agents, in `skills/nomo`.
+- Honest comparisons with a GitHub README, Linktree, Carrd and a hand-built site, plus a way off Bento, Read.cv and Polywork, at `/compare`.
+- A badge for your GitHub profile README: `nomo.md/badge.svg?user=you`.
 - Analytics start fresh. No cookies, no stored IPs, and Do Not Track is respected. The old counter stopped at 645 views and 237 visits across 4 profiles.
 
 
