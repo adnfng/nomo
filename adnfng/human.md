@@ -2,15 +2,15 @@
 
 # Aidan Fang
 
-Design at [Trinita Studio](https://trinitastudio.com)
+Design at [Human Error](https://humanerror.com)
 
-I'm based in Shanghai and enjoy merging
-works across fashion, tech and cultures outside design.
+I'm a creative director and product design/eng based in Shanghai.
+Merging works across fashion, tech and cultures outside design.
 
 Prev clients include: Nike Jordan, Balenciaga, Chatcut,
 Stranger Club, Champion, Lululemon, Under Armour.
 
-you can find me on [x](https://x.com/adnfng) or as a last resort [email](mailto:aidan@nomo.md).
+You can find me on [x](https://x.com/adnfng) or as a last resort [email](mailto:aidan@nomo.md).
 
 
 [IG](https://instagram.com/adnfng) · [Github](https://github.com/adnfng)
@@ -19,7 +19,7 @@ you can find me on [x](https://x.com/adnfng) or as a last resort [email](mailto:
 
 ### Currently
 
-- Design · [Trinita Studio](https://trinitastudio.com)
+- Design · [Human Error](https://humanerror.com)
 
 ### Previously
 
@@ -29,6 +29,8 @@ you can find me on [x](https://x.com/adnfng) or as a last resort [email](mailto:
 
 ### Projects
 
+- [gallery.cv](https://gallery.cv)
+  You deserve a better portfolio.
 <!-- github:pinned -->
 
 ## Gallery
@@ -37,4 +39,4 @@ you can find me on [x](https://x.com/adnfng) or as a last resort [email](mailto:
 ![](assets/imsending.webm)
 ![](assets/imsendingfinal.webm)
 
-will add more soon
+More work on request, or see it on [my gallery](https://gallery.cv/aidanfang).
