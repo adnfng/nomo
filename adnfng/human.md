@@ -2,7 +2,7 @@
 
 # Aidan Fang
 
-Design at [Human Error](https://humanerror.com)
+Senior Product Designer at [OpusClip](https://www.opus.pro)
 
 I'm a creative director and product design/eng based in Shanghai.
 Merging works across fashion, tech and cultures outside design.
@@ -19,10 +19,11 @@ You can find me on [x](https://x.com/adnfng) or as a last resort [email](mailto:
 
 ### Currently
 
-- Design · [Human Error](https://humanerror.com)
+- Senior Product Designer · [OpusClip](https://www.opus.pro)
 
 ### Previously
 
+- Creative / Design · [Human Error](https://humanerror.com)
 - Founding Designer · [ChatCut](https://chatcut.io)
 - Creative Director · Pureness Means Wealth
 - Creative Director · Savvy Market
